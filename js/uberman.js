@@ -1,77 +1,74 @@
-// FILE: js/uberman.js
-// Purpose: Handle Uberman Sleep Counter frontend interactions
-
+// js/uberman.js
 import { supabase } from "./supabaseClient.js";
 
-// Load the current counter for logged-in user
-export async function loadCounter() {
-    try {
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-        if (userError) throw userError;
-        if (!user) return;
+let counterId = null;
 
-        const { data, error } = await supabase
-            .from("uberman_counters")
-            .select("*")
-            .eq("user_id", user.id)
-            .maybeSingle(); // ❌ Use maybeSingle to avoid single object errors
+// 1️⃣ Ensure ONE counter row exists
+async function initCounter() {
+  // try to load existing counter
+  const { data, error } = await supabase
+    .from("uberman_counters")
+    .select("*")
+    .limit(1)
+    .maybeSingle();
 
-        if (error) throw error;
+  if (error) {
+    console.error(error);
+    return;
+  }
 
-        // If no counter exists yet, create one
-        if (!data) {
-            await supabase.from("uberman_counters").insert({
-                user_id: user.id,
-                day: 0,
-                current_awake_hours: 0
-            });
-            return loadCounter(); // reload after creation
-        }
+  // if none exists, create it
+  if (!data) {
+    const { data: newCounter, error: insertError } = await supabase
+      .from("uberman_counters")
+      .insert({
+        day: 0,
+        current_awake_hours: 0
+      })
+      .select()
+      .single();
 
-        document.getElementById("dayCount").innerText = data.day;
-        document.getElementById("hoursAwake").innerText = data.current_awake_hours;
-
-    } catch (err) {
-        console.error("Load counter error:", err);
+    if (insertError) {
+      console.error(insertError);
+      return;
     }
+
+    counterId = newCounter.id;
+    updateUI(newCounter);
+  } else {
+    counterId = data.id;
+    updateUI(data);
+  }
 }
 
-// Increment awake hours
-export async function incrementHours(hours = 0.5) {
-    try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+// 2️⃣ Update counter
+export async function incrementHour() {
+  if (!counterId) return;
 
-        const { data, error } = await supabase
-            .from("uberman_counters")
-            .select("*")
-            .eq("user_id", user.id)
-            .maybeSingle();
-        if (error) throw error;
+  const { data, error } = await supabase
+    .from("uberman_counters")
+    .update({
+      current_awake_hours: supabase.sql`current_awake_hours + 1`,
+      last_update: new Date()
+    })
+    .eq("id", counterId)
+    .select()
+    .single();
 
-        if (!data) return;
+  if (error) {
+    console.error(error);
+    return;
+  }
 
-        const newHours = parseFloat(data.current_awake_hours) + hours;
-        const newDay = newHours >= 24 ? data.day + 1 : data.day;
-
-        await supabase
-            .from("uberman_counters")
-            .update({
-                current_awake_hours: newHours % 24,
-                day: newDay,
-                last_update: new Date().toISOString()
-            })
-            .eq("id", data.id);
-
-        loadCounter(); // refresh UI
-    } catch (err) {
-        console.error("Increment error:", err);
-    }
+  updateUI(data);
 }
 
-// Expose globally
-window.loadCounter = loadCounter;
-window.incrementHours = incrementHours;
+// 3️⃣ UI
+function updateUI(counter) {
+  document.getElementById("day").textContent = counter.day;
+  document.getElementById("hours").textContent = counter.current_awake_hours;
+}
 
-// Auto-load on page load
-window.addEventListener("DOMContentLoaded", loadCounter);
+// boot
+window.incrementHour = incrementHour;
+window.addEventListener("DOMContentLoaded", initCounter);

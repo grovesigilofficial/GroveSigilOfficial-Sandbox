@@ -1,257 +1,95 @@
-<!-- FILE: uberman.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Uberman Counter</title>
-  <style>
-    :root {
-      --bg:#000;
-      --text:#ff3a3a;
-      --glow:0 0 18px rgba(255,0,40,.6);
-      --modal-bg:rgba(0,0,0,.95);
-    }
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{
-      height:100vh;
-      display:flex;
-      flex-direction:column;
-      justify-content:flex-start;
-      align-items:center;
-      background:var(--bg);
-      color:var(--text);
-      font-family:Oswald,system-ui,sans-serif;
-      overflow-x:hidden;
-      padding:20px;
-    }
-    h1{
-      font-size:clamp(32px,8vw,90px);
-      letter-spacing:.12em;
-      text-shadow:var(--glow);
-      margin-bottom:20px;
-    }
-    p{
-      font-size:1.2rem;
-      margin:6px 0;
-    }
-    button{
-      margin-top:10px;
-      padding:10px 20px;
-      border:2px solid var(--text);
-      background:transparent;
-      color:var(--text);
-      border-radius:8px;
-      cursor:pointer;
-      font-size:1rem;
-    }
-    button:hover{background:var(--text);color:#000}
-    #notes{
-      margin-top:20px;
-      max-width:600px;
-      padding:15px;
-      border:2px solid var(--text);
-      background:#111;
-      border-radius:10px;
-      white-space:pre-wrap;
-      line-height:1.5;
-    }
-    .modal{
-      display:none;
-      position:fixed;
-      inset:0;
-      background:var(--modal-bg);
-      padding:60px 20px;
-      overflow-y:auto;
-    }
-    .modal-content{
-      background:#111;
-      border:2px solid var(--text);
-      border-radius:12px;
-      max-width:800px;
-      margin:auto;
-      padding:20px;
-      white-space:pre-wrap;
-      line-height:1.6;
-    }
-    .close{
-      float:right;
-      font-size:28px;
-      cursor:pointer;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Uberman Counter</title>
+
+<style>
+:root {
+  --bg:#000;
+  --text:#ff3a3a;
+  --glow:0 0 18px rgba(255,0,40,.6);
+  --modal-bg:rgba(0,0,0,.95);
+}
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  background:var(--bg);
+  color:var(--text);
+  font-family:system-ui, sans-serif;
+  letter-spacing:0.12em;
+}
+h1{
+  font-size:clamp(32px,8vw,96px);
+  text-shadow:var(--glow);
+  margin-bottom:1em;
+}
+button{
+  margin:10px;
+  padding:12px 24px;
+  border:2px solid var(--text);
+  background:transparent;
+  color:var(--text);
+  border-radius:8px;
+  cursor:pointer;
+}
+button:hover{background:var(--text);color:#000}
+#countdown, #hours, #notes{margin:10px;font-size:1.2em;text-align:center;}
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:var(--modal-bg);
+  padding:60px 20px;
+  overflow-y:auto;
+}
+.modal-content{
+  background:#111;
+  border:2px solid var(--text);
+  border-radius:12px;
+  max-width:800px;
+  margin:auto;
+  padding:20px;
+  white-space:pre-wrap;
+  line-height:1.6;
+}
+.close{
+  float:right;
+  font-size:28px;
+  cursor:pointer;
+}
+</style>
 </head>
 <body>
-  <h1>Uberman Counter</h1>
 
-  <p>Countdown to Start: <span id="countdown">--:--:--</span></p>
-  <p>Day: <span id="day">0</span></p>
-  <p>Hours Awake: <span id="hours-awake">0</span></p>
-  <p>Hours Asleep: <span id="hours-asleep">0</span></p>
+<h1>Uberman Counter</h1>
 
-  <button id="increment-awake">+1 Hour Awake</button>
-  <button id="increment-sleep">+1 Hour Sleep</button>
-  <button id="save-counter">Save Counter</button>
-  <button id="reset-counter">Reset Counter</button>
-  <button id="show-notes">Show Comparison Notes</button>
+<p id="countdown">Countdown: --:--:--</p>
+<p id="day">Day: 0</p>
+<p id="hours">Awake: 0h / Asleep: 0h</p>
+<p id="notes"></p>
 
-  <div id="notes" style="display:none;"></div>
+<div>
+  <button id="startBtn">Start Counter</button>
+  <button id="stopBtn">Stop Counter</button>
+  <button id="saveBtn">Save</button>
+  <button id="resetBtn">Reset</button>
+</div>
 
-  <script type="module">
-  // FILE: js/uberman.js
-  import { supabase } from "./supabaseClient.js";
+<div id="avgModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Average Person Sleep Comparison</h2>
+    <p id="avgText"></p>
+  </div>
+</div>
+<button id="avgBtn">Show Average Comparison</button>
 
-  const DAY_EL = document.getElementById("day");
-  const HOURS_AWAKE_EL = document.getElementById("hours-awake");
-  const HOURS_ASLEEP_EL = document.getElementById("hours-asleep");
-  const COUNTDOWN_EL = document.getElementById("countdown");
-  const NOTES_EL = document.getElementById("notes");
-
-  const INCREMENT_AWAKE = document.getElementById("increment-awake");
-  const INCREMENT_SLEEP = document.getElementById("increment-sleep");
-  const SAVE_BTN = document.getElementById("save-counter");
-  const RESET_BTN = document.getElementById("reset-counter");
-  const NOTES_BTN = document.getElementById("show-notes");
-
-  // User/Counter
-  let counter = {
-    id:null,
-    start_time:null,
-    day:0,
-    awake:0,
-    asleep:0
-  };
-
-  // Average person data
-  const avgSleepHours = 8;
-  const avgAwakeHours = 16;
-
-  async function loadCounter() {
-    const { data, error } = await supabase
-      .from("uberman_counters")
-      .select("*")
-      .limit(1)
-      .maybeSingle();
-
-    if(error){console.error("Load error:", error);return;}
-
-    if(!data){
-      const { data: created, error: createError } = await supabase
-        .from("uberman_counters")
-        .insert({
-          day:0,
-          current_awake_hours:0,
-          current_sleep_hours:0,
-          start_time:new Date().toISOString()
-        })
-        .select()
-        .single();
-
-      if(createError){console.error("Create error:",createError);return;}
-      counter = mapData(created);
-    } else counter = mapData(data);
-
-    render();
-    startCountdown();
-  }
-
-  function mapData(row){
-    return {
-      id: row.id,
-      start_time: row.start_time ? new Date(row.start_time) : new Date(),
-      day: row.day || 0,
-      awake: row.current_awake_hours || 0,
-      asleep: row.current_sleep_hours || 0
-    };
-  }
-
-  function render(){
-    DAY_EL.textContent = `Day ${counter.day}`;
-    HOURS_AWAKE_EL.textContent = `${counter.awake} hours awake`;
-    HOURS_ASLEEP_EL.textContent = `${counter.asleep} hours asleep`;
-  }
-
-  function startCountdown(){
-    const now = new Date();
-    const start = counter.start_time;
-    const diff = start - now;
-
-    if(diff <= 0){
-      COUNTDOWN_EL.textContent = "Started!";
-      return;
-    }
-
-    const interval = setInterval(()=>{
-      const t = counter.start_time - new Date();
-      if(t<=0){
-        COUNTDOWN_EL.textContent="Started!";
-        clearInterval(interval);
-        return;
-      }
-      const h = Math.floor(t/1000/60/60);
-      const m = Math.floor(t/1000/60)%60;
-      const s = Math.floor(t/1000)%60;
-      COUNTDOWN_EL.textContent = `${h}h ${m}m ${s}s`;
-    },1000);
-  }
-
-  async function increment(type){
-    if(type==="awake") counter.awake++;
-    else if(type==="sleep") counter.asleep++;
-    render();
-  }
-
-  async function saveCounter(){
-    if(!counter.id) return;
-    const { error } = await supabase
-      .from("uberman_counters")
-      .update({
-        current_awake_hours:counter.awake,
-        current_sleep_hours:counter.asleep,
-        last_update:new Date().toISOString()
-      })
-      .eq("id",counter.id);
-    if(error) console.error("Save error:",error);
-    else alert("Counter saved!");
-  }
-
-  function resetCounter(){
-    if(confirm("Reset the counter?")){
-      counter.awake=0;
-      counter.asleep=0;
-      counter.day=0;
-      counter.start_time=new Date();
-      render();
-      startCountdown();
-      alert("Counter reset!");
-    }
-  }
-
-  function showNotes(){
-    const totalAwake = counter.awake;
-    const totalAsleep = counter.asleep;
-    const avgAwake = avgAwakeHours;
-    const avgSleep = avgSleepHours;
-    const weekHours = 24*7;
-    const monthHours = 24*30;
-    const yearHours = 24*365;
-    NOTES_EL.innerHTML=
-      `Your Uberman schedule:<br>`+
-      `Awake: ${totalAwake}h, Asleep: ${totalAsleep}h<br>`+
-      `Compared to average person:<br>`+
-      `Awake/Week: ${avgAwake*7}h, Sleep/Week: ${avgSleep*7}h<br>`+
-      `Awake/Month: ${avgAwake*30}h, Sleep/Month: ${avgSleep*30}h<br>`+
-      `Awake/Year: ${avgAwake*365}h, Sleep/Year: ${avgSleep*365}h<br>`+
-      `If you lived Uberman style instead of average sleep, think how many days longer you'd be awake over a lifespan!`;
-    NOTES_EL.style.display="block";
-  }
-
-  INCREMENT_AWAKE.onclick=()=>increment("awake");
-  INCREMENT_SLEEP.onclick=()=>increment("sleep");
-  SAVE_BTN.onclick=saveCounter;
-  RESET_BTN.onclick=resetCounter;
-  NOTES_BTN.onclick=showNotes;
-
-  document.addEventListener("DOMContentLoaded",loadCounter);
-  </script>
+<script type="module" src="/js/uberman.js"></script>
 </body>
 </html>

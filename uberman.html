@@ -10,6 +10,7 @@
   --bg:#000;
   --text:#ff2a2a;
   --glow:0 0 20px rgba(255,42,42,.6);
+  --modal-bg:rgba(0,0,0,.95);
 }
 body {
   margin:0;
@@ -28,9 +29,9 @@ h1 {
   text-shadow: var(--glow);
   margin-bottom: 1rem;
 }
-p { font-size: 1.2rem; margin: 0.5rem 0; }
+p { font-size: 1.1rem; margin: 0.5rem 0; }
 button {
-  margin-top: 1rem;
+  margin-top: 0.8rem;
   padding: 10px 20px;
   border: 2px solid var(--text);
   background: transparent;
@@ -38,29 +39,36 @@ button {
   border-radius: 8px;
   cursor: pointer;
 }
-button:hover { background: var(--text); color: #000; }
-input, select { padding: 6px; margin: 4px 0; border-radius: 6px; border:1px solid var(--text); background:#111; color:var(--text);}
-.note { font-size: 0.9rem; opacity: 0.7; margin-top:0.5rem; text-align:center; max-width:400px; }
+button:hover { background: var(--text); color:#000; }
+input { padding: 6px; margin:4px 0; border-radius:6px; border:1px solid var(--text); background:#111; color:var(--text);}
+.note { font-size: 0.9rem; opacity:0.7; margin-top:0.5rem; max-width:400px; text-align:center; }
+.modal { display:none; position:fixed; inset:0; background:var(--modal-bg); padding:40px 20px; overflow-y:auto;}
+.modal-content { background:#111; border:2px solid var(--text); border-radius:12px; max-width:600px; margin:auto; padding:20px; line-height:1.6; white-space:pre-wrap;}
+.close { float:right; font-size:28px; cursor:pointer;}
 </style>
 </head>
 <body>
 
 <h1>Uberman Counter</h1>
 
-<!-- Countdown -->
 <p>Countdown to Start: <span id="countdown">--:--:--</span></p>
-
-<!-- Day & Totals -->
 <p>Day: <span id="day">0</span></p>
 <p>Hours Awake: <span id="hours-awake">0</span></p>
 <p>Hours Asleep: <span id="hours-sleep">0</span></p>
-<p class="note" id="comparison">Compared to the average person’s schedule.</p>
+<p class="note" id="comparison">Your schedule compared to an average person.</p>
 
-<!-- Controls -->
 <label for="startTime">Set Start Time:</label>
 <input type="datetime-local" id="startTime">
-<button id="setStartBtn">Set / Restart Counter</button>
-<button id="toggleAwakeBtn">Toggle Awake/Sleep</button>
+<button id="setStartBtn">Save / Reset Counter</button>
+<button id="toggleAwakeBtn">Switch Awake/Sleep</button>
+<button id="showAvgBtn">Show Average Sleep Stats</button>
+
+<div id="avgModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <div id="avgContent"></div>
+  </div>
+</div>
 
 <script type="module" src="/js/uberman.js"></script>
 </body>

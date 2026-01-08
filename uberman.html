@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Uberman Counter</title>
-
 <style>
 :root {
   --bg:#000;
@@ -21,7 +20,7 @@ body{
   align-items:center;
   background:var(--bg);
   color:var(--text);
-  font-family:system-ui, sans-serif;
+  font-family:system-ui,sans-serif;
   letter-spacing:0.12em;
 }
 h1{
@@ -30,7 +29,7 @@ h1{
   margin-bottom:1em;
 }
 button{
-  margin:8px;
+  margin:6px;
   padding:10px 20px;
   border:2px solid var(--text);
   background:transparent;
@@ -41,6 +40,7 @@ button{
 }
 button:hover{background:var(--text);color:#000;}
 #countdown,#day,#hours,#notes{text-align:center;margin:6px;font-size:1.2em;}
+#controls{display:none;flex-direction:column;align-items:center;margin-top:1em;}
 #settings{display:none;flex-direction:column;align-items:center;margin-top:1em;}
 input[type=datetime-local]{padding:6px;margin:6px;border:1px solid var(--text);border-radius:6px;background:#111;color:var(--text);}
 .modal{display:none;position:fixed;inset:0;background:var(--modal-bg);padding:60px 20px;overflow-y:auto;}
@@ -51,17 +51,17 @@ input[type=datetime-local]{padding:6px;margin:6px;border:1px solid var(--text);b
 <body>
 
 <h1>Uberman Counter</h1>
-
 <p id="countdown">Countdown: --:--:--</p>
 <p id="day">Day: 0</p>
 <p id="hours">Awake: 0h / Asleep: 0h</p>
 <p id="notes"></p>
 
+<button id="lockBtn">Unlock Settings</button>
+
 <div id="controls">
   <button id="incrementBtn">+1 Hour Awake</button>
   <button id="saveBtn">Save</button>
   <button id="resetBtn">Reset</button>
-  <button id="lockBtn">Unlock Settings</button>
   <button id="backBtn">Back</button>
 </div>
 

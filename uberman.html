@@ -9,8 +9,9 @@
   --bg:#000;
   --text:#ff3a3a;
   --glow:0 0 18px rgba(255,0,40,.6);
+  --modal-bg:rgba(0,0,0,.95);
 }
-body {
+body{
   margin:0;
   min-height:100vh;
   display:flex;
@@ -20,11 +21,30 @@ body {
   background:var(--bg);
   color:var(--text);
   font-family:system-ui,sans-serif;
+  letter-spacing:0.12em;
 }
-h1 { font-size:clamp(32px,8vw,96px); text-shadow:var(--glow); margin-bottom:1em; }
-button { margin:6px; padding:10px 20px; border:2px solid var(--text); background:transparent; color:var(--text); border-radius:8px; cursor:pointer; }
-button:hover { background:var(--text); color:#000; }
-#controls, #settings { display:none; flex-direction:column; align-items:center; margin-top:1em; }
+h1{
+  font-size:clamp(32px,8vw,96px);
+  text-shadow:var(--glow);
+  margin-bottom:1em;
+}
+button{
+  margin:6px;
+  padding:10px 20px;
+  border:2px solid var(--text);
+  background:transparent;
+  color:var(--text);
+  border-radius:8px;
+  cursor:pointer;
+  font-size:1em;
+}
+button:hover{background:var(--text);color:#000;}
+#countdown,#day,#hours,#notes{text-align:center;margin:6px;font-size:1.2em;}
+#controls,#settings{display:none;flex-direction:column;align-items:center;margin-top:1em;}
+input[type=datetime-local]{padding:6px;margin:6px;border:1px solid var(--text);border-radius:6px;background:#111;color:var(--text);}
+.modal{display:none;position:fixed;inset:0;background:var(--modal-bg);padding:60px 20px;overflow-y:auto;}
+.modal-content{background:#111;border:2px solid var(--text);border-radius:12px;max-width:800px;margin:auto;padding:20px;white-space:pre-wrap;line-height:1.6;}
+.close{float:right;font-size:28px;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -35,11 +55,17 @@ button:hover { background:var(--text); color:#000; }
 <p id="hours">Awake: 0h / Asleep: 0h</p>
 <p id="notes"></p>
 
-<button id="lockBtn">Unlock Settings</button>
+<!-- Lock / PIN -->
+<div id="lockSection">
+  <input type="password" id="pinInput" placeholder="Enter PIN" />
+  <button id="unlockBtn">Unlock</button>
+</div>
 
 <div id="controls">
   <button id="incrementBtn">+1 Hour Awake</button>
+  <button id="saveBtn">Save</button>
   <button id="resetBtn">Reset</button>
+  <button id="backBtn">Back</button>
 </div>
 
 <div id="settings">
@@ -48,80 +74,15 @@ button:hover { background:var(--text); color:#000; }
   <button id="startBtn">Set Start</button>
 </div>
 
-<script>
-let unlocked = false;
-let day = 0;
-let awake = 0;
-let startTime = new Date();
-const DAY_EL = document.getElementById("day");
-const HOURS_EL = document.getElementById("hours");
-const COUNTDOWN_EL = document.getElementById("countdown");
-const NOTES_EL = document.getElementById("notes");
+<div id="avgModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Average Person Sleep Comparison</h2>
+    <p id="avgText"></p>
+  </div>
+</div>
+<button id="avgBtn">Show Average Comparison</button>
 
-const LOCK_BTN = document.getElementById("lockBtn");
-const CONTROLS = document.getElementById("controls");
-const SETTINGS = document.getElementById("settings");
-const INCREMENT_BTN = document.getElementById("incrementBtn");
-const RESET_BTN = document.getElementById("resetBtn");
-const START_BTN = document.getElementById("startBtn");
-const START_INPUT = document.getElementById("startTime");
-
-// Lock/Unlock
-LOCK_BTN.onclick = () => {
-  unlocked = !unlocked;
-  CONTROLS.style.display = unlocked ? 'flex' : 'none';
-  SETTINGS.style.display = unlocked ? 'flex' : 'none';
-  LOCK_BTN.textContent = unlocked ? 'Lock Settings' : 'Unlock Settings';
-};
-
-// Set start time
-START_BTN.onclick = () => {
-  const val = START_INPUT.value;
-  if(val) startTime = new Date(val);
-  startCountdown();
-};
-
-// Increment hour awake
-INCREMENT_BTN.onclick = () => {
-  awake += 1;
-  render();
-};
-
-// Reset
-RESET_BTN.onclick = () => {
-  day = 0;
-  awake = 0;
-  render();
-};
-
-// Countdown
-function startCountdown() {
-  setInterval(()=>{
-    const now = new Date();
-    const diff = startTime - now;
-    if(diff <= 0) {
-      COUNTDOWN_EL.textContent = "Countdown: 00:00:00";
-      return;
-    }
-    const h = String(Math.floor(diff/3600000)).padStart(2,'0');
-    const m = String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
-    const s = String(Math.floor((diff%60000)/1000)).padStart(2,'0');
-    COUNTDOWN_EL.textContent = `Countdown: ${h}:${m}:${s}`;
-  }, 1000);
-}
-
-// Render UI
-function render() {
-  DAY_EL.textContent = `Day: ${day}`;
-  HOURS_EL.textContent = `Awake: ${awake}h / Asleep: ${day*24 - awake}h`;
-  NOTES_EL.textContent = `Average person sleeps 8h/day. You are awake ${awake}h, asleep ${day*24 - awake}h.`;
-}
-
-// Init
-document.addEventListener("DOMContentLoaded", ()=>{
-  render();
-  startCountdown();
-});
-</script>
+<script type="module" src="/js/uberman.js"></script>
 </body>
 </html>

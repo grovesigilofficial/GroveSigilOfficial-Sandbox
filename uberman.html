@@ -1,85 +1,133 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Uberman Counter</title>
-<style>
-:root {
-  --bg:#000;
-  --text:#ff3a3a;
-  --glow:0 0 18px rgba(255,0,40,.6);
-  --modal-bg:rgba(0,0,0,.95);
-}
-body{
-  margin:0;
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  background:var(--bg);
-  color:var(--text);
-  font-family:system-ui,sans-serif;
-  letter-spacing:0.12em;
-}
-h1{
-  font-size:clamp(32px,8vw,96px);
-  text-shadow:var(--glow);
-  margin-bottom:1em;
-}
-button{
-  margin:6px;
-  padding:10px 20px;
-  border:2px solid var(--text);
-  background:transparent;
-  color:var(--text);
-  border-radius:8px;
-  cursor:pointer;
-  font-size:1em;
-}
-button:hover{background:var(--text);color:#000;}
-#countdown,#day,#hours,#notes{text-align:center;margin:6px;font-size:1.2em;}
-#controls{display:none;flex-direction:column;align-items:center;margin-top:1em;}
-#settings{display:none;flex-direction:column;align-items:center;margin-top:1em;}
-input[type=datetime-local]{padding:6px;margin:6px;border:1px solid var(--text);border-radius:6px;background:#111;color:var(--text);}
-.modal{display:none;position:fixed;inset:0;background:var(--modal-bg);padding:60px 20px;overflow-y:auto;}
-.modal-content{background:#111;border:2px solid var(--text);border-radius:12px;max-width:800px;margin:auto;padding:20px;white-space:pre-wrap;line-height:1.6;}
-.close{float:right;font-size:28px;cursor:pointer;}
-</style>
-</head>
-<body>
+// FILE: js/uberman.js
+import { supabase } from "./supabaseClient.js";
 
-<h1>Uberman Counter</h1>
-<p id="countdown">Countdown: --:--:--</p>
-<p id="day">Day: 0</p>
-<p id="hours">Awake: 0h / Asleep: 0h</p>
-<p id="notes"></p>
+document.addEventListener("DOMContentLoaded", () => {
+  // Elements
+  const countdownEl = document.getElementById("countdown");
+  const dayEl = document.getElementById("day");
+  const hoursEl = document.getElementById("hours");
+  const notesEl = document.getElementById("notes");
+  const controlsEl = document.getElementById("controls");
+  const settingsEl = document.getElementById("settings");
 
-<button id="lockBtn">Unlock Settings</button>
+  const incrementBtn = document.getElementById("incrementBtn");
+  const saveBtn = document.getElementById("saveBtn");
+  const resetBtn = document.getElementById("resetBtn");
+  const lockBtn = document.getElementById("lockBtn");
+  const backBtn = document.getElementById("backBtn");
+  const startBtn = document.getElementById("startBtn");
+  const startTimeInput = document.getElementById("startTime");
 
-<div id="controls">
-  <button id="incrementBtn">+1 Hour Awake</button>
-  <button id="saveBtn">Save</button>
-  <button id="resetBtn">Reset</button>
-  <button id="backBtn">Back</button>
-</div>
+  const avgBtn = document.getElementById("avgBtn");
+  const avgModal = document.getElementById("avgModal");
+  const avgClose = avgModal.querySelector(".close");
+  const avgText = document.getElementById("avgText");
 
-<div id="settings">
-  <label for="startTime">Start Time:</label>
-  <input type="datetime-local" id="startTime"/>
-  <button id="startBtn">Set Start</button>
-</div>
+  let counter = null;
+  let unlocked = false;
 
-<div id="avgModal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <h2>Average Person Sleep Comparison</h2>
-    <p id="avgText"></p>
-  </div>
-</div>
-<button id="avgBtn">Show Average Comparison</button>
+  // Load or create counter
+  async function loadCounter() {
+    const { data, error } = await supabase
+      .from("uberman_counters")
+      .select("*")
+      .limit(1)
+      .maybeSingle();
 
-<script type="module" src="/js/uberman.js"></script>
-</body>
-</html>
+    if (error) return console.error("Load error:", error);
+
+    if (!data) {
+      const { data: created, error: createError } = await supabase
+        .from("uberman_counters")
+        .insert({ day: 0, current_awake_hours: 0 })
+        .select()
+        .single();
+      if (createError) return console.error("Create error:", createError);
+      counter = created;
+    } else counter = data;
+
+    render();
+  }
+
+  function render() {
+    if (!counter) return;
+    dayEl.textContent = `Day: ${counter.day ?? 0}`;
+    hoursEl.textContent = `Awake: ${counter.current_awake_hours ?? 0}h / Asleep: 0h`; // placeholder asleep
+    notesEl.textContent = "Compared to an average person, you are…"; // can expand later
+  }
+
+  // Increment awake hours
+  async function incrementHour() {
+    if (!counter) return;
+    counter.current_awake_hours = Number(counter.current_awake_hours || 0) + 1;
+
+    const { error } = await supabase
+      .from("uberman_counters")
+      .update({ current_awake_hours: counter.current_awake_hours, last_update: new Date() })
+      .eq("id", counter.id);
+    if (error) return console.error("Update error:", error);
+
+    render();
+  }
+
+  // Save counter
+  async function saveCounter() {
+    if (!counter) return;
+    const { error } = await supabase
+      .from("uberman_counters")
+      .update({ current_awake_hours: counter.current_awake_hours })
+      .eq("id", counter.id);
+    if (error) return console.error("Save error:", error);
+    alert("Counter saved!");
+  }
+
+  // Reset counter
+  async function resetCounter() {
+    if (!counter) return;
+    if (!confirm("Reset counter?")) return;
+    counter.current_awake_hours = 0;
+    counter.day = 0;
+    const { error } = await supabase
+      .from("uberman_counters")
+      .update({ current_awake_hours: 0, day: 0 })
+      .eq("id", counter.id);
+    if (error) return console.error("Reset error:", error);
+    render();
+  }
+
+  // Lock/unlock controls
+  function toggleLock() {
+    unlocked = !unlocked;
+    controlsEl.style.display = unlocked ? "flex" : "none";
+    settingsEl.style.display = unlocked ? "flex" : "none";
+    lockBtn.textContent = unlocked ? "Lock Settings" : "Unlock Settings";
+  }
+
+  // Show average modal
+  function showAvg() {
+    avgText.innerHTML = `
+      Average person sleeps ~56h/week, 240h/month, 2920h/year.
+      Uberman is ~2h sleep/day. Lifespan comparison depends on adherence.
+    `;
+    avgModal.style.display = "block";
+  }
+
+  // Close modal
+  avgClose.onclick = () => avgModal.style.display = "none";
+  window.onclick = (e) => { if (e.target === avgModal) avgModal.style.display = "none"; }
+
+  // Event listeners
+  incrementBtn.addEventListener("click", incrementHour);
+  saveBtn.addEventListener("click", saveCounter);
+  resetBtn.addEventListener("click", resetCounter);
+  lockBtn.addEventListener("click", toggleLock);
+  backBtn.addEventListener("click", () => window.history.back());
+  startBtn.addEventListener("click", () => {
+    if (!startTimeInput.value) return alert("Select start time");
+    alert("Start time set for: " + startTimeInput.value);
+  });
+  avgBtn.addEventListener("click", showAvg);
+
+  // Init
+  loadCounter();
+});

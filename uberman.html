@@ -1,19 +1,15 @@
-<!-- FILE: uberman.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Uberman Sleep Counter</title>
+  <meta charset="UTF-8" />
+  <title>Uberman Counter</title>
 </head>
 <body>
-<h1>Uberman Sleep Counter</h1>
-<div>
-    Day: <span id="dayCount">0</span> <br>
-    Hours Awake: <span id="hoursAwake">0</span>
-</div>
-<button onclick="incrementHours(0.5)">Add 30 minutes</button>
-<script type="module" src="js/uberman.js"></script>
-<script type="module" src="js/supabaseClient.js"></script>
+  <h1>Uberman</h1>
+  <p>Day: <span id="day">0</span></p>
+  <p>Hours Awake: <span id="hours">0</span></p>
+  <button onclick="incrementHour()">+1 Hour Awake</button>
+
+  <script type="module" src="/js/uberman.js"></script>
 </body>
 </html>

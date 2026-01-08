@@ -1,70 +1,88 @@
 // FILE: js/uberman.js
 import { supabase } from "./supabaseClient.js";
 
-window.incrementHour = incrementHour; // expose function globally
+const DAY_EL = document.getElementById("day");
+const HOURS_EL = document.getElementById("hours");
+const INCREMENT_BTN = document.getElementById("incrementBtn");
 
-document.addEventListener("DOMContentLoaded", async () => {
-  const DAY_EL = document.getElementById("day");
-  const HOURS_EL = document.getElementById("hours");
+let counterId = null;
 
-  let counterId = null;
+// Load or create the counter row
+async function loadCounter() {
+  const { data, error } = await supabase
+    .from("uberman_counters")
+    .select("*")
+    .limit(1)
+    .maybeSingle();
 
-  async function render(row) {
-    if (DAY_EL) DAY_EL.textContent = `Day ${row.day ?? 0}`;
-    if (HOURS_EL) HOURS_EL.textContent = `${row.current_awake_hours ?? 0} hours awake`;
+  if (error) {
+    console.error("Load error:", error);
+    return;
   }
 
-  async function loadCounter() {
-    const { data, error } = await supabase
+  if (!data) {
+    const { data: created, error: createError } = await supabase
       .from("uberman_counters")
-      .select("*")
-      .limit(1)
-      .maybeSingle();
-
-    if (error) return console.error("Load error:", error);
-
-    if (!data) {
-      const { data: created, error: createError } = await supabase
-        .from("uberman_counters")
-        .insert({ day: 0, current_awake_hours: 0 })
-        .select()
-        .single();
-
-      if (createError) return console.error("Create error:", createError);
-
-      counterId = created.id;
-      render(created);
-    } else {
-      counterId = data.id;
-      render(data);
-    }
-  }
-
-  async function incrementHour() {
-    if (!counterId) return;
-
-    const { data, error } = await supabase
-      .from("uberman_counters")
-      .select("current_awake_hours, day")
-      .eq("id", counterId)
+      .insert({ day: 0, current_awake_hours: 0 })
+      .select()
       .single();
 
-    if (error) return console.error("Read error:", error);
+    if (createError) {
+      console.error("Create error:", createError);
+      return;
+    }
 
-    const updatedHours = Number(data.current_awake_hours ?? 0) + 1;
+    counterId = created.id;
+    render(created);
+  } else {
+    counterId = data.id;
+    render(data);
+  }
+}
 
-    const { error: updateError } = await supabase
-      .from("uberman_counters")
-      .update({ current_awake_hours: updatedHours, last_update: new Date().toISOString() })
-      .eq("id", counterId);
+// Increment awake hours
+async function incrementHour() {
+  if (!counterId) return;
 
-    if (updateError) return console.error("Update error:", updateError);
+  const { data, error } = await supabase
+    .from("uberman_counters")
+    .select("current_awake_hours, day")
+    .eq("id", counterId)
+    .single();
 
-    render({ ...data, current_awake_hours: updatedHours });
+  if (error) {
+    console.error("Read error:", error);
+    return;
   }
 
-  // Make incrementHour accessible globally
-  window.incrementHour = incrementHour;
+  let updatedHours = Number(data.current_awake_hours || 0) + 1;
+  let updatedDay = data.day;
 
-  await loadCounter();
-});
+  // Auto-increment day every 24 hours
+  if (updatedHours >= 24) {
+    updatedHours -= 24;
+    updatedDay += 1;
+  }
+
+  const { error: updateError } = await supabase
+    .from("uberman_counters")
+    .update({ current_awake_hours: updatedHours, day: updatedDay, last_update: new Date().toISOString() })
+    .eq("id", counterId);
+
+  if (updateError) {
+    console.error("Update error:", updateError);
+    return;
+  }
+
+  render({ ...data, current_awake_hours: updatedHours, day: updatedDay });
+}
+
+// Render UI
+function render(row) {
+  if (DAY_EL) DAY_EL.textContent = `Day: ${row.day ?? 0}`;
+  if (HOURS_EL) HOURS_EL.textContent = `Hours Awake: ${row.current_awake_hours ?? 0}`;
+}
+
+// Init
+INCREMENT_BTN?.addEventListener("click", incrementHour);
+document.addEventListener("DOMContentLoaded", loadCounter);

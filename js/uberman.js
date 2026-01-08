@@ -1,37 +1,23 @@
-// FILE: js/uberman.js
+// js/uberman.js
 import { supabase } from "./supabaseClient.js";
 
-const countdownEl = document.getElementById("countdown");
-const dayEl = document.getElementById("day");
-const hoursAwakeEl = document.getElementById("hours-awake");
-const hoursSleepEl = document.getElementById("hours-sleep");
-const comparisonEl = document.getElementById("comparison");
-const startInput = document.getElementById("startTime");
-const setStartBtn = document.getElementById("setStartBtn");
-const toggleAwakeBtn = document.getElementById("toggleAwakeBtn");
-const showAvgBtn = document.getElementById("showAvgBtn");
+const DAY_EL = document.getElementById("day");
+const HOURS_AWAKE_EL = document.getElementById("hours-awake");
+const HOURS_SLEEP_EL = document.getElementById("hours-sleep");
+const COUNTDOWN_EL = document.getElementById("countdown");
+
 const avgModal = document.getElementById("avgModal");
-const avgContent = document.getElementById("avgContent");
-const closeModal = document.querySelector(".close");
+const avgNotes = document.getElementById("avgNotes");
+avgModal.querySelector(".close")?.addEventListener("click",()=>avgModal.style.display="none");
 
 let counterId = null;
-let awake = true;
+let startTime = null;
 
-// --- Constants ---
-const AVG_SLEEP_HOURS = 8; // avg hours per night
-const AVG_AWAKE_HOURS = 16; // per day
-const DAYS_IN_YEAR = 365;
+// Constants for averages
+const AVG_AWAKE_HOURS_PER_DAY = 16;
+const AVG_SLEEP_HOURS_PER_DAY = 8;
 
-// --- Utility ---
-function formatHMS(ms) {
-  const totalSec = Math.floor(ms/1000);
-  const h = Math.floor(totalSec/3600);
-  const m = Math.floor((totalSec%3600)/60);
-  const s = totalSec%60;
-  return `${h}h ${m}m ${s}s`;
-}
-
-// --- Load / Create Counter ---
+// Load or create counter
 async function loadCounter() {
   const { data, error } = await supabase
     .from("uberman_counters")
@@ -39,114 +25,123 @@ async function loadCounter() {
     .limit(1)
     .maybeSingle();
 
-  if (error) { console.error(error); return; }
+  if (error) return console.error("Load error:", error);
 
   if (!data) {
     const { data: created, error: createError } = await supabase
       .from("uberman_counters")
-      .insert({ day:0, current_awake_hours:0, current_sleep_hours:0, last_update:new Date().toISOString() })
-      .select().single();
-    if (createError) { console.error(createError); return; }
+      .insert({ day: 0, current_awake_hours: 0, total_sleep_hours:0, start_time: new Date().toISOString() })
+      .select()
+      .single();
+    if (createError) return console.error("Create error:", createError);
     counterId = created.id;
+    startTime = new Date(created.start_time);
     render(created);
   } else {
     counterId = data.id;
+    startTime = new Date(data.start_time);
     render(data);
   }
 
-  startTicker();
+  startCountdown();
 }
 
-// --- Save / Reset Start ---
-async function setStartTime() {
-  if (!startInput.value) return alert("Pick a start time!");
-  const startDate = new Date(startInput.value);
+// Increment awake hour
+export async function incrementHour() {
+  if (!counterId) return;
+  const { data, error } = await supabase
+    .from("uberman_counters")
+    .select("*")
+    .eq("id", counterId)
+    .single();
+  if (error) return console.error(error);
+
+  const newAwake = Number(data.current_awake_hours || 0)+1;
+
+  await supabase
+    .from("uberman_counters")
+    .update({ current_awake_hours: newAwake, last_update: new Date().toISOString() })
+    .eq("id", counterId);
+
+  render({ ...data, current_awake_hours: newAwake });
+}
+
+// Log sleep hour
+export async function logSleep() {
+  if (!counterId) return;
+  const { data, error } = await supabase
+    .from("uberman_counters")
+    .select("*")
+    .eq("id", counterId)
+    .single();
+  if (error) return console.error(error);
+
+  const newSleep = Number(data.total_sleep_hours || 0)+1;
+
+  await supabase
+    .from("uberman_counters")
+    .update({ total_sleep_hours: newSleep, last_update: new Date().toISOString() })
+    .eq("id", counterId);
+
+  render({ ...data, total_sleep_hours: newSleep });
+}
+
+// Reset counter
+export async function resetCounter() {
+  if (!counterId) return;
   const { error } = await supabase
     .from("uberman_counters")
-    .update({ start_time:startDate.toISOString(), last_update:new Date().toISOString(), day:0, current_awake_hours:0, current_sleep_hours:0 })
+    .update({ day:0, current_awake_hours:0, total_sleep_hours:0, start_time: new Date().toISOString() })
     .eq("id", counterId);
-  if (error) { console.error(error); alert("Failed to save."); return; }
-  alert("Start time saved! Counter reset.");
+  if (error) return console.error(error);
+  render({ day:0, current_awake_hours:0, total_sleep_hours:0, start_time:new Date() });
+  alert("Counter reset and saved!");
 }
 
-// --- Toggle Awake/Sleep ---
-async function toggleAwake() {
-  awake = !awake;
-  toggleAwakeBtn.textContent = awake ? "Switch to Sleep" : "Switch to Awake";
-}
-
-// --- Ticker ---
-function startTicker() {
-  setInterval(async () => {
-    if (!counterId) return;
-
-    const now = new Date();
-    const { data, error } = await supabase
-      .from("uberman_counters")
-      .select("*")
-      .eq("id", counterId)
-      .single();
-    if (error) { console.error(error); return; }
-
-    const startTime = data.start_time ? new Date(data.start_time) : now;
-    const elapsed = now - startTime;
-
-    // Countdown
-    const countdownMs = startTime - now;
-    countdownEl.textContent = countdownMs>0 ? formatHMS(countdownMs) : "Started";
-
-    if (elapsed>0) {
-      const lastUpdate = data.last_update ? new Date(data.last_update) : startTime;
-      const deltaHrs = (now - lastUpdate)/1000/3600;
-
-      const updated = {};
-      if (awake) updated.current_awake_hours = (data.current_awake_hours||0)+deltaHrs;
-      else updated.current_sleep_hours = (data.current_sleep_hours||0)+deltaHrs;
-      updated.last_update = now.toISOString();
-      updated.day = Math.floor(elapsed/(24*3600*1000));
-
-      await supabase.from("uberman_counters").update(updated).eq("id", counterId);
-      render({...data, ...updated});
-    }
-  }, 1000);
-}
-
-// --- Render ---
+// Render UI
 function render(row) {
-  dayEl.textContent = row.day ?? 0;
-  hoursAwakeEl.textContent = `${(row.current_awake_hours ?? 0).toFixed(2)} hours awake`;
-  hoursSleepEl.textContent = `${(row.current_sleep_hours ?? 0).toFixed(2)} hours asleep`;
-  comparisonEl.textContent = `Your schedule is ${(row.current_awake_hours ?? 0) > AVG_AWAKE_HOURS ? "more extreme" : "lighter"} than an average person's ${AVG_AWAKE_HOURS}h/day awake.`;
+  if (DAY_EL) DAY_EL.textContent = `Day ${row.day ?? 0}`;
+  if (HOURS_AWAKE_EL) HOURS_AWAKE_EL.textContent = `${row.current_awake_hours ?? 0} hours`;
+  if (HOURS_SLEEP_EL) HOURS_SLEEP_EL.textContent = `${row.total_sleep_hours ?? 0} hours`;
 }
 
-// --- Show Average Sleep Stats Modal ---
-function showAverageStats() {
-  const weeklyAwake = AVG_AWAKE_HOURS*7;
-  const weeklySleep = AVG_SLEEP_HOURS*7;
-  const monthlyAwake = AVG_AWAKE_HOURS*30;
-  const monthlySleep = AVG_SLEEP_HOURS*30;
-  const yearlyAwake = AVG_AWAKE_HOURS*DAYS_IN_YEAR;
-  const yearlySleep = AVG_SLEEP_HOURS*DAYS_IN_YEAR;
-  const lifespanAwake = yearlyAwake*80/24;
-  const lifespanSleep = yearlySleep*80/24;
+// Countdown logic
+function startCountdown() {
+  function update() {
+    const now = new Date();
+    const diff = startTime - now;
+    if (diff <= 0) {
+      COUNTDOWN_EL.textContent = "Started!";
+      return clearInterval(timer);
+    }
+    const h = Math.floor(diff/1000/3600);
+    const m = Math.floor((diff/1000%3600)/60);
+    const s = Math.floor(diff/1000%60);
+    COUNTDOWN_EL.textContent = `${h}h ${m}m ${s}s`;
+  }
+  update();
+  const timer = setInterval(update,1000);
+}
 
-  avgContent.innerHTML = `
-    <h2>Average Person Sleep Stats</h2>
-    <p>Per Week: ${weeklyAwake}h awake / ${weeklySleep}h sleep</p>
-    <p>Per Month: ${monthlyAwake}h awake / ${monthlySleep}h sleep</p>
-    <p>Per Year: ${yearlyAwake}h awake / ${yearlySleep}h sleep</p>
-    <p>Lifespan (~80 years): ${lifespanAwake.toFixed(0)}h awake / ${lifespanSleep.toFixed(0)}h sleep</p>
-    <p>Compared to Uberman schedule, your awake hours may exceed these significantly.</p>
-  `;
+// Show average sleep comparison
+window.showAverage = ()=>{
+  const totalAwake = 16*7; // example: 16 hours/day * 7 days
+  const totalSleep = 8*7;  // 8 hours/day * 7 days
+  const lifespanYears = 80;
+  avgNotes.textContent = `Average person per week:
+Awake: ${totalAwake}h
+Sleep: ${totalSleep}h
+Per month: ${totalAwake*4}h awake, ${totalSleep*4}h sleep
+Per year: ${totalAwake*52}h awake, ${totalSleep*52}h sleep
+Over a lifespan (~${lifespanYears}y):
+Awake: ${totalAwake*52*lifespanYears}h
+Sleep: ${totalSleep*52*lifespanYears}h
+\nCompare this to your Uberman schedule!`;
   avgModal.style.display="block";
-}
+};
 
-// --- Modal Close ---
-closeModal.onclick = ()=>avgModal.style.display="none";
-window.onclick = (e)=>{if(e.target===avgModal) avgModal.style.display="none";}
-
-// --- Init ---
-setStartBtn.onclick = setStartTime;
-toggleAwakeBtn.onclick = toggleAwake;
-showAvgBtn.onclick = showAverageStats;
+// Init
 document.addEventListener("DOMContentLoaded", loadCounter);
+window.incrementHour = incrementHour;
+window.logSleep = logSleep;
+window.resetCounter = resetCounter;

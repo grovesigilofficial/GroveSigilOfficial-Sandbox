@@ -1,168 +1,162 @@
 // FILE: js/uberman.js
 import { supabase } from "./supabaseClient.js";
 
+const DAY_EL = document.getElementById("day");
+const HOURS_EL = document.getElementById("hours");
+const COUNTDOWN_EL = document.getElementById("countdown");
+const NOTES_EL = document.getElementById("notes");
+
+const LOCK_BTN = document.getElementById("lockBtn");
+const CONTROLS = document.getElementById("controls");
+const SETTINGS = document.getElementById("settings");
+const INCREMENT_BTN = document.getElementById("incrementBtn");
+const SAVE_BTN = document.getElementById("saveBtn");
+const RESET_BTN = document.getElementById("resetBtn");
+const BACK_BTN = document.getElementById("backBtn");
+const START_INPUT = document.getElementById("startTime");
+const START_BTN = document.getElementById("startBtn");
+const AVG_BTN = document.getElementById("avgBtn");
+const AVG_MODAL = document.getElementById("avgModal");
+const AVG_TEXT = document.getElementById("avgText");
+const CLOSE_AVG = document.querySelector(".close");
+
 let counterId = null;
-let locked = true;
-let interval = null;
+let startTime = null;
+let unlocked = false;
 
-document.addEventListener("DOMContentLoaded", async () => {
-  // Grab elements AFTER DOM is loaded
-  const DAY_EL = document.getElementById("day");
-  const HOURS_EL = document.getElementById("hours");
-  const COUNTDOWN_EL = document.getElementById("countdown");
-  const NOTES_EL = document.getElementById("notes");
-  const START_INPUT = document.getElementById("startTime");
+// Average person stats
+const AVG_SLEEP_HOURS_PER_DAY = 8;
+const AVG_AWAKE_HOURS_PER_DAY = 16;
+const AVG_WEEK = AVG_SLEEP_HOURS_PER_DAY*7;
+const AVG_MONTH = AVG_SLEEP_HOURS_PER_DAY*30;
+const AVG_YEAR = AVG_SLEEP_HOURS_PER_DAY*365;
+const LIFE_YEARS = 80;
 
-  const controls = document.getElementById("controls");
-  const settings = document.getElementById("settings");
-  const lockBtn = document.getElementById("lockBtn");
-  const incrementBtn = document.getElementById("incrementBtn");
-  const saveBtn = document.getElementById("saveBtn");
-  const resetBtn = document.getElementById("resetBtn");
-  const startBtn = document.getElementById("startBtn");
-  const backBtn = document.getElementById("backBtn");
-  const avgBtn = document.getElementById("avgBtn");
-  const modal = document.getElementById("avgModal");
-  const closeModal = modal.querySelector(".close");
-
-  // ---------------- LOAD COUNTER ----------------
-  async function loadCounter() {
-    const { data, error } = await supabase
-      .from("uberman_counters")
-      .select("*")
-      .limit(1)
-      .maybeSingle();
-    if (error) return console.error("Load error:", error);
-
-    if (!data) {
-      const { data: created, error: createErr } = await supabase
-        .from("uberman_counters")
-        .insert({
-          day: 0,
-          current_awake_hours: 0,
-          current_sleep_hours: 0,
-          start_time: new Date().toISOString(),
-          notes: ""
-        })
-        .select()
-        .single();
-      if (createErr) return console.error("Create error:", createErr);
-      counterId = created.id;
-      render(created);
-    } else {
-      counterId = data.id;
-      render(data);
-    }
-
-    startAutoUpdate();
-  }
-
-  // ---------------- RENDER ----------------
-  function render(row) {
-    DAY_EL.textContent = `Day ${row.day ?? 0}`;
-    HOURS_EL.textContent = `Awake: ${row.current_awake_hours ?? 0}h / Asleep: ${row.current_sleep_hours ?? 0}h`;
-    NOTES_EL.textContent = row.notes || "";
-    if (START_INPUT && row.start_time) START_INPUT.value = new Date(row.start_time).toISOString().slice(0,16);
-  }
-
-  // ---------------- COUNTDOWN ----------------
-  function updateCountdown(startTime) {
-    const start = new Date(startTime);
-    const now = new Date();
-    let diff = Math.max(0, start - now);
-    if (diff <= 0) {
-      COUNTDOWN_EL.textContent = "Counter started!";
-      return;
-    }
-    const hrs = String(Math.floor(diff/(1000*60*60))).padStart(2,'0');
-    const mins = String(Math.floor(diff/60000%60)).padStart(2,'0');
-    const secs = String(Math.floor(diff/1000%60)).padStart(2,'0');
-    COUNTDOWN_EL.textContent = `Countdown: ${hrs}:${mins}:${secs}`;
-  }
-
-  // ---------------- AUTO UPDATE ----------------
-  function startAutoUpdate() {
-    if (!counterId) return;
-    clearInterval(interval);
-    interval = setInterval(async () => {
-      const { data, error } = await supabase
-        .from("uberman_counters")
-        .select("*")
-        .eq("id", counterId)
-        .single();
-      if (error) return console.error(error);
-
-      const startTime = new Date(data.start_time);
-      const now = new Date();
-      if (now < startTime) {
-        updateCountdown(startTime);
-        return;
-      }
-
-      render(data);
-      updateCountdown(startTime);
-    }, 1000);
-  }
-
-  // ---------------- BUTTONS ----------------
-  lockBtn.onclick = () => {
-    locked = !locked;
-    controls.style.display = locked ? "none" : "flex";
-    settings.style.display = locked ? "none" : "flex";
-    lockBtn.textContent = locked ? "Unlock Settings" : "Lock Settings";
-  };
-
-  incrementBtn.onclick = async () => {
-    if (!counterId) return;
-    const { data, error } = await supabase.from("uberman_counters").select("*").eq("id", counterId).single();
-    if (error) return console.error(error);
-
-    const updatedHours = (data.current_awake_hours || 0) + 1;
-    const { error: updateErr } = await supabase.from("uberman_counters").update({ current_awake_hours: updatedHours, last_update: new Date().toISOString() }).eq("id", counterId);
-    if (updateErr) return console.error(updateErr);
-    render({ ...data, current_awake_hours: updatedHours });
-  };
-
-  saveBtn.onclick = async () => {
-    if (!counterId) return;
-    const { error } = await supabase.from("uberman_counters").update({ last_update: new Date().toISOString() }).eq("id", counterId);
-    if (error) return console.error(error);
-    alert("Counter saved!");
-  };
-
-  resetBtn.onclick = async () => {
-    if (!counterId) return;
-    const { error } = await supabase.from("uberman_counters").update({
-      current_awake_hours: 0,
-      current_sleep_hours: 0,
-      day: 0,
-      last_update: new Date().toISOString()
-    }).eq("id", counterId);
-    if (error) return console.error(error);
-    render({ current_awake_hours: 0, current_sleep_hours: 0, day: 0 });
-    alert("Counter reset!");
-  };
-
-  startBtn.onclick = async () => {
-    if (locked) return;
-    const start = START_INPUT.value ? new Date(START_INPUT.value) : new Date();
-    if (!counterId) return;
-    const { error } = await supabase.from("uberman_counters").update({
-      start_time: start.toISOString(),
-      current_awake_hours: 0,
-      current_sleep_hours: 0,
-      day: 0
-    }).eq("id", counterId);
-    if (error) return console.error(error);
-    render({ current_awake_hours: 0, current_sleep_hours: 0, day: 0, start_time: start });
-    alert("Start time set!");
-  };
-
-  backBtn.onclick = () => window.history.back();
-
-  avgBtn.onclick = () => modal.style.display = "block";
-  closeModal.onclick = () => modal.style.display = "none";
-
-  // ---------------- INIT ----------------
-  loadCounter();
+// ------------------- LOCK -------------------
+LOCK_BTN.addEventListener("click", ()=>{
+  unlocked = !unlocked;
+  CONTROLS.style.display = unlocked?"flex":"none";
+  SETTINGS.style.display = unlocked?"flex":"none";
+  LOCK_BTN.textContent = unlocked?"Lock Settings":"Unlock Settings";
 });
+
+// ------------------- MODAL -------------------
+AVG_BTN.onclick = ()=>{ AVG_MODAL.style.display="block"; }
+CLOSE_AVG.onclick = ()=>{ AVG_MODAL.style.display="none"; }
+window.onclick = e=>{ if(e.target===AVG_MODAL) AVG_MODAL.style.display="none"; }
+
+// ------------------- BACK -------------------
+BACK_BTN.onclick = ()=>{ window.history.back(); }
+
+// ------------------- LOAD COUNTER -------------------
+async function loadCounter(){
+  const { data, error } = await supabase
+    .from("uberman_counters")
+    .select("*")
+    .limit(1)
+    .maybeSingle();
+  if(error){ console.error("Load error:",error); return; }
+
+  if(!data){
+    const { data: created, error: createError } = await supabase
+      .from("uberman_counters")
+      .insert({ day:0, current_awake_hours:0 })
+      .select()
+      .single();
+    if(createError){ console.error("Create error:",createError); return; }
+    counterId = created.id;
+    render(created);
+  }else{
+    counterId = data.id;
+    render(data);
+  }
+
+  startTime = new Date(data.last_update || Date.now());
+  startCountdown();
+  updateNotes(data);
+}
+
+// ------------------- INCREMENT -------------------
+INCREMENT_BTN.onclick = async ()=>{
+  if(!counterId) return;
+  const { data, error } = await supabase
+    .from("uberman_counters")
+    .select("current_awake_hours, day")
+    .eq("id",counterId)
+    .single();
+  if(error){ console.error("Read error:",error); return; }
+  const updatedHours = Number(data.current_awake_hours||0)+1;
+  const { error: updateError } = await supabase
+    .from("uberman_counters")
+    .update({ current_awake_hours: updatedHours, last_update: new Date().toISOString() })
+    .eq("id",counterId);
+  if(updateError){ console.error("Update error:",updateError); return; }
+  render({ ...data, current_awake_hours: updatedHours });
+  updateNotes({ ...data, current_awake_hours: updatedHours });
+}
+
+// ------------------- SAVE -------------------
+SAVE_BTN.onclick = async ()=>{
+  if(!counterId) return;
+  const { error } = await supabase
+    .from("uberman_counters")
+    .update({ last_update:new Date().toISOString() })
+    .eq("id",counterId);
+  if(error){ console.error("Save error:",error); alert("Save failed"); return; }
+  alert("Counter saved!");
+}
+
+// ------------------- RESET -------------------
+RESET_BTN.onclick = async ()=>{
+  if(!counterId) return;
+  const { error } = await supabase
+    .from("uberman_counters")
+    .update({ day:0, current_awake_hours:0, last_update:new Date().toISOString() })
+    .eq("id",counterId);
+  if(error){ console.error("Reset error:",error); alert("Reset failed"); return; }
+  render({ day:0, current_awake_hours:0 });
+  updateNotes({ day:0, current_awake_hours:0 });
+}
+
+// ------------------- SET START TIME -------------------
+START_BTN.onclick = ()=>{
+  const val = START_INPUT.value;
+  if(!val) return;
+  startTime = new Date(val);
+  startCountdown();
+}
+
+// ------------------- COUNTDOWN -------------------
+function startCountdown(){
+  if(!startTime) return;
+  const interval = setInterval(()=>{
+    const now = new Date();
+    const diff = startTime - now;
+    if(diff<=0){ COUNTDOWN_EL.textContent="Countdown: 00:00:00"; clearInterval(interval); return; }
+    const h = String(Math.floor(diff/3600000)).padStart(2,'0');
+    const m = String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+    const s = String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+    COUNTDOWN_EL.textContent=`Countdown: ${h}:${m}:${s}`;
+  },1000);
+}
+
+// ------------------- NOTES -------------------
+function updateNotes(data){
+  const awake = data.current_awake_hours||0;
+  const asleep = data.day*24-awake;
+  NOTES_EL.innerHTML = `
+    Compared to an average person: Awake ${AVG_AWAKE_HOURS_PER_DAY*data.day||0}h, Sleep ${AVG_SLEEP_HOURS_PER_DAY*data.day||0}h.
+    Total awake: ${awake}h, total asleep: ${asleep}h.
+    Over week/month/year/lifespan: ${AVG_WEEK}h / ${AVG_MONTH}h / ${AVG_YEAR}h / ${AVG_YEAR*LIFE_YEARS}h.
+  `;
+}
+
+// ------------------- RENDER -------------------
+function render(row){
+  if(DAY_EL) DAY_EL.textContent=`Day ${row.day||0}`;
+  if(HOURS_EL) HOURS_EL.textContent=`Awake: ${row.current_awake_hours||0}h / Asleep: ${(row.day||0)*24-(row.current_awake_hours||0)}h`;
+  updateNotes(row);
+}
+
+// INIT
+document.addEventListener("DOMContentLoaded", loadCounter);

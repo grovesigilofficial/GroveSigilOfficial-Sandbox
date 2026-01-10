@@ -12,12 +12,17 @@ const notesEl = document.getElementById("notes");
 const showAvgBtn = document.getElementById("showAvgBtn");
 const avgPanel = document.getElementById("avgPanel");
 
+/* PIN (reliable) */
+const PIN = document
+  .querySelector('meta[name="uberman-pin"]')
+  ?.getAttribute("content");
+
 /* State */
 let counterRow = null;
 let unlocked = false;
 let startTime = localStorage.getItem("ubermanStart");
 
-/* Load or create single counter row */
+/* Load counter */
 async function loadCounter() {
   const { data } = await supabase
     .from("uberman_counters")
@@ -40,16 +45,21 @@ async function loadCounter() {
   render();
 }
 
-/* Render UI */
+/* Render */
 function render() {
   hoursEl.textContent = `Awake: ${counterRow.current_awake_hours}h`;
 }
 
 /* Unlock */
 lockBtn.onclick = () => {
-  const pin = prompt("Enter PIN");
+  if (!PIN) {
+    alert("PIN not configured");
+    return;
+  }
 
-  if (pin === window.NEXT_PUBLIC_UBERMAN_PIN) {
+  const input = prompt("Enter PIN");
+
+  if (input === PIN) {
     unlocked = true;
     controls.classList.remove("hidden");
     statusEl.textContent = "Status: Unlocked";
@@ -59,7 +69,7 @@ lockBtn.onclick = () => {
   }
 };
 
-/* Increment awake hours */
+/* Increment awake */
 awakeBtn.onclick = async () => {
   if (!unlocked) return;
 
@@ -76,13 +86,14 @@ awakeBtn.onclick = async () => {
   render();
 };
 
-/* Show average (placeholder, works visually) */
+/* Average (placeholder, visible + working) */
 showAvgBtn.onclick = () => {
   avgPanel.classList.toggle("hidden");
-  avgPanel.textContent = `Average awake (current): ${counterRow.current_awake_hours}h`;
+  avgPanel.textContent =
+    `Current average awake: ${counterRow.current_awake_hours}h`;
 };
 
-/* Save notes */
+/* Notes */
 saveBtn.onclick = () => {
   localStorage.setItem("ubermanNotes", notesEl.value);
   alert("Notes saved");

@@ -9,22 +9,24 @@ Emojis + lines make it easy to follow for anyone.
 ────────────────────────────────────────────
 
 ├─ 📄 index.html                 → The first page people see (MAIN ENTRY POINT)
-├─ 📄 file-structure.tree        → This map (what you are reading)
-└─ 📄 .env                       → Secret codes the project can read
+└─ 📂 public/                    → Folder for assets and reference files
+    └─ 📄 file-structure.tree    → This map file (currently stored here)
 
 ────────────────────────────────────────────
 📌 HOW TO READ THIS MAP
 ────────────────────────────────────────────
 
+- 📂 = folder (a place to keep files together)
 - 📄 = file (one item with instructions or information)
 - ├─ or └─ = shows connection to the folder above
 - Items not indented are at the starting point of the project
 
 Example:
 
-├─ 📄 index.html
+├─ 📂 public/
+│   └─ 📄 file-structure.tree
 
-Means: index.html is at the root of the project.
+Means: file-structure.tree is inside the public folder.
 
 ────────────────────────────────────────────
 📌 HOW FILES WORK (IMPORTANT)
@@ -33,8 +35,7 @@ Means: index.html is at the root of the project.
 - index.html MUST be at the starting point of the project
   → This is what loads when someone visits the root (/)
 
-- file-structure.tree is for reference only
-- .env stores secret codes the project can read
+- file-structure.tree is stored in public/ for reference only
 
 ────────────────────────────────────────────
 📌 HOW TO ADD FILES
@@ -44,9 +45,9 @@ Means: index.html is at the root of the project.
    - Place the file at the starting point
    - Same level as index.html
 
-2️⃣ Adding a configuration or secret file:
-   - Place at the root
-   - Same level as .env
+2️⃣ Adding a visible/reference file:
+   - Place inside /public/
+   - Connect under public/ with indentation
 
 ────────────────────────────────────────────
 📌 WHY THIS MATTERS
@@ -63,4 +64,4 @@ Means: index.html is at the root of the project.
 - Use clear, descriptive names
 - Keep index.html simple and stable
 - Update this map whenever files change
-- Emojis 🌳 📄 🗺️ 🧭 help visualize structure
+- Emojis 🌳 📂 📄 🗺️ 🧭 help visualize structure

@@ -1,5 +1,8 @@
 import { supabase } from "./supabaseClient.js";
 
+/* ===== CONFIG ===== */
+const PIN = "0432"; // hard-set so unlock WORKS, no setup required
+
 /* DOM */
 const lockBtn = document.getElementById("lockBtn");
 const controls = document.getElementById("controls");
@@ -12,17 +15,12 @@ const notesEl = document.getElementById("notes");
 const showAvgBtn = document.getElementById("showAvgBtn");
 const avgPanel = document.getElementById("avgPanel");
 
-/* PIN (reliable) */
-const PIN = document
-  .querySelector('meta[name="uberman-pin"]')
-  ?.getAttribute("content");
-
 /* State */
 let counterRow = null;
 let unlocked = false;
 let startTime = localStorage.getItem("ubermanStart");
 
-/* Load counter */
+/* Load or create row */
 async function loadCounter() {
   const { data } = await supabase
     .from("uberman_counters")
@@ -52,11 +50,6 @@ function render() {
 
 /* Unlock */
 lockBtn.onclick = () => {
-  if (!PIN) {
-    alert("PIN not configured");
-    return;
-  }
-
   const input = prompt("Enter PIN");
 
   if (input === PIN) {
@@ -86,7 +79,7 @@ awakeBtn.onclick = async () => {
   render();
 };
 
-/* Average (placeholder, visible + working) */
+/* Average display */
 showAvgBtn.onclick = () => {
   avgPanel.classList.toggle("hidden");
   avgPanel.textContent =

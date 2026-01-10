@@ -8,13 +8,15 @@
   <style>
     body {
       margin: 0;
-      font-family: 'Orbitron', sans-serif;
-      background: #000;
+      height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      background: #000;
+      color: #a259ff;
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing: 0.15em;
       text-align: center;
       overflow: hidden;
       position: relative;
@@ -24,7 +26,7 @@
     .portal-wrapper {
       position: relative;
       display: inline-block;
-      margin-bottom: 1rem; /* reduced to bring subtitle closer */
+      margin-bottom: 2rem;
     }
 
     h1 {
@@ -55,19 +57,19 @@
     .subtitle-wrapper {
       position: relative;
       display: inline-block;
-      margin-bottom: 0.75rem; /* spacing for third line */
+      margin-top: 1rem;
     }
 
     .subtitle {
-      font-size: 0.9rem; /* small font */
+      font-size: 0.9rem;
       color: #d0b3ff;
       text-shadow: 0 0 5px #a259ff;
       margin: 0.25rem 0;
       position: relative;
       z-index: 2;
       padding: 0 5px;
-      background: #000; /* letters appear above line */
-      white-space: nowrap; /* ensure single line */
+      background: #000;
+      white-space: nowrap;
     }
 
     /* Line directly under subtitle */
@@ -83,36 +85,15 @@
       z-index: 1;
     }
 
-    /* Credit line wrapper */
-    .credit-wrapper {
-      position: relative;
-      display: inline-block;
-      margin-top: 0.25rem;
-    }
-
     .credit {
       font-size: 0.8rem;
+      opacity: 0.6;
+      margin-top: 0.5rem;
+      letter-spacing: 0.1em;
       color: #d0b3ff;
       text-shadow: 0 0 3px #a259ff;
-      margin: 0;
-      padding: 0 5px;
-      position: relative;
       z-index: 2;
-      background: #000;
-      white-space: nowrap;
-    }
-
-    /* Line under credit */
-    .credit-line {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: linear-gradient(to right, transparent, #a259ff, transparent);
-      opacity: 0.7;
-      box-shadow: 0 0 6px #a259ff;
-      z-index: 1;
+      position: relative;
     }
 
     @keyframes glowPulse {
@@ -136,11 +117,7 @@
     <div class="subtitle-line"></div>
   </div>
 
-  <!-- Credit line -->
-  <div class="credit-wrapper">
-    <p class="credit">by GroveSigilOfficial • Bleedvow</p>
-    <div class="credit-line"></div>
-  </div>
+  <p class="credit">by GroveSigilOfficial • Bleedvow</p>
 
 </body>
 </html>

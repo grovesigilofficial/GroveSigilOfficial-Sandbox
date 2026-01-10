@@ -1,40 +1,44 @@
-Portal Project - File Structure
+📂 Portal Project File Structure
 
-This file documents the current minimal file structure for Portal, including the Uberman counter feature.
-It is placed inside the project with the other files for easy reference.
-
----
-
-PROJECT FILE STRUCTURE
-
-your-project/
-├─ public/
-│  ├─ file-structure.md   # This file - documents project structure & notes
-│  ├─ index.html          # Landing page (Portal)
-│  ├─ uberman.html        # Uberman counter page
-│  └─ js/
-│     └─ uberman.js       # JS logic for counter, notes, unlock
-├─ server.js              # Node server handling private PIN for Uberman counter
-└─ .env                   # Environment variables (PIN)
+This file documents the minimal and readable file structure for the Portal website. 
+It includes every folder and file, along with notes, so anyone can understand it. 
+The file is placed inside `/public/` so it stays with the other files.
 
 ---
 
-NOTES - GANG LEVEL
+Current Minimal Portal Structure
 
-- Website name: **Portal** (clean, minimal, powerful).  
-- Uberman counter is a separate feature, fully tracked via JS and server-side PIN.  
-- Main color for UI elements: **indigo** (third-eye energy).  
-- `.env` holds private secrets: PIN for Uberman counter.  
-- `file-structure.md` is intentionally inside `public/` for easy reference, so any developer can see the current working setup.  
-- No unnecessary dependencies, no extra frameworks yet. Minimal, clean, deployable.  
-- `server.js` only handles PIN unlock; all other features will expand later (social feeds, profiles, notes sync, etc.).  
-- Keep all JS inside `/public/js/` for now.  
-- Everything is structured for clarity, maintainability, and fast iteration.  
+├─ index.html          # Landing page for Portal
+├─ uberman.html        # Uberman tracker page
+├─ file-structure.md   # THIS file documenting the structure
+└─ js/
+   └─ uberman.js       # JS logic for Uberman tracker: PIN unlock, awake hours, notes
+
+├─ server.js           # Node server to handle private PIN unlock
+└─ .env                # Environment variables (PIN, other keys in future)
 
 ---
 
-REFERENCE
+Notes:
 
-This file itself is part of the structure:
+- **Folder / File Relationships:**  
+   - Files in `/js/` are inside the `js` folder.  
+   - `server.js` and `.env` live in the root, because they control the backend and environment.  
+   - `index.html`, `uberman.html`, and `file-structure.md` are in `/public/` to be accessible in the browser.
 
-/public/file-structure.md
+- **Naming Conventions:**  
+   - HTML files = pages users see.  
+   - JS files = scripts controlling the page behavior.  
+   - server.js = backend logic.  
+   - .env = private variables like PIN.  
+
+- **Color and Style:**  
+   - All UI elements will use **indigo (third-eye indigo)** as the main color.  
+
+- **Readability Tips:**  
+   - This tree format keeps indentation intact for visual clarity.  
+   - Beginner-friendly: you can see exactly which files belong inside which folders.  
+   - Developer-friendly: easy to expand into a full social media platform later.
+
+- **Future Expansion:**  
+   - You can add more HTML pages, JS files, or folders (like `/api/` for serverless endpoints) and keep the same tree style.

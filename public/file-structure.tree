@@ -1,34 +1,32 @@
-╔════════════════════════════════════════════╗
-║           PORTAL PROJECT FILE TREE         ║
-╚════════════════════════════════════════════╝
-
-This is a **map of all the files and folders** in the Portal project.
-It shows **exactly which files go inside which folders**.
-No confusing words. Just simple, plain English.
+🗺️🧭 PORTAL PROJECT FILE MAP
+══════════════════════════════════════════════
+This map shows **all the files and folders in Portal**.
+It teaches **where things go** and **how they connect**.
+Emojis + lines make it easy to follow for anyone.
 
 ────────────────────────────────────────────
-🌳 PROJECT TREE (Top Level)
+🌳 PROJECT TREE (Starting Point of the Project)
 ────────────────────────────────────────────
 
-├─ 📂 public/                       → A folder for pages people can see
+├─ 📂 public/                       → Folder for pages people see
 │   ├─ 📄 index.html                → The first page people see
 │   ├─ 📄 uberman.html              → The page with the Uberman tracker
-│   ├─ 📄 file-structure.tree       → This file (shows all files/folders)
-│   └─ 📂 js/                       → A folder for instructions for Uberman tracker
+│   ├─ 📄 file-structure.tree       → This map (what you are reading)
+│   └─ 📂 js/                       → Folder for instructions for Uberman tracker
 │       └─ 📄 uberman.js            → Instructions for Uberman tracker
 │                                     (pin unlock, hours awake, notes)
 ├─ 📄 server.js                     → Instructions that help the project work
-└─ 📄 .env                          → Secret codes that only the project can read
+└─ 📄 .env                          → Secret codes the project can read
 
 ────────────────────────────────────────────
-📌 HOW TO READ THIS TREE
+📌 HOW TO READ THIS MAP
 ────────────────────────────────────────────
 
 - 📂 = folder (a place to keep files together)  
-- 📄 = file (a single item with instructions or information)  
-- ├─ or └─ = shows the **connection to the folder above**  
+- 📄 = file (one item with instructions or information)  
+- ├─ or └─ = shows **connection to the folder above**  
 - Indentation + lines show **which files belong inside which folder**  
-- Items at the top, not indented, are at the **top level of the project**, not inside any folder
+- Items not indented = **starting point of the project**, everything else is inside a folder
 
 Example:
 
@@ -36,30 +34,30 @@ Example:
 │   └─ 📂 js/
 │       └─ 📄 uberman.js
 
-Means: `uberman.js` is **inside the js folder**, which is **inside public**.  
-Files at the same line as `public/`, `server.js`, `.env` = **at the top level of the project**.
+Means: `uberman.js` is **inside js**, which is **inside public**.  
+Files at the same line as `public/`, `server.js`, `.env` = **at the starting point of the project**.
 
 ────────────────────────────────────────────
 📌 HOW TO ADD FILES OR FOLDERS
 ────────────────────────────────────────────
 
-1️⃣ Adding a new page (file with instructions people can see):  
+1️⃣ Adding a new page (file people can see):  
    - Go inside `/public/`  
-   - Create your new file  
+   - Create your file  
    - Connect it under public/ with ├─ or └─  
 
 2️⃣ Adding instructions for Uberman tracker:  
    - Go inside `/public/js/`  
-   - Create your new file  
-   - Connect it under js/ with lines and indentation  
+   - Create your file  
+   - Connect under js/ with lines and indentation  
 
 3️⃣ Adding a folder:  
-   - Make a new folder **inside public/ or public/js/**  
+   - Make a folder **inside public/ or public/js/**  
    - Indent everything inside one level more  
    - Connect with ├─ or └─  
 
-4️⃣ Adding files at the top level:  
-   - Place new files **at the top level**, same line as `server.js` or `.env`  
+4️⃣ Adding files at the starting point:  
+   - Place new files **at the starting point of the project**, same line as `server.js` or `.env`  
    - Connect with ├─ if not last, └─ if last  
 
 ────────────────────────────────────────────
@@ -67,16 +65,16 @@ Files at the same line as `public/`, `server.js`, `.env` = **at the top level of
 ────────────────────────────────────────────
 
 - Lines + indentation **show clearly where everything belongs**  
-- Keeps project organized so the files work together correctly  
-- Easy for anyone to read and understand, even with no coding experience  
-- Lets people learn **what a folder is, what a file is, and how things connect**  
+- Starting point files are clearly visible, not floating  
+- Easy for anyone to read and understand  
+- Teaches **what a folder is, what a file is, and how things connect**  
 
 ────────────────────────────────────────────
 🎨 BEST PRACTICES
 ────────────────────────────────────────────
 
 - Use clear names for files and folders  
-- Keep the main color **indigo**  
-- Update this tree when adding or removing files  
-- Follow tree lines and indentation exactly  
-- Emojis 📂 and 📄 = quickly see folders vs files
+- Main color of the project **indigo**  
+- Update this map when adding or removing files  
+- Follow tree lines + indentation exactly  
+- Emojis 🌳 📂 📄 🗺️ 🧭 = quickly see folders, files, and navigation

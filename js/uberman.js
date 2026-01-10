@@ -1,8 +1,5 @@
 import { supabase } from "./supabaseClient.js";
 
-/* ===== CONFIG ===== */
-const PIN = "0432"; // hard-set so unlock WORKS, no setup required
-
 /* DOM */
 const lockBtn = document.getElementById("lockBtn");
 const controls = document.getElementById("controls");
@@ -16,11 +13,11 @@ const showAvgBtn = document.getElementById("showAvgBtn");
 const avgPanel = document.getElementById("avgPanel");
 
 /* State */
-let counterRow = null;
 let unlocked = false;
+let counterRow = null;
 let startTime = localStorage.getItem("ubermanStart");
 
-/* Load or create row */
+/* Load counter row */
 async function loadCounter() {
   const { data } = await supabase
     .from("uberman_counters")
@@ -34,25 +31,27 @@ async function loadCounter() {
       .insert({ day: 0, current_awake_hours: 0 })
       .select()
       .single();
-
     counterRow = created;
   } else {
     counterRow = data;
   }
-
   render();
 }
 
-/* Render */
+/* Render awake hours */
 function render() {
   hoursEl.textContent = `Awake: ${counterRow.current_awake_hours}h`;
 }
 
 /* Unlock */
 lockBtn.onclick = () => {
-  const input = prompt("Enter PIN");
+  const pin = prompt("Enter PIN");
+  if (!pin) return;
 
-  if (input === PIN) {
+  // Use the Vercel environment variable (already public)
+  const correctPin = window.NEXT_PUBLIC_UBERMAN_PIN;
+
+  if (pin === correctPin) {
     unlocked = true;
     controls.classList.remove("hidden");
     statusEl.textContent = "Status: Unlocked";
@@ -62,7 +61,7 @@ lockBtn.onclick = () => {
   }
 };
 
-/* Increment awake */
+/* Increment awake hours */
 awakeBtn.onclick = async () => {
   if (!unlocked) return;
 
@@ -79,14 +78,13 @@ awakeBtn.onclick = async () => {
   render();
 };
 
-/* Average display */
+/* Show average */
 showAvgBtn.onclick = () => {
   avgPanel.classList.toggle("hidden");
-  avgPanel.textContent =
-    `Current average awake: ${counterRow.current_awake_hours}h`;
+  avgPanel.textContent = `Current average awake: ${counterRow.current_awake_hours}h`;
 };
 
-/* Notes */
+/* Save notes */
 saveBtn.onclick = () => {
   localStorage.setItem("ubermanNotes", notesEl.value);
   alert("Notes saved");
@@ -100,7 +98,6 @@ function updateCountdown() {
   }
 
   const diff = new Date(startTime) - new Date();
-
   if (diff <= 0) {
     countdownEl.textContent = "Uberman Active";
     return;
@@ -109,12 +106,10 @@ function updateCountdown() {
   const h = Math.floor(diff / 36e5);
   const m = Math.floor((diff % 36e5) / 6e4);
   const s = Math.floor((diff % 6e4) / 1000);
-
   countdownEl.textContent = `Countdown: ${h}:${m}:${s}`;
 }
 
-setInterval(updateCountdown, 1000);
-
 /* Init */
+setInterval(updateCountdown, 1000);
 notesEl.value = localStorage.getItem("ubermanNotes") || "";
 loadCounter();

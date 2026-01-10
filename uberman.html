@@ -1,74 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Uberman Counter</title>
+
 <style>
-:root {
-  --bg:#000;
-  --text:#ff3a3a;
-  --glow:0 0 18px rgba(255,0,40,.6);
-  --modal-bg:rgba(0,0,0,.95);
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #000;
+  color: #ff2a2a;
+  font-family: system-ui, sans-serif;
+  letter-spacing: 0.08em;
 }
-body{
-  margin:0;
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  background:var(--bg);
-  color:var(--text);
-  font-family:system-ui,sans-serif;
-  letter-spacing:0.12em;
+
+h1 {
+  font-size: 22px;
+  margin: 0 0 8px 0;
 }
-h1{font-size:clamp(32px,8vw,96px);text-shadow:var(--glow);margin-bottom:1em;}
-button{margin:6px;padding:10px 20px;border:2px solid var(--text);background:transparent;color:var(--text);border-radius:8px;cursor:pointer;font-size:1em;}
-button:hover{background:var(--text);color:#000;}
-#countdown,#day,#hours,#notes{text-align:center;margin:6px;font-size:1.2em;}
-#controls,#settings{display:none;flex-direction:column;align-items:center;margin-top:1em;}
-input[type=datetime-local]{padding:6px;margin:6px;border:1px solid var(--text);border-radius:6px;background:#111;color:var(--text);}
-.modal{display:none;position:fixed;inset:0;background:var(--modal-bg);padding:60px 20px;overflow-y:auto;}
-.modal-content{background:#111;border:2px solid var(--text);border-radius:12px;max-width:800px;margin:auto;padding:20px;white-space:pre-wrap;line-height:1.6;}
-.close{float:right;font-size:28px;cursor:pointer;}
+
+.hidden { display: none; }
+
+button, input, textarea {
+  background: transparent;
+  color: #ff2a2a;
+  border: 1px solid #ff2a2a;
+  padding: 6px 10px;
+  margin: 4px 0;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #ff2a2a;
+  color: #000;
+}
+
+textarea {
+  width: 100%;
+  height: 60px;
+  font-size: 12px;
+}
+
+/* Small corner panel */
+#panel {
+  width: 280px;
+  background: rgba(0,0,0,0.85);
+  padding: 12px;
+  border-radius: 10px;
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  box-shadow: 0 0 12px rgba(255,42,42,0.25);
+}
+
+p {
+  margin: 4px 0;
+  font-size: 12px;
+}
 </style>
 </head>
+
 <body>
 
-<h1>Uberman Counter</h1>
-<p id="countdown">Countdown: --:--:--</p>
-<p id="day">Day: 0</p>
-<p id="hours">Awake: 0h / Asleep: 0h</p>
-<p id="notes"></p>
+<div id="panel">
+  <h1>UBERMAN</h1>
 
-<!-- PIN Lock -->
-<div id="lockSection">
-  <input type="password" id="pinInput" placeholder="Enter PIN" />
-  <button id="unlockBtn">Unlock Settings</button>
-</div>
+  <p id="status">Status: Locked</p>
+  <p id="countdown">Countdown: --:--:--</p>
+  <p id="hours">Awake: 0h</p>
 
-<div id="controls">
-  <button id="incrementBtn">+1 Hour Awake</button>
-  <button id="saveBtn">Save</button>
-  <button id="resetBtn">Reset</button>
-  <button id="backBtn">Back</button>
-</div>
+  <button id="lockBtn">Unlock</button>
 
-<div id="settings">
-  <label for="startTime">Start Time:</label>
-  <input type="datetime-local" id="startTime"/>
-  <button id="startBtn">Set Start</button>
-</div>
+  <div id="controls" class="hidden">
+    <button id="awakeBtn">+1 Hour Awake</button>
+    <button id="showAvgBtn">Show Average</button>
 
-<div id="avgModal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <h2>Average Person Sleep Comparison</h2>
-    <p id="avgText"></p>
+    <div id="avgPanel" class="hidden"></div>
+
+    <textarea id="notes" placeholder="Notes..."></textarea>
+    <button id="saveBtn">Save Notes</button>
   </div>
 </div>
-<button id="avgBtn">Show Average Comparison</button>
 
 <script type="module" src="/js/uberman.js"></script>
 </body>

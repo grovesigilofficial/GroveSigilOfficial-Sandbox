@@ -1,0 +1,44 @@
+📂 Portal Project File Structure
+
+This file documents the minimal and readable file structure for the Portal website.
+
+---
+
+Current Minimal Portal Structure
+
+📁 public/
+│   index.html          # Landing page for Portal
+│   uberman.html        # Uberman tracker page
+│   file-structure.tree # THIS file documenting the structure
+│
+└─ js/
+    uberman.js         # JS logic for Uberman tracker: PIN unlock, awake hours, notes
+
+server.js              # Node server to handle private PIN unlock
+.env                   # Environment variables (PIN, other keys in future)
+
+---
+
+Notes:
+
+- Folder / File Relationships:
+    - Files in /js/ are inside the js folder.
+    - server.js and .env live in the root, controlling backend and environment.
+    - index.html, uberman.html, and file-structure.tree are in /public/ for browser access.
+
+- Naming Conventions:
+    - HTML files = pages users see.
+    - JS files = scripts controlling the page behavior.
+    - server.js = backend logic.
+    - .env = private variables like PIN.
+
+- Color & Style:
+    - UI elements will use indigo (third-eye indigo) as main color.
+
+- Readability:
+    - ASCII tree preserves indentation.
+    - Beginner-friendly: see which files belong in which folders.
+    - Developer-friendly: easy to expand into a full social media platform later.
+
+- Future Expansion:
+    - Add more HTML pages, JS files, or folders (like /api/) and keep the same tree style.

@@ -1,6 +1,6 @@
 🗺️🧭 PORTAL PROJECT FILE MAP
 ══════════════════════════════════════════════
-This map shows ALL the files and folders in Portal.
+This map shows ALL the files in Portal (current state).
 It teaches where things go and how they connect.
 Emojis + lines make it easy to follow for anyone.
 
@@ -9,36 +9,22 @@ Emojis + lines make it easy to follow for anyone.
 ────────────────────────────────────────────
 
 ├─ 📄 index.html                 → The first page people see (MAIN ENTRY POINT)
-├─ 📂 public/                    → Folder for assets and extra pages
-│   ├─ 📄 uberman.html           → The page with the Uberman tracker
-│   ├─ 📄 file-structure.tree    → This map (what you are reading)
-│   └─ 📂 js/                    → Folder for instructions for Uberman tracker
-│       └─ 📄 uberman.js         → Instructions for Uberman tracker
-│                                  (pin unlock, hours awake, notes)
-├─ 📄 server.js                  → Instructions that help the project work
+├─ 📄 file-structure.tree        → This map (what you are reading)
 └─ 📄 .env                       → Secret codes the project can read
 
 ────────────────────────────────────────────
 📌 HOW TO READ THIS MAP
 ────────────────────────────────────────────
 
-- 📂 = folder (a place to keep files together)
 - 📄 = file (one item with instructions or information)
 - ├─ or └─ = shows connection to the folder above
-- Indentation + lines show which files belong inside which folder
 - Items not indented are at the starting point of the project
 
 Example:
 
-├─ 📂 public/
-│   └─ 📂 js/
-│       └─ 📄 uberman.js
+├─ 📄 index.html
 
-Means:
-uberman.js is inside js, which is inside public.
-
-Files at the same level as index.html, server.js, and .env
-are at the starting point of the project.
+Means: index.html is at the root of the project.
 
 ────────────────────────────────────────────
 📌 HOW FILES WORK (IMPORTANT)
@@ -47,44 +33,28 @@ are at the starting point of the project.
 - index.html MUST be at the starting point of the project
   → This is what loads when someone visits the root (/)
 
-- Files inside public/ are accessed by path:
-  public/uberman.html  →  /uberman.html
-  public/js/uberman.js →  /js/uberman.js
-
-- public/ is for assets and secondary pages
-- public/index.html does NOT control the main page
+- file-structure.tree is for reference only
+- .env stores secret codes the project can read
 
 ────────────────────────────────────────────
-📌 HOW TO ADD FILES OR FOLDERS
+📌 HOW TO ADD FILES
 ────────────────────────────────────────────
 
 1️⃣ Adding a new main page:
    - Place the file at the starting point
    - Same level as index.html
 
-2️⃣ Adding a visible page:
-   - Go inside /public/
-   - Create the file
-   - Connect it under public/ using lines and indentation
-
-3️⃣ Adding instructions or logic:
-   - Go inside /public/js/
-   - Create the file
-   - Connect it under js/
-
-4️⃣ Adding a new folder:
-   - Create the folder inside public/ or public/js/
-   - Indent all contents one level deeper
-   - Connect with ├─ or └─
+2️⃣ Adding a configuration or secret file:
+   - Place at the root
+   - Same level as .env
 
 ────────────────────────────────────────────
 📌 WHY THIS MATTERS
 ────────────────────────────────────────────
 
 - Lines and indentation clearly show structure
-- The entry point is never ambiguous
-- Easy to teach, easy to read, easy to expand
-- Prevents broken links and missing pages
+- Root index.html is always obvious
+- Easy to read, teach, and expand
 
 ────────────────────────────────────────────
 🎨 BEST PRACTICES
@@ -92,7 +62,5 @@ are at the starting point of the project.
 
 - Use clear, descriptive names
 - Keep index.html simple and stable
-- Use public/ for assets and secondary pages
 - Update this map whenever files change
-- Follow indentation and tree lines exactly
-- Emojis 🌳 📂 📄 🗺️ 🧭 help visualize structure
+- Emojis 🌳 📄 🗺️ 🧭 help visualize structure

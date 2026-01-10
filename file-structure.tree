@@ -1,0 +1,55 @@
+🧭 PROJECT MAP — START HERE
+===========================
+
+📍 Root Level
+(the starting place — not a folder, just “here”)
+
+│
+├─ index.html
+│   └─ This is the entire website right now.
+│      When someone visits the site, THIS file loads.
+│
+└─ file-structure.tree
+    └─ This map. It explains what exists and where future files go.
+
+🧠 HOW TO READ THIS MAP
+----------------------
+
+• Lines (│ ├ └) show relationships  
+• Indentation means “inside” or “belongs to”
+• If two files line up vertically, they are in the SAME place
+• Right now, everything lives at the root level
+
+🧱 WHAT “ROOT LEVEL” MEANS (VERY IMPORTANT)
+-------------------------------------------
+
+• It is NOT a folder
+• It is just the starting location of the project
+• Think of it like:
+  - the ground
+  - the table
+  - the place you put things first
+
+If a file is NOT indented under another name,
+it lives directly at the root level.
+
+🧭 FUTURE EXPANSION (NOT CREATED YET)
+-------------------------------------
+
+When you add folders later, they will look like this:
+
+📍 Root Level
+│
+├─ index.html
+└─ public/
+    └─ (things placed inside this folder will be indented here)
+
+If it’s indented → it’s inside  
+If it’s not indented → it’s at the root
+
+💜 STATUS
+---------
+✔ Simple
+✔ Honest
+✔ Beginner-proof
+✔ Ready to grow

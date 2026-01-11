@@ -1,133 +1,88 @@
-🧭 PROJECT MAP — PORTAL (START HERE)
-==================================
+🧭 PROJECT MAP — PORTAL
+======================
 
-This file is a MAP.
-It explains what exists, what is coming next, and where everything belongs.
-Nothing in this file runs.
-This file is for humans only.
+This file is a HUMAN MAP.
+It does not run.
+It does not load.
+It does not affect the website.
 
+It exists so anyone can understand the project
+before touching a single file.
 
-════════════════════════════════════
-📍 CURRENT STATE — WHAT EXISTS NOW
-════════════════════════════════════
+────────────────────────────────────────
+📍 STARTING POINT (ROOT — not a folder)
+────────────────────────────────────────
 
-📍 ROOT LEVEL
-(the starting place — not a folder, just “here”)
+ROOT = the place where the project begins.
+Think: the ground, the table, the starting surface.
+
+Everything NOT indented lives here.
 
 │
 ├─ index.html
-│   └─ The entire website right now
-│      • This is the first thing that loads
-│      • Visuals, text, glow, layout all live here
+│   └─ ✅ EXISTS NOW
+│      • The entire website lives here currently
+│      • This is what visitors see
+│      • Safe, working, deployed
 │
-└─ file-structure.tree
-    └─ This file
-       • The map of the project
-       • Explains structure and future growth
+├─ file-structure.tree
+│   └─ ✅ EXISTS NOW
+│      • This map
+│      • Explains now vs later
+│
+└─ (nothing else yet — on purpose)
 
+────────────────────────────────────────
+🟣 CURRENT STATE (WHAT IS REAL RIGHT NOW)
+────────────────────────────────────────
 
-════════════════════════════════════
+✔ One page site
+✔ One file controls everything
+✔ No folders
+✔ No scripts
+✔ No stylesheets
+✔ Nothing fancy yet
+
+This is intentional.
+This is the stable foundation.
+
+────────────────────────────────────────
+🟣 NEXT SAFE EXPANSION (NOT CREATED YET)
+────────────────────────────────────────
+
+These will be added ONE AT A TIME
+only after the map says they exist.
+
+│
+└─ public/
+    ├─ styles/
+    │   └─ (colors, glow, layout later)
+    │
+    ├─ scripts/
+    │   └─ (logic later: login, chat, admin tools)
+    │
+    └─ assets/
+        └─ (images, icons, sounds later)
+
+Nothing above exists yet.
+Nothing above should be created yet.
+
+────────────────────────────────────────
 🧠 HOW TO READ THIS MAP
-════════════════════════════════════
+────────────────────────────────────────
 
-• Lines (│ ├ └) show relationships  
-• Indentation means “inside” or “belongs to”  
-• If two items line up vertically, they live in the SAME place  
-• If something is indented, it lives INSIDE the thing above it  
+• Indentation = “inside”
+• Same vertical line = same place
+• If something breaks → check index.html
+• If confused → come back to this file
 
-Think of it like rooms and items:
-• No indent = on the floor
-• Indented = inside a room
+────────────────────────────────────────
+💜 RULES (VERY IMPORTANT)
+────────────────────────────────────────
 
+• Do not add folders before the map says so
+• Do not add files without knowing why
+• The map updates FIRST
+• The site updates SECOND
 
-════════════════════════════════════
-🧱 WHAT “ROOT LEVEL” MEANS
-════════════════════════════════════
-
-• Root is NOT a folder
-• Root is the starting location of the project
-• It is where index.html lives
-• When the site loads, it starts here
-
-Think of root like:
-• the ground
-• the table
-• the front door
-
-
-════════════════════════════════════
-🚧 NEXT PHASE — TREE IN PROGRESS
-(not created yet, added in order)
-════════════════════════════════════
-
-📍 ROOT LEVEL
-│
-├─ index.html
-├─ file-structure.tree
-│
-├─ public/
-│   ├─ styles/
-│   │   └─ Visual rules (colors, glow, layout)
-│   │
-│   ├─ scripts/
-│   │   └─ Behavior and logic
-│   │      • login
-│   │      • chat
-│   │      • admin tools
-│   │      • counters
-│   │
-│   └─ assets/
-│       └─ Images, icons, media
-│
-└─ notes/
-    └─ Planning, explanations, learning files
-       (nothing here affects the site)
-
-
-════════════════════════════════════
-🎯 GOAL TREE — FULL PORTAL VISION
-(long-term direction)
-════════════════════════════════════
-
-📍 ROOT LEVEL
-│
-├─ index.html
-├─ file-structure.tree
-├─ README.md
-│
-├─ public/
-│   ├─ styles/
-│   ├─ scripts/
-│   └─ assets/
-│
-├─ auth/
-│   ├─ signup
-│   ├─ login
-│   └─ profile
-│
-├─ chat/
-│   ├─ world-chat
-│   └─ message-rules
-│
-├─ feed/
-│   └─ news-feed
-│
-└─ admin/
-    ├─ controls
-    ├─ counters
-    └─ sleep-tracker (hidden unless unlocked)
-
-
-════════════════════════════════════
-💜 PROJECT RULES
-════════════════════════════════════
-
-• If the site looks wrong → check index.html or styles
-• If something doesn’t behave right → check scripts
-• If confused → read this file again
-• Build ONE thing at a time
-• Match “Tree in Progress” to “Goal Tree” slowly
-
-✔ Beginner-proof  
-✔ Honest  
-✔ Built to grow
+This keeps everything clean and calm.

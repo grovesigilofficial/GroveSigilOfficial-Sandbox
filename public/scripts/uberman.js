@@ -1,19 +1,5 @@
-// 🕒 Starter Uberman Counter
-// -------------------------------------------------
-// This file is loaded by index.html when needed
-// Tracks the Uberman counter and can be expanded later
-// -------------------------------------------------
+// Uberman JS placeholder
+// Safe to exist without breaking the site
+// Nothing runs yet
 
-// Initialize Uberman counter
-let ubermanCounter = 0; // starts at 0
-
-function incrementCounter() {
-  ubermanCounter++;
-  console.log("Uberman counter:", ubermanCounter);
-}
-
-// Temporary test trigger
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("Uberman JS loaded!");
-  incrementCounter();
-});
+console.log("Uberman JS is present and safe."); // This is harmless

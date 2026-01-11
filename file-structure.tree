@@ -1,55 +1,135 @@
-🧭 PROJECT MAP — START HERE
-===========================
+🧭 PROJECT MAP — PORTAL (START HERE)
+===================================
 
-📍 Root Level
-(the starting place — not a folder, just “here”)
+This file explains the project layout.
+It does NOT affect the website.
+It exists only for humans.
 
+There are THREE sections:
+1) What exists now
+2) What we are building next
+3) The long-term goal layout
+
+
+───────────────────────────────────
+📍 SECTION 1 — CURRENT TREE (REAL)
+───────────────────────────────────
+
+This shows what ACTUALLY EXISTS on disk right now.
+
+📍 ROOT (.)
 │
 ├─ index.html
-│   └─ This is the entire website right now.
-│      When someone visits the site, THIS file loads.
+│   └─ The entire live website
+│      • This file loads when someone visits Portal
+│      • All visuals and text live here for now
 │
 └─ file-structure.tree
-    └─ This map. It explains what exists and where future files go.
+    └─ This file
+       • The project map
+       • Safe to edit
+       • Does not affect the site
 
-🧠 HOW TO READ THIS MAP
-----------------------
 
-• Lines (│ ├ └) show relationships  
-• Indentation means “inside” or “belongs to”
-• If two files line up vertically, they are in the SAME place
-• Right now, everything lives at the root level
+✔ This section must ALWAYS match reality  
+✔ If something isn’t listed here, it does NOT exist yet
 
-🧱 WHAT “ROOT LEVEL” MEANS (VERY IMPORTANT)
--------------------------------------------
 
-• It is NOT a folder
-• It is just the starting location of the project
-• Think of it like:
-  - the ground
-  - the table
-  - the place you put things first
+───────────────────────────────────
+📍 SECTION 2 — TREE IN PROGRESS
+───────────────────────────────────
 
-If a file is NOT indented under another name,
-it lives directly at the root level.
+These are the NEXT pieces we will add.
+They may not exist yet — that’s okay.
 
-🧭 FUTURE EXPANSION (NOT CREATED YET)
--------------------------------------
-
-When you add folders later, they will look like this:
-
-📍 Root Level
+📍 ROOT (.)
 │
 ├─ index.html
-└─ public/
-    └─ (things placed inside this folder will be indented here)
+│
+├─ README.md
+│   └─ Explains Portal on GitHub
+│
+├─ public/
+│   │
+│   ├─ styles/
+│   │   └─ main.css
+│   │      • Visual styling (glow, color, spacing)
+│   │
+│   ├─ scripts/
+│   │   ├─ ui.js
+│   │   │   • Handles page behavior
+│   │   │
+│   │   └─ admin.js
+│   │       • Hidden admin tools (locked by default)
+│   │
+│   └─ assets/
+│       └─ (images, icons later)
+│
+└─ notes/
+    └─ ideas.txt
+        • Planning, thoughts, reminders
 
-If it’s indented → it’s inside  
-If it’s not indented → it’s at the root
+
+🧠 IMPORTANT:
+• This section is a PLAN
+• Files appear here BEFORE they are created
+• When a file is created, move it to Section 1
+
+
+───────────────────────────────────
+📍 SECTION 3 — GOAL TREE (VISION)
+───────────────────────────────────
+
+This is where Portal is heading.
+Nothing here is required yet.
+
+📍 ROOT (.)
+│
+├─ index.html
+├─ README.md
+│
+├─ public/
+│   │
+│   ├─ styles/
+│   │   ├─ base.css
+│   │   ├─ theme.css
+│   │   └─ animations.css
+│   │
+│   ├─ scripts/
+│   │   ├─ auth.js        (sign up / login)
+│   │   ├─ profile.js    (user profiles)
+│   │   ├─ chat.js       (world chat)
+│   │   ├─ feed.js       (news feed)
+│   │   └─ admin.js      (admin controls)
+│   │
+│   └─ assets/
+│       ├─ icons/
+│       └─ images/
+│
+└─ notes/
+    ├─ file-structure.tree
+    ├─ roadmap.txt
+    └─ learning-notes.txt
+
+
+───────────────────────────────────
+🧠 HOW TO USE THIS FILE
+───────────────────────────────────
+
+• Section 1 = truth
+• Section 2 = next steps
+• Section 3 = destination
+
+Rule:
+If you create a file → add it to Section 1  
+If you plan a file → put it in Section 2  
+If it’s a dream → leave it in Section 3
+
 
 💜 STATUS
 ---------
-✔ Simple
-✔ Honest
+✔ Clear
 ✔ Beginner-proof
-✔ Ready to grow
+✔ Honest
+✔ Expandable
+✔ Matches reality AND vision

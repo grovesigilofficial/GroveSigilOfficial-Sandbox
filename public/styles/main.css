@@ -1,0 +1,22 @@
+/* ===================================================
+   PORTAL — STYLESHEET (NOT ACTIVE YET)
+   ---------------------------------------------------
+   This file does NOTHING right now.
+
+   It is here so:
+   • GitHub can create the folder
+   • We have a safe place for styles later
+   • Nothing breaks
+
+   When we are ready, index.html will
+   LINK to this file.
+
+   Until then:
+   • Comments only
+   • No real CSS
+   =================================================== */
+/* ================== TEST RULE ================== */
+/* This is just to make sure the stylesheet works */
+body {
+  background: #0b001f; /* a slightly different indigo */
+}

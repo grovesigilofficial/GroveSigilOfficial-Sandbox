@@ -15,3 +15,8 @@
    • Comments only
    • No real CSS
    =================================================== */
+/* ================== TEST RULE ================== */
+/* This is just to make sure the stylesheet works */
+body {
+  background: #0b001f; /* a slightly different indigo */
+}

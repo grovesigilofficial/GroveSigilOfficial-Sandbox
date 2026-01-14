@@ -1,22 +1,112 @@
 /* ===================================================
-   PORTAL — STYLESHEET (NOT ACTIVE YET)
+   PORTAL — MAIN STYLESHEET
    ---------------------------------------------------
-   This file does NOTHING right now.
-
-   It is here so:
-   • GitHub can create the folder
-   • We have a safe place for styles later
-   • Nothing breaks
-
-   When we are ready, index.html will
-   LINK to this file.
-
-   Until then:
-   • Comments only
-   • No real CSS
+   This file controls all the visual styles for the site.
+   It is linked from index.html.
+   Edit this file to change colors, fonts, glow, layout, etc.
    =================================================== */
-/* ================== TEST RULE ================== */
-/* This is just to make sure the stylesheet works */
+
+/* ================== BODY STYLING ================== */
 body {
-  background: #0b001f; /* a slightly different indigo */
+  margin: 0; /* remove default margin */
+  height: 100vh; /* full height of viewport */
+  display: flex; /* center everything vertically & horizontally */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #000; /* background color */
+  color: #a259ff; /* default text color */
+  font-family: system-ui, sans-serif; /* readable font */
+  letter-spacing: 0.15em; /* spacing between letters */
+  text-align: center;
+  overflow: hidden; /* prevent scrollbars */
+  position: relative;
+}
+
+/* ================== PORTAL HEADER ================== */
+.portal-wrapper {
+  position: relative; /* needed for line under text */
+  display: inline-block;
+  margin-bottom: 2rem; /* spacing below header */
+}
+
+h1 {
+  font-size: clamp(32px, 8vw, 96px); /* responsive font size */
+  color: #a259ff; /* main glow color */
+  text-shadow: 0 0 10px #a259ff, 0 0 20px #b280ff, 0 0 30px #c0a0ff; /* glow */
+  margin: 0;
+  position: relative; /* stack line behind text */
+  z-index: 2;
+  padding: 0 10px;
+  animation: glowPulse 2s infinite alternate; /* glow animation */
+}
+
+/* ---------------- PORTAL UNDERLINE ---------------- */
+.portal-line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px; /* thickness of line */
+  background: linear-gradient(to right, transparent, #a259ff, transparent);
+  opacity: 0.8;
+  box-shadow: 0 0 6px #a259ff; /* glow effect */
+  z-index: 1; /* behind text */
+}
+
+/* ================== SUBTITLE ================== */
+.subtitle-wrapper {
+  position: relative; /* for line positioning */
+  display: inline-block;
+  margin-top: 1rem; /* spacing above subtitle */
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  color: #d0b3ff; /* subtitle color */
+  text-shadow: 0 0 5px #a259ff; /* subtle glow */
+  margin: 0.25rem 0;
+  position: relative;
+  z-index: 2; /* above line */
+  padding: 0 5px;
+  background: #000; /* hides line behind text */
+  white-space: nowrap; /* keep single line */
+}
+
+/* ---------------- SUBTITLE UNDERLINE ---------------- */
+.subtitle-line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(to right, transparent, #a259ff, transparent);
+  opacity: 0.7;
+  box-shadow: 0 0 6px #a259ff; /* subtle glow */
+  z-index: 1; /* behind text */
+}
+
+/* ================== CREDIT SECTION ================== */
+.credit {
+  font-size: 0.8rem; /* smaller than subtitle */
+  opacity: 0.6; /* faded */
+  margin-top: 0.5rem;
+  letter-spacing: 0.1em; /* spacing letters */
+  color: #d0b3ff; /* same as subtitle */
+  text-shadow: 0 0 3px #a259ff; /* subtle glow */
+  z-index: 2;
+  position: relative;
+}
+
+/* ================== GLOW ANIMATION ================== */
+@keyframes glowPulse {
+  0%   { text-shadow: 0 0 10px #a259ff, 0 0 20px #b280ff, 0 0 30px #c0a0ff; }
+  50%  { text-shadow: 0 0 20px #a259ff, 0 0 30px #b280ff, 0 0 40px #c0a0ff; }
+  100% { text-shadow: 0 0 15px #a259ff, 0 0 25px #b280ff, 0 0 35px #c0a0ff; }
+}
+
+/* ================== TEST RULE (SAFE) ================== */
+/* Uncomment or change this to test color changes */
+body {
+  /* background: #0b001f; */ /* a slightly different indigo for testing */
 }

@@ -4,21 +4,42 @@
   <meta charset="UTF-8" />
   <title>Portal (Sandbox/Test Site)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="./styles/main.css">
+
+  <style>
+    /* 🔴 GUARANTEED VISIBLE TEST */
+    html {
+      background: red !important;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: black;
+      color: #a259ff;
+      font-family: system-ui, sans-serif;
+      letter-spacing: 0.15em;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 64px;
+      text-shadow: 0 0 20px #a259ff;
+      margin: 0;
+    }
+
+    .subtitle {
+      opacity: 0.8;
+      margin-top: 1rem;
+    }
+  </style>
 </head>
+
 <body>
-
-  <div class="portal-wrapper">
-    <h1>PORTAL</h1>
-    <div class="portal-line"></div>
-  </div>
-
-  <div class="subtitle-wrapper">
-    <p class="subtitle">(Sandbox/Test Site)</p>
-    <div class="subtitle-line"></div>
-  </div>
-
-  <p class="credit">by GroveSigilOfficial • Bleedvow</p>
-
+  <h1>PORTAL</h1>
+  <div class="subtitle">(Sandbox/Test Site)</div>
 </body>
 </html>

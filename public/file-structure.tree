@@ -14,74 +14,32 @@ before touching a single file.
 ────────────────────────────────────────
 
 ROOT = the place where the project begins.
-Think: the ground, the table, the surface everything sits on.
+Think: the ground, the table, the starting surface.
 
 Everything NOT indented lives here.
 
 │
 ├─ public/
-│   └─ ✅ EXISTS NOW (THIS IS WHERE THE SITE LIVES)
-│
-└─ file-structure.tree
-    └─ ✅ EXISTS NOW
-       • Master copy of the project map
-       • Safe place for humans to read first
+│   ├─ index.html       ✅ EXISTS NOW — main site page
+│   ├─ file-structure.tree  ✅ EXISTS NOW — this human map
+│   └─ styles/
+│       └─ main.css     ✅ EXISTS NOW — main stylesheet
 
 ────────────────────────────────────────
 🟣 CURRENT STATE (WHAT IS REAL RIGHT NOW)
 ────────────────────────────────────────
 
-The website works because everything lives together
-inside the public folder.
-
-public/
-│
-├─ index.html
-│   └─ ✅ EXISTS NOW
-│      • The entire website
-│      • This is what visitors see
-│      • This file must stay here
-│
-└─ file-structure.tree
-    └─ ✅ EXISTS NOW
-       • A readable copy of the project map
-       • Safe to view in the browser
-       • Does NOT affect the site
-
-✔ One site folder
-✔ One page site
-✔ One visual file
-✔ One human map
+✔ One site folder (public/)
+✔ One page site (index.html)
+✔ Stylesheet exists (main.css)
+✔ Human-readable map exists (file-structure.tree)
 ✔ Stable and working
-
-────────────────────────────────────────
-🟣 WHY THIS WORKS
-────────────────────────────────────────
-
-The site only looks inside ONE place:
-
-→ public/
-
-If index.html is inside public/
-the site works.
-
-Other files can exist,
-but they must NOT interrupt index.html.
-
-The map files are safe
-because they do not run.
 
 ────────────────────────────────────────
 🟣 NEXT SAFE EXPANSION (NOT CREATED YET)
 ────────────────────────────────────────
 
-These will be added ONE AT A TIME
-only after this map is updated first.
-
 public/
-│
-├─ styles/
-│   └─ (colors, glow, layout later)
 │
 ├─ scripts/
 │   └─ (logic later: login, chat, admin tools)
@@ -89,17 +47,13 @@ public/
 └─ assets/
     └─ (images, icons, sounds later)
 
-Nothing above exists yet.
-Nothing above should be created yet.
-
 ────────────────────────────────────────
 🧠 HOW TO READ THIS MAP
 ────────────────────────────────────────
 
-• Indentation = “inside”
-• Same vertical line = same place
-• If something is indented → it lives inside the thing above it
-• If the site breaks → check public/index.html first
+• Indentation = inside
+• Same vertical line = same level
+• If something breaks → check public/index.html first
 • If confused → read this file again
 
 ────────────────────────────────────────
@@ -111,5 +65,3 @@ Nothing above should be created yet.
 • Maps are safe, code is powerful
 • The map updates FIRST
 • Files and folders come SECOND
-
-This keeps everything calm, readable, and unbroken.

@@ -1,4 +1,7 @@
 /* ================== BODY STYLING ================== */
+html {
+  background: red !important;
+}
 body {
   margin: 0;
   height: 100vh;

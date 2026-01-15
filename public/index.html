@@ -22,7 +22,6 @@
       position: relative;
     }
 
-    /* PORTAL header wrapper */
     .portal-wrapper {
       position: relative;
       display: inline-block;
@@ -32,7 +31,10 @@
     h1 {
       font-size: clamp(32px, 8vw, 96px);
       color: #a259ff;
-      text-shadow: 0 0 10px #a259ff, 0 0 20px #b280ff, 0 0 30px #c0a0ff;
+      text-shadow:
+        0 0 10px #a259ff,
+        0 0 20px #b280ff,
+        0 0 30px #c0a0ff;
       margin: 0;
       position: relative;
       z-index: 2;
@@ -40,7 +42,6 @@
       padding: 0 10px;
     }
 
-    /* Line directly under PORTAL */
     .portal-line {
       position: absolute;
       bottom: 0;
@@ -53,7 +54,6 @@
       z-index: 1;
     }
 
-    /* Subtitle wrapper */
     .subtitle-wrapper {
       position: relative;
       display: inline-block;
@@ -64,15 +64,20 @@
       font-size: 0.9rem;
       color: #d0b3ff;
       text-shadow: 0 0 5px #a259ff;
-      margin: 0.25rem 0;
+      margin: 0.2rem 0;
       position: relative;
       z-index: 2;
-      padding: 0 5px;
+      padding: 0 6px;
       background: #000;
       white-space: nowrap;
     }
 
-    /* Line directly under subtitle */
+    .subtitle.secondary {
+      font-size: 0.75rem;
+      opacity: 0.8;
+      letter-spacing: 0.2em;
+    }
+
     .subtitle-line {
       position: absolute;
       bottom: 0;
@@ -88,7 +93,7 @@
     .credit {
       font-size: 0.8rem;
       opacity: 0.6;
-      margin-top: 0.5rem;
+      margin-top: 0.6rem;
       letter-spacing: 0.1em;
       color: #d0b3ff;
       text-shadow: 0 0 3px #a259ff;
@@ -97,24 +102,22 @@
     }
 
     @keyframes glowPulse {
-      0% { text-shadow: 0 0 10px #a259ff, 0 0 20px #b280ff, 0 0 30px #c0a0ff; }
-      50% { text-shadow: 0 0 20px #a259ff, 0 0 30px #b280ff, 0 0 40px #c0a0ff; }
+      0%   { text-shadow: 0 0 10px #a259ff, 0 0 20px #b280ff, 0 0 30px #c0a0ff; }
+      50%  { text-shadow: 0 0 20px #a259ff, 0 0 30px #b280ff, 0 0 40px #c0a0ff; }
       100% { text-shadow: 0 0 15px #a259ff, 0 0 25px #b280ff, 0 0 35px #c0a0ff; }
     }
   </style>
 </head>
 <body>
 
-  <!-- PORTAL header -->
   <div class="portal-wrapper">
     <h1>PORTAL</h1>
     <div class="portal-line"></div>
   </div>
 
-  <!-- Subtitle text with line directly underneath -->
   <div class="subtitle-wrapper">
     <p class="subtitle">A new social media platform coming soon</p>
-    <p class="subtitle">(Sandbox/Test Site)</p>
+    <p class="subtitle secondary">SANDBOX • TEST SITE</p>
     <div class="subtitle-line"></div>
   </div>
 

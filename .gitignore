@@ -1,18 +1,16 @@
-# Ignore environment files
+# Environment variables
 .env
 
-# Ignore node modules (if you ever use Vite/React/Next.js)
+# Node modules
 node_modules/
 
-# Ignore build outputs
+# Build outputs (if using Vite/Next)
 dist/
 build/
 
-# Ignore system files
+# Logs
+*.log
+
+# OS files
 .DS_Store
 Thumbs.db
-
-# Optional: ignore logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*

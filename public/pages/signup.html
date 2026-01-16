@@ -1,12 +1,14 @@
+<!-- File Path: /public/pages/signup.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Signup — Social Platform</title>
 
   <!-- ===================== STYLES ===================== -->
   <style>
+    /* ===== BODY & LAYOUT ===== */
     body {
       margin: 0;
       padding: 0;
@@ -19,6 +21,7 @@
       color: #a259ff;
     }
 
+    /* ===== FORM CONTAINER ===== */
     .form-container {
       width: 90%;
       max-width: 400px;
@@ -29,6 +32,7 @@
       text-align: center;
     }
 
+    /* ===== FORM HEADER ===== */
     .form-header {
       font-size: 1.5rem;
       margin-bottom: 1.5rem;
@@ -36,6 +40,7 @@
       text-shadow: 0 0 10px #a259ff, 0 0 20px #b280ff;
     }
 
+    /* ===== INPUT FIELDS ===== */
     input[type="text"],
     input[type="email"],
     input[type="password"] {
@@ -53,6 +58,7 @@
       color: #a259ff88;
     }
 
+    /* ===== SUBMIT BUTTON ===== */
     button {
       width: 100%;
       padding: 0.8rem;
@@ -72,46 +78,79 @@
       transform: translateY(-2px);
     }
 
+    /* ===== NOTE TEXT ===== */
+    .note {
+      font-size: 0.75rem;
+      opacity: 0.7;
+      margin-top: 0.5rem;
+      text-align: left;
+    }
+
+    /* ===== SUCCESS & ERROR MESSAGES ===== */
     .message {
       margin-top: 0.5rem;
       font-size: 0.85rem;
       opacity: 0.9;
     }
 
-    .message.success { color: #2ecc71; }
-    .message.error   { color: #e74c3c; }
+    .message.success {
+      color: #2ecc71;
+    }
+
+    .message.error {
+      color: #e74c3c;
+    }
   </style>
 </head>
 <body>
 
+  <!-- ===================== FORM CONTAINER ===================== -->
   <div class="form-container">
-    <div class="form-header">Signup</div>
 
+    <!-- ===== FORM HEADER ===== -->
+    <div class="form-header">
+      Signup
+    </div>
+
+    <!-- ===== SIGNUP FORM ===== -->
     <form id="signup-form">
-      <input type="text" id="username" name="username" placeholder="Username" required />
-      <input type="email" id="email" name="email" placeholder="Email" required />
-      <input type="password" id="password" name="password" placeholder="Password" required />
+      <!-- USERNAME FIELD -->
+      <input type="text" id="username" name="username" placeholder="Username" required>
+      <!-- NOTE: Edit placeholder or add notes here -->
+
+      <!-- EMAIL FIELD -->
+      <input type="email" id="email" name="email" placeholder="Email" required>
+      <!-- NOTE: Email is required for Supabase confirmation -->
+
+      <!-- PASSWORD FIELD -->
+      <input type="password" id="password" name="password" placeholder="Password" required>
+      <!-- NOTE: You can add password strength validation here -->
+
+      <!-- SUBMIT BUTTON -->
       <button type="submit">Create Account</button>
+
+      <!-- MESSAGE DISPLAY -->
       <div id="message" class="message"></div>
+      <!-- NOTE: Server response (success/error) will appear here -->
     </form>
+
+    <!-- ===== TERMS / FOOTER ===== -->
+    <div class="note">
+      By signing up, you agree to the platform’s terms and privacy policy.
+      <!-- NOTE: Replace with real links if available -->
+    </div>
   </div>
 
-  <!-- ===================== SCRIPT ===================== -->
-  <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-    // ===================== READ KEYS FROM VERCEL =====================
-    // In Vercel, go to Project Settings → Environment Variables
-    // Add SUPABASE_URL and SUPABASE_ANON_KEY
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
+  <!-- ===================== SCRIPT — Calls serverless function ===================== -->
+  <script>
+    // ===== ELEMENTS =====
     const form = document.getElementById('signup-form');
     const messageEl = document.getElementById('message');
 
+    // ===== FORM SUBMIT HANDLER =====
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+
       const username = document.getElementById('username').value.trim();
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
@@ -120,22 +159,32 @@
       messageEl.className = 'message';
 
       try {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { data: { username } }
+        // ===== CALL SERVERLESS FUNCTION =====
+        const res = await fetch('/api/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, email, password })
         });
 
-        if (error) throw error;
+        const data = await res.json();
 
+        if (!res.ok) throw new Error(data.error || 'Signup failed');
+
+        // ===== SUCCESS =====
         messageEl.textContent = 'Signup successful! Check your email to confirm.';
         messageEl.classList.add('success');
+
         form.reset();
+
       } catch (err) {
+        // ===== ERROR =====
         messageEl.textContent = `Error: ${err.message}`;
         messageEl.classList.add('error');
       }
     });
   </script>
+
 </body>
 </html>

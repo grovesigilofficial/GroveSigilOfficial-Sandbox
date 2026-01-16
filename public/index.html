@@ -1,14 +1,14 @@
+<!-- File path: public/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Portal</title>
+  <title>Social Media Platform</title> <!-- Browser tab title -->
 
-  <!-- ==========================
-       GLOBAL STYLES / BODY STYLING
-       ========================== -->
+  <!-- ================== STYLES ================== -->
   <style>
+    /* -------------------- BODY -------------------- */
     body {
       margin: 0;
       height: 100vh;
@@ -16,7 +16,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: #000; /* main background */
+      background: #000;
       color: #a259ff;
       font-family: system-ui, sans-serif;
       letter-spacing: 0.15em;
@@ -25,49 +25,22 @@
       position: relative;
     }
 
-    /* ==========================
-       PORTAL TITLE (HIDDEN)
-       ========================== */
+    /* -------------------- PORTAL TITLE -------------------- */
     .portal-wrapper {
-      display: none; /* Portal name hidden for privacy */
+      display: none; /* Hides the name completely */
     }
 
-    h1 {
-      font-size: clamp(32px, 8vw, 96px);
-      color: #a259ff;
-      text-shadow: 0 0 10px #a259ff, 0 0 20px #b280ff, 0 0 30px #c0a0ff;
-      margin: 0;
-      position: relative;
-      z-index: 2;
-      animation: glowPulse 2s infinite alternate;
-      padding: 0 10px;
-    }
-
-    .portal-line {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: linear-gradient(to right, transparent, #a259ff, transparent);
-      opacity: 0.8;
-      box-shadow: 0 0 6px #a259ff;
-      z-index: 1;
-    }
-
-    /* ==========================
-       SUBTITLE / PLATFORM DESCRIPTION
-       ========================== */
+    /* -------------------- SUBTITLE -------------------- */
     .subtitle-wrapper {
       position: relative;
       display: inline-block;
       margin-top: 0.8rem;
       margin-bottom: 2rem;
-      max-width: 90%; /* prevents horizontal stretching */
+      max-width: 90%; /* keeps text compact */
     }
 
     .subtitle {
-      font-size: 0.75rem; /* smaller, more compact */
+      font-size: 0.75rem;
       color: #d0b3ff;
       text-shadow: 0 0 5px #a259ff;
       margin: 0.15rem 0;
@@ -79,6 +52,7 @@
       line-height: 1.3rem;
     }
 
+    /* Subtitle line below text */
     .subtitle-line {
       position: absolute;
       bottom: 0;
@@ -91,16 +65,15 @@
       z-index: 1;
     }
 
-    /* ==========================
-       WAITLIST / JOIN LINK
-       ==========================
-       This is where you can add your own links or buttons.
-       Placed after subtitle wrapper.
-    */
+    /* -------------------- WAITLIST LINK -------------------- */
+    .waitlist-link {
+      font-size: 0.8rem;
+      margin-top: 1rem;
+    }
+
     .waitlist-link a {
       color: #a259ff;
       text-decoration: underline;
-      font-size: 0.8rem;
       animation: glowPulse 2s infinite alternate;
     }
 
@@ -108,9 +81,7 @@
       text-shadow: 0 0 10px #a259ff, 0 0 20px #b280ff, 0 0 30px #c0a0ff;
     }
 
-    /* ==========================
-       CREDIT / SOCIAL MEDIA
-       ========================== */
+    /* -------------------- CREDIT -------------------- */
     .credit {
       font-size: 0.8rem;
       opacity: 0.8;
@@ -130,53 +101,47 @@
       text-shadow: 0 0 10px #a259ff, 0 0 20px #b280ff, 0 0 30px #c0a0ff;
     }
 
-    /* ==========================
-       GLOW ANIMATION
-       ========================== */
+    /* -------------------- ANIMATION -------------------- */
     @keyframes glowPulse {
       0%   { text-shadow: 0 0 10px #a259ff, 0 0 20px #b280ff, 0 0 30px #c0a0ff; }
       50%  { text-shadow: 0 0 20px #a259ff, 0 0 30px #b280ff, 0 0 40px #c0a0ff; }
       100% { text-shadow: 0 0 15px #a259ff, 0 0 25px #b280ff, 0 0 35px #c0a0ff; }
     }
-
   </style>
 </head>
 <body>
 
-  <!-- ==========================
-       PORTAL TITLE BLOCK (HIDDEN)
-       ========================== -->
+  <!-- ================== PORTAL TITLE (HIDDEN) ================== -->
   <div class="portal-wrapper">
     <h1>PORTAL</h1>
     <div class="portal-line"></div>
   </div>
 
-  <!-- ==========================
-       SUBTITLE / PLATFORM DESCRIPTION
-       ========================== -->
+  <!-- ================== SUBTITLE ================== -->
   <div class="subtitle-wrapper">
-    <p class="subtitle">A new social media platform coming soon</p>
-    <p class="subtitle">(Name reserved • details kept private)</p>
+    <p class="subtitle">
+      A new social media platform coming soon
+    </p>
+    <p class="subtitle">
+      (Name reserved • details confidential)
+    </p>
     <div class="subtitle-line"></div>
   </div>
 
-  <!-- ==========================
-       WAITLIST LINK
-       ==========================
-       Paste your link here to allow users to join the waitlist
-  -->
-  <p class="subtitle waitlist-link">
-    <a href="pages/signup.html">
-      Join the waitlist
-    </a>
-  </p>
+  <!-- ================== WAITLIST LINK ================== -->
+  <div class="waitlist-link">
+    <p>
+      <a href="pages/signup.html">
+        Join the waitlist
+      </a>
+    </p>
+  </div>
 
-  <!-- ==========================
-       CREDIT / SOCIAL MEDIA
-       ========================== -->
+  <!-- ================== CREDIT ================== -->
   <p class="credit">
-    <a href="https://www.instagram.com/nogabrielarmandochristensen?igsh=MzRlODBiNWFlZA==" target="_blank" rel="noopener noreferrer">
-      @NoGabrielArmandoChristensen
+    <a href="https://www.instagram.com/nogabrielarmandochristensen?igsh=MzRlODBiNWFlZA=="
+       target="_blank" rel="noopener noreferrer">
+       @NoGabrielArmandoChristensen
     </a>
   </p>
 

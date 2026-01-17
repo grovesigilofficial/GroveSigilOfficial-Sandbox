@@ -17,11 +17,14 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing fields' });
     }
 
-    // Add redirectTo so confirmation email goes to your live signup page
-    const { data, error } = await supabase.auth.signUp(
-      { email, password },
-      { redirectTo: 'https://grove-sigil-official-sandbox.vercel.app/pages/signup.html' }
-    );
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo:
+          'https://grove-sigil-official-sandbox.vercel.app/pages/profile.html'
+      }
+    });
 
     if (error) {
       return res.status(400).json({ error: error.message });

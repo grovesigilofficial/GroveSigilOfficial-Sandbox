@@ -140,8 +140,10 @@
 
         if (!res.ok) throw new Error(data.error || 'Signup failed');
 
-        messageEl.textContent = 'Signup successful! Check your email to confirm.';
+        // === SUCCESS MESSAGE ===
+        messageEl.textContent = 'Signup successful! Check your email to confirm your account before logging in.';
         messageEl.classList.add('success');
+
         form.reset();
 
       } catch (err) {

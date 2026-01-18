@@ -19,18 +19,18 @@ export default async function handler(req, res) {
 
     const { data, error } = await supabase.auth.signUp({
       email,
-      password,
-      options: {
-        emailRedirectTo:
-          'https://grove-sigil-official-sandbox.vercel.app/pages/profile.html'
-      }
+      password
     });
 
     if (error) {
       return res.status(400).json({ error: error.message });
     }
 
-    return res.status(200).json({ data });
+    return res.status(200).json({
+      user: data.user,
+      session: data.session
+    });
+
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }

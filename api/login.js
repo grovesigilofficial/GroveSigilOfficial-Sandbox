@@ -1,3 +1,4 @@
+// api/login.js
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
@@ -14,7 +15,7 @@ export default async function handler(req, res) {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ error: 'Missing email or password' });
+      return res.status(400).json({ error: 'Missing fields' });
     }
 
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -23,7 +24,7 @@ export default async function handler(req, res) {
     });
 
     if (error) {
-      return res.status(401).json({ error: error.message });
+      return res.status(400).json({ error: error.message });
     }
 
     return res.status(200).json({

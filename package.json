@@ -1,8 +1,7 @@
-// package.json
 {
-  "name": "social-platform",
-  "private": true,
+  "name": "uberman-auth",
+  "type": "module",
   "dependencies": {
-    "@supabase/supabase-js": "^2.45.0"
+    "@supabase/supabase-js": "^2.39.0"
   }
 }

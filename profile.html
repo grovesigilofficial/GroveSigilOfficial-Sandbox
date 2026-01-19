@@ -1,0 +1,29 @@
+<h1>Profile</h1>
+<pre id="user"></pre>
+<button onclick="logout()">Logout</button>
+
+<script>
+async function load() {
+  const token = localStorage.getItem('token');
+  if (!token) location.href = '/login.html';
+
+  const res = await fetch('/api/me', {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+
+  if (!res.ok) {
+    localStorage.removeItem('token');
+    return location.href = '/login.html';
+  }
+
+  const data = await res.json();
+  user.textContent = JSON.stringify(data.user, null, 2);
+}
+
+function logout() {
+  localStorage.removeItem('token');
+  location.href = '/login.html';
+}
+
+load();
+  </script>

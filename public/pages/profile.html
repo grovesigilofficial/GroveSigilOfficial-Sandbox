@@ -1,36 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
   <title>Profile</title>
-  <script>
-    if (!localStorage.getItem('sb-session')) {
-      window.location.replace('/pages/login.html');
-    }
-  </script>
+
   <style>
     body {
+      margin: 0;
+      min-height: 100vh;
       background: #000;
       color: #a259ff;
-      font-family: system-ui;
       display: flex;
-      justify-content: center;
       align-items: center;
-      min-height: 100vh;
+      justify-content: center;
+      font-family: system-ui, sans-serif;
+    }
+
+    .box {
+      border: 1px solid #a259ff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #a259ff44;
       text-align: center;
+    }
+
+    button {
+      margin-top: 1.5rem;
+      padding: 0.7rem 1.2rem;
+      background: #a259ff;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <div>
-    <h1>Logged In</h1>
-    <button onclick="logout()">Logout</button>
-  </div>
 
-  <script>
-    function logout() {
-      localStorage.removeItem('sb-session');
-      window.location.href = '/';
-    }
-  </script>
+<div class="box">
+  <h1>Welcome</h1>
+  <p>You are logged in.</p>
+
+  <button onclick="logout()">Logout</button>
+</div>
+
+<script>
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    window.location.href = '/pages/login.html';
+  }
+
+  function logout() {
+    localStorage.removeItem('token');
+    window.location.href = '/pages/login.html';
+  }
+</script>
+
 </body>
 </html>

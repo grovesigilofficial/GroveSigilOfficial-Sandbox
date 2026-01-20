@@ -17,14 +17,23 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { data, error } = await supabase.auth.signUp(
-      { email, password },
-      { redirectTo: 'https://grove-sigil-official-sandbox.vercel.app/pages/profile.html' }
-    );
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo:
+          'https://grove-sigil-official-sandbox.vercel.app/pages/profile.html'
+      }
+    });
 
-    if (error) return res.status(400).json({ error: error.message });
+    if (error) {
+      return res.status(400).json({ error: error.message });
+    }
 
-    return res.status(200).json({ message: 'Signup successful! Check your email to confirm.' });
+    return res.status(200).json({
+      message: 'Signup successful! Check your email to confirm.',
+      user: data.user
+    });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }

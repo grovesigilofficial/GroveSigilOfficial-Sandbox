@@ -12,23 +12,12 @@ export default async function handler(req, res) {
 
   try {
     const { email, password } = req.body;
+    if (!email || !password) return res.status(400).json({ error: 'Missing fields' });
 
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Missing fields' });
-    }
-
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { emailRedirectTo: 'https://grove-sigil-official-sandbox.vercel.app/pages/login.html' }
-    });
-
+    const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) return res.status(400).json({ error: error.message });
 
-    return res.status(200).json({
-      user: data.user,
-      session: data.session
-    });
+    return res.status(200).json({ user: data.user, session: data.session });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }

@@ -1,8 +1,13 @@
 {
-  "name": "grove-platform",
+  "name": "grove-sigil",
   "version": "1.0.0",
-  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build step'",
+    "start": "vercel dev"
+  },
   "dependencies": {
-    "@supabase/supabase-js": "^2.32.0"
+    "@supabase/supabase-js": "^2.36.0"
   }
 }

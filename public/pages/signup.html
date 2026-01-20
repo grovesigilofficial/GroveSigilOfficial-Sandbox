@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Signup</title>
+  <style>
+    body {
+      background: #000;
+      color: #a259ff;
+      font-family: system-ui;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    form {
+      border: 1px solid #a259ff;
+      padding: 2rem;
+      border-radius: 12px;
+      width: 320px;
+      text-align: center;
+    }
+    input, button {
+      width: 100%;
+      margin-bottom: 1rem;
+      padding: 0.7rem;
+    }
+  </style>
+</head>
+<body>
+  <form id="signup">
+    <h2>Signup</h2>
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <button>Create Account</button>
+    <div id="msg"></div>
+  </form>
+
+  <script>
+    document.getElementById('signup').onsubmit = async (e) => {
+      e.preventDefault();
+      const email = email.value;
+      const password = password.value;
+
+      const res = await fetch('/api/signup', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        msg.textContent = data.error;
+        return;
+      }
+
+      localStorage.setItem('sb-session', 'true');
+      window.location.href = '/pages/profile.html';
+    };
+  </script>
+</body>
+</html>

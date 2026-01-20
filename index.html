@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Social Platform</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirecting...</title>
 </head>
 <body>
+
 <script>
-  // Redirect based on login token
   const token = localStorage.getItem('token');
-  if(token) {
+  if (token) {
     window.location.href = '/pages/profile.html';
   } else {
     window.location.href = '/pages/login.html';
   }
 </script>
+
 </body>
 </html>

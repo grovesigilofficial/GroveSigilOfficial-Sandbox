@@ -1,57 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Signup</title>
 <style>
-body { margin:0; padding:0; min-height:100vh; display:flex; justify-content:center; align-items:center; background:#000; color:#a259ff; font-family:system-ui,sans-serif;}
+body { background: #000; color: #a259ff; font-family: system-ui; display:flex; justify-content:center; align-items:center; min-height:100vh; }
 .form-container { width:90%; max-width:400px; padding:2rem; border:1px solid #a259ff; border-radius:12px; text-align:center; }
-input, button { width:100%; margin:0.5rem 0; padding:0.7rem; border-radius:8px; font-size:1rem; }
-input { background:#000; color:#fff; border:1px solid #a259ff; }
+input, button { width:100%; padding:0.7rem; margin-bottom:1rem; border-radius:8px; font-size:1rem; }
+input { background:#000; border:1px solid #a259ff; color:#fff; }
 button { background:#a259ff; color:#000; font-weight:bold; cursor:pointer; }
-.message { margin-top:0.5rem; font-size:0.85rem; }
-.message.success { color:#2ecc71; }
-.message.error { color:#e74c3c; }
+.message { font-size:0.85rem; margin-top:0.5rem; }
+.message.success { color: #2ecc71; }
+.message.error { color: #e74c3c; }
 </style>
 </head>
 <body>
 <div class="form-container">
-<h2>Signup</h2>
-<form id="signup-form">
-<input type="email" id="email" placeholder="Email" required>
-<input type="password" id="password" placeholder="Password" required>
-<button type="submit">Sign Up</button>
-<div id="message" class="message"></div>
-</form>
+  <h2>Signup</h2>
+  <form id="signup-form">
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button type="submit">Create Account</button>
+    <div id="message" class="message"></div>
+  </form>
+  <a href="/pages/login.html">Already have an account? Login</a>
 </div>
-
 <script>
 const form = document.getElementById('signup-form');
-const messageEl = document.getElementById('message');
+const msg = document.getElementById('message');
 
-form.addEventListener('submit', async (e) => {
+form.addEventListener('submit', async e => {
   e.preventDefault();
+  msg.textContent=''; msg.className='message';
+
   const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value;
-  messageEl.textContent=''; messageEl.className='message';
 
   try {
     const res = await fetch('/api/signup', {
       method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({email,password})
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({ email, password })
     });
-
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error||'Signup failed');
-
-    messageEl.textContent='Signup successful! Please check your email to confirm.';
-    messageEl.classList.add('success');
-    form.reset();
+    if(res.ok) {
+      msg.textContent = data.message;
+      msg.classList.add('success');
+      form.reset();
+    } else {
+      throw new Error(data.error);
+    }
   } catch(err) {
-    messageEl.textContent=`Error: ${err.message}`;
-    messageEl.classList.add('error');
+    msg.textContent = `Error: ${err.message}`;
+    msg.classList.add('error');
   }
 });
 </script>

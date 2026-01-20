@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Redirect</title>
+  <script>
+    const session = localStorage.getItem('sb-session');
+    if (session) {
+      window.location.replace('/pages/profile.html');
+    } else {
+      window.location.replace('/pages/login.html');
+    }
+  </script>
+</head>
+<body></body>
+</html>

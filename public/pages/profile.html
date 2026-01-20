@@ -1,61 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Profile</title>
-
-  <style>
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: #000;
-      color: #a259ff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: system-ui, sans-serif;
-    }
-
-    .box {
-      border: 1px solid #a259ff;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 0 20px #a259ff44;
-      text-align: center;
-    }
-
-    button {
-      margin-top: 1.5rem;
-      padding: 0.7rem 1.2rem;
-      background: #a259ff;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile</title>
+<style>
+body { margin:0; display:flex; justify-content:center; align-items:center; height:100vh; background:#000; color:#a259ff; font-family:system-ui,sans-serif;}
+.container { padding:2rem; border:1px solid #a259ff; border-radius:12px; box-shadow:0 0 20px #a259ff33; max-width:400px; width:90%; text-align:center;}
+button { background:#a259ff; color:#000; font-weight:bold; border:none; cursor:pointer; padding:0.7rem; border-radius:8px; margin-top:1rem;}
+button:hover { box-shadow:0 0 20px #b280ff; transform:translateY(-2px);}
+</style>
 </head>
 <body>
-
-<div class="box">
-  <h1>Welcome</h1>
-  <p>You are logged in.</p>
-
-  <button onclick="logout()">Logout</button>
+<div class="container">
+  <h2>Your Profile</h2>
+  <p>Welcome! You are logged in.</p>
+  <button id="logout">Logout</button>
 </div>
 
 <script>
-  const token = localStorage.getItem('token');
-
-  if (!token) {
-    window.location.href = '/pages/login.html';
-  }
-
-  function logout() {
-    localStorage.removeItem('token');
-    window.location.href = '/pages/login.html';
-  }
+document.getElementById('logout').addEventListener('click',()=>{
+  localStorage.removeItem('token');
+  window.location.href='/pages/login.html';
+});
 </script>
-
 </body>
 </html>

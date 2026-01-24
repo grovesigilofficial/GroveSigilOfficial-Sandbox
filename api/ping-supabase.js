@@ -1,6 +1,4 @@
-export const config = {
-  runtime: 'nodejs'
-};
+export const config = { runtime: 'nodejs' };
 
 import { createClient } from '@supabase/supabase-js';
 
@@ -12,13 +10,7 @@ export default async function handler(req, res) {
     );
 
     const { data, error } = await supabase.auth.admin.listUsers();
-
-    if (error) {
-      return res.status(500).json({
-        ok: false,
-        error: error.message
-      });
-    }
+    if (error) return res.status(500).json({ ok: false, error: error.message });
 
     return res.status(200).json({
       ok: true,
@@ -26,9 +18,6 @@ export default async function handler(req, res) {
       emails: data.users.map(u => u.email)
     });
   } catch (err) {
-    return res.status(500).json({
-      ok: false,
-      error: err.message
-    });
+    return res.status(500).json({ ok: false, error: err.message });
   }
 }

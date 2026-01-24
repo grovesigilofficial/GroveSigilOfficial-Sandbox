@@ -1,147 +1,48 @@
-<!-- 
-  This tells the browser:
-  "This is an HTML5 document."
--->
 <!DOCTYPE html>
-
-<!-- 
-  The <html> tag wraps the entire page.
-  lang="en" tells browsers and screen readers the language is English.
--->
 <html lang="en">
-
 <head>
-  <!-- 
-    <meta charset="UTF-8">
-    This allows normal text, emojis, and symbols to display correctly.
-  -->
   <meta charset="UTF-8" />
-
-  <!-- 
-    This makes the page scale correctly on phones and tablets.
-    Without this, mobile layouts look broken.
-  -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- 
-    This is the text shown in the browser tab.
-  -->
   <title>Sandbox – Live</title>
-
-  <!-- 
-    Everything inside <style> is CSS.
-    CSS controls how things LOOK.
-  -->
   <style>
-
-    /* 
-      This styles the entire page body.
-    */
     body {
-      margin: 0; 
-      /* Removes default browser spacing */
-
-      min-height: 100vh; 
-      /* Makes the page at least the full height of the screen */
-
-      display: flex; 
-      /* Enables Flexbox layout */
-
-      align-items: center; 
-      /* Centers content vertically */
-
-      justify-content: center; 
-      /* Centers content horizontally */
-
-      background: #000; 
-      /* Black background */
-
-      color: #a259ff; 
-      /* Default text color (purple) */
-
-      font-family: system-ui, sans-serif; 
-      /* Uses the system's default clean font */
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      color: #a259ff;
+      font-family: system-ui, sans-serif;
     }
-
-    /* 
-      This styles the main container box
-    */
     .box {
-      text-align: center; 
-      /* Centers text inside the box */
-
-      padding: 2rem; 
-      /* Space inside the box */
-
-      border: 1px solid #a259ff; 
-      /* Purple border */
-
-      border-radius: 12px; 
-      /* Rounded corners */
-
-      box-shadow: 0 0 20px #a259ff33; 
-      /* Soft purple glow */
-
-      max-width: 420px; 
-      /* Limits width on large screens */
-
-      width: 90%; 
-      /* Shrinks nicely on mobile */
+      text-align: center;
+      padding: 2rem;
+      border: 1px solid #a259ff;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #a259ff33;
+      max-width: 420px;
+      width: 90%;
     }
-
-    /* 
-      This styles ALL <a> links
-    */
     a {
-      display: block; 
-      /* Makes links behave like buttons */
-
-      margin-top: 1rem; 
-      /* Space above each button */
-
-      padding: 0.6rem 1rem; 
-      /* Space inside the button */
-
-      background: #a259ff; 
-      /* Purple button background */
-
-      color: #000; 
-      /* Black text */
-
-      border-radius: 8px; 
-      /* Rounded button edges */
-
-      text-decoration: none; 
-      /* Removes underline */
-
-      font-weight: bold; 
-      /* Makes text thicker */
+      display: block;
+      margin-top: 1rem;
+      padding: 0.6rem 1rem;
+      background: #a259ff;
+      color: #000;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
     }
-
   </style>
 </head>
-
 <body>
-
-  <!-- 
-    This is the main visible box on the page
-  -->
   <div class="box">
-
-    <!-- Big title -->
     <h1>Sandbox Live</h1>
-
-    <!-- Normal paragraph text -->
     <p>If you see this, routing works.</p>
 
-    <!-- 
-      Links that go to other pages
-      href is the file path
-    -->
     <a href="/pages/signup.html">Signup</a>
     <a href="/pages/login.html">Login</a>
-
   </div>
-
 </body>
 </html>

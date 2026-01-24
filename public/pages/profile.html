@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,6 +13,8 @@
     button{width:100%;padding:10px;border-radius:6px;border:none;background:#2563eb;color:#e5e7eb;font-weight:bold;cursor:pointer;transition:0.3s all;}
     button:hover{box-shadow:0 0 15px #3b82f6;transform:translateY(-2px);}
     .message{font-size:0.9rem;opacity:0.8;}
+    ul { list-style: none; padding: 0; max-height: 200px; overflow-y: auto; width: 100%; }
+    li { padding: 5px 0; border-bottom: 1px solid #334155; font-size: 0.9rem; }
   </style>
 </head>
 <body>
@@ -22,6 +25,10 @@
     <!-- Delete user section -->
     <input type="email" id="deleteEmail" placeholder="Email to delete" />
     <button id="deleteUser">Delete User</button>
+
+    <!-- List all users -->
+    <button id="listUsers">List All Users</button>
+    <ul id="userList"></ul>
 
     <button id="logout">Logout</button>
     <p class="message" id="msg"></p>
@@ -39,6 +46,8 @@
     const logoutBtn = document.getElementById('logout');
     const deleteInput = document.getElementById('deleteEmail');
     const deleteBtn = document.getElementById('deleteUser');
+    const listBtn = document.getElementById('listUsers');
+    const userList = document.getElementById('userList');
     const msg = document.getElementById('msg');
 
     async function loadUser() {
@@ -59,17 +68,33 @@
         msg.textContent = 'Enter an email to delete.';
         return;
       }
-
       try {
         const res = await fetch('/api/delete-user', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: emailToDelete })
         });
-
         const data = await res.json();
         if (res.ok) msg.textContent = data.message;
         else msg.textContent = data.error || 'Error deleting user';
+      } catch (err) {
+        msg.textContent = err.message;
+      }
+    });
+
+    listBtn.addEventListener('click', async () => {
+      try {
+        const res = await fetch('/api/ping-supabase');
+        const data = await res.json();
+        if (!res.ok) msg.textContent = data.error || 'Error fetching users';
+        else {
+          userList.innerHTML = '';
+          data.emails.forEach(email => {
+            const li = document.createElement('li');
+            li.textContent = email;
+            userList.appendChild(li);
+          });
+        }
       } catch (err) {
         msg.textContent = err.message;
       }

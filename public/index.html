@@ -7,5 +7,13 @@
   <body>
     <h1>Sandbox is alive</h1>
     <p>If you see this, Vercel is serving HTML.</p>
+
+    <button id="test">Click me</button>
+
+    <script>
+      document.getElementById("test").onclick = () => {
+        alert("JS is running");
+      };
+    </script>
   </body>
 </html>

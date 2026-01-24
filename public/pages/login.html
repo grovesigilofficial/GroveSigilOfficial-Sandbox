@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sandbox Login</title>
+<style>
+body { background: #000; color: #a259ff; font-family: system-ui; display:flex; justify-content:center; align-items:center; min-height:100vh; }
+.form-container { width:90%; max-width:400px; padding:2rem; border:1px solid #a259ff; border-radius:12px; text-align:center; }
+input, button { width:100%; padding:0.7rem; margin-bottom:1rem; border-radius:8px; font-size:1rem; }
+input { background:#000; border:1px solid #a259ff; color:#fff; }
+button { background:#a259ff; color:#000; font-weight:bold; cursor:pointer; }
+.message { font-size:0.85rem; margin-top:0.5rem; }
+.message.success { color: #2ecc71; }
+.message.error { color: #e74c3c; }
+a { color: #a259ff; text-decoration: none; font-weight: bold; }
+a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="form-container">
+  <h2>Login</h2>
+  <form id="login-form">
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button type="submit">Login</button>
+    <div id="message" class="message"></div>
+  </form>
+  <a href="/pages/signup.html">Don't have an account? Signup</a>
+</div>
+
+<script>
+const form = document.getElementById('login-form');
+const msg = document.getElementById('message');
+
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  msg.textContent=''; msg.className='message';
+
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+
+  try {
+    const res = await fetch('/api/login', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+
+    if(res.ok) {
+      localStorage.setItem('token', data.session.access_token);
+      msg.textContent = 'Login successful!';
+      msg.classList.add('success');
+      window.location.href = 'https://vltunwjftktmaaiicbny.vercel.app/pages/profile.html';
+    } else {
+      throw new Error(data.error);
+    }
+  } catch(err) {
+    msg.textContent = `Error: ${err.message}`;
+    msg.classList.add('error');
+  }
+});
+</script>
+</body>
+</html>

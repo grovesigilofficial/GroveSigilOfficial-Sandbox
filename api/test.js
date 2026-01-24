@@ -1,7 +1,6 @@
-// Force Node runtime
-export const config = { runtime: 'nodejs' };
-
 import { createClient } from '@supabase/supabase-js';
+
+export const config = { runtime: 'nodejs' };
 
 export default async function handler(req, res) {
   try {
@@ -11,12 +10,13 @@ export default async function handler(req, res) {
     );
 
     const { data, error } = await supabase.auth.admin.listUsers();
+
     if (error) return res.status(500).json({ ok: false, error: error.message });
 
     return res.status(200).json({
       ok: true,
       userCount: data.users.length,
-      emails: data.users.map(u => u.email),
+      emails: data.users.map(u => u.email)
     });
   } catch (err) {
     return res.status(500).json({ ok: false, error: err.message });

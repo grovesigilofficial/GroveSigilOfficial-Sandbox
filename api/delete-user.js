@@ -1,33 +1,38 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
-
 export default async function handler(req, res) {
   try {
     if (req.method !== 'POST') {
       return res.status(405).json({ error: 'Method not allowed' });
     }
 
+    const supabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+
     const { email } = req.body;
-    if (!email) return res.status(400).json({ error: 'Missing email' });
+    if (!email) {
+      return res.status(400).json({ error: 'Missing email' });
+    }
 
-    // Fetch user by email
-    const { data: users, error: listError } = await supabase.auth.admin.listUsers({ filter: `email=eq.${email}` });
-    if (listError) return res.status(400).json({ error: listError.message });
-    if (!users || users.length === 0) return res.status(404).json({ error: 'User not found' });
+    const { data, error } = await supabase.auth.admin.listUsers();
+    if (error) return res.status(400).json({ error: error.message });
 
-    const userId = users[0].id;
+    const user = data.users.find(u => u.email === email);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
 
-    // Delete user
-    const { error: deleteError } = await supabase.auth.admin.deleteUser(userId);
-    if (deleteError) return res.status(400).json({ error: deleteError.message });
+    const { error: delError } =
+      await supabase.auth.admin.deleteUser(user.id);
 
-    return res.status(200).json({ message: `User ${email} deleted successfully.` });
+    if (delError) {
+      return res.status(400).json({ error: delError.message });
+    }
+
+    return res.status(200).json({ message: 'User deleted' });
   } catch (err) {
-    // Always respond with valid JSON
-    return res.status(500).json({ error: err.message || 'Unknown server error' });
+    return res.status(500).json({ error: err.message });
   }
 }

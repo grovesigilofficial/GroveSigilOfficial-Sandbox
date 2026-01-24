@@ -7,7 +7,8 @@
 <style>
 body { background: #000; color: #a259ff; font-family: system-ui; display:flex; justify-content:center; align-items:center; min-height:100vh; }
 .container { width:90%; max-width:400px; padding:2rem; border:1px solid #a259ff; border-radius:12px; text-align:center; }
-button { background:#a259ff; color:#000; font-weight:bold; padding:0.7rem 1rem; border-radius:8px; cursor:pointer; margin-top:1rem; }
+button { background:#a259ff; color:#000; font-weight:bold; padding:0.7rem 1rem; border-radius:8px; cursor:pointer; margin-top:1rem; display:block; width:100%; }
+#message { margin-top: 1rem; font-size:0.85rem; }
 </style>
 </head>
 <body>
@@ -15,12 +16,13 @@ button { background:#a259ff; color:#000; font-weight:bold; padding:0.7rem 1rem; 
   <h2>Profile</h2>
   <p id="welcome">Loading...</p>
   <button id="logout">Logout</button>
+  <button id="delete">Delete My Account</button>
+  <div id="message"></div>
 </div>
 
 <script>
 const token = localStorage.getItem('token');
 if(!token) {
-  // Not logged in → redirect to login
   window.location.href = 'https://vltunwjftktmaaiicbny.vercel.app/pages/login.html';
 } else {
   document.getElementById('welcome').textContent = 'Logged in! Token present.';
@@ -29,6 +31,31 @@ if(!token) {
 document.getElementById('logout').addEventListener('click', () => {
   localStorage.removeItem('token');
   window.location.href = 'https://vltunwjftktmaaiicbny.vercel.app/pages/login.html';
+});
+
+document.getElementById('delete').addEventListener('click', async () => {
+  const email = prompt("Enter your email to confirm deletion:");
+  if(!email) return;
+
+  const msg = document.getElementById('message');
+  msg.textContent = '';
+  try {
+    const res = await fetch('/api/delete-user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    if(res.ok) {
+      msg.textContent = data.message;
+      localStorage.removeItem('token');
+      setTimeout(() => window.location.href = 'https://vltunwjftktmaaiicbny.vercel.app/pages/signup.html', 1500);
+    } else {
+      msg.textContent = `Error: ${data.error}`;
+    }
+  } catch(err) {
+    msg.textContent = `Error: ${err.message}`;
+  }
 });
 </script>
 </body>

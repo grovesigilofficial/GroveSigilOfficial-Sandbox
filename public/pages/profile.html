@@ -1,83 +1,54 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Profile</title>
-<style>
-body {
-  margin:0;
-  font-family:system-ui, Arial, sans-serif;
-  background:#0f172a;
-  color:#e5e7eb;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  height:100vh;
-}
-.container {
-  background:#020617;
-  padding:24px;
-  border-radius:10px;
-  width:320px;
-  text-align:center;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-}
-button {
-  padding:10px;
-  border-radius:6px;
-  border:none;
-  cursor:pointer;
-}
-#logout { background:#2563eb; color:white; }
-#delete { background:#dc2626; color:white; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sandbox – Profile</title>
+  <style>
+    body { margin:0; min-height:100vh; display:flex; justify-content:center; align-items:center; background:#0f172a; color:#e5e7eb; font-family:system-ui,sans-serif; }
+    .container { background:#020617; padding:2rem; border-radius:12px; max-width:400px; width:90%; display:flex; flex-direction:column; gap:1rem; align-items:center; box-shadow:0 0 20px #2563eb33; }
+    h1{margin:0;text-shadow:0 0 10px #2563eb;}
+    button{width:100%;padding:10px;border-radius:6px;border:none;background:#2563eb;color:#e5e7eb;font-weight:bold;cursor:pointer;transition:0.3s all;}
+    button:hover{box-shadow:0 0 15px #3b82f6;transform:translateY(-2px);}
+    .message{font-size:0.9rem;opacity:0.8;}
+  </style>
 </head>
 <body>
-<div class="container">
-  <h2>Profile</h2>
-  <button id="logout">Logout</button>
-  <button id="delete">Delete My Account</button>
-  <p id="message"></p>
-</div>
+  <div class="container">
+    <h1>Profile</h1>
+    <p id="email">Loading...</p>
+    <button id="logout">Logout</button>
+    <p class="message" id="msg"></p>
+  </div>
 
-<script>
-const token = localStorage.getItem('token');
-if (!token) location.href = '/pages/login.html';
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-logout.onclick = () => {
-  localStorage.removeItem('token');
-  location.href = '/pages/login.html';
-};
+    const supabaseUrl = 'https://vltunwjftktmaaiicbny.supabase.co';
+    const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdHVud2pmdGt0bWFhaWljY255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDY5NjQsImV4cCI6MjA4NDcyMjk2NH0.hQcnLrb7TgH37eek5FOlOgtwKfE2IlEWzxG35vzqS7Q';
 
-delete.onclick = async () => {
-  const email = prompt('Enter email to delete:');
-  if(!email) return;
-  const msg = document.getElementById('message');
-  msg.textContent = 'Deleting...';
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-  try {
-    const res = await fetch('/api/delete-user', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ email })
-    });
+    const emailEl = document.getElementById('email');
+    const logoutBtn = document.getElementById('logout');
+    const msg = document.getElementById('msg');
 
-    const text = await res.text();
-    try { 
-      msg.textContent = JSON.parse(text).message; 
-    } catch { 
-      msg.textContent = text; 
+    async function loadUser() {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (error) {
+        emailEl.textContent = 'Not logged in';
+      } else {
+        emailEl.textContent = user.email;
+      }
     }
 
-    localStorage.removeItem('token');
-    setTimeout(()=>location.href='/pages/signup.html',1200);
+    logoutBtn.addEventListener('click', async () => {
+      const { error } = await supabase.auth.signOut();
+      if (error) msg.textContent = error.message;
+      else window.location.href = '/pages/login.html';
+    });
 
-  } catch(err) {
-    msg.textContent = err.message;
-  }
-};
-</script>
+    loadUser();
+  </script>
 </body>
 </html>

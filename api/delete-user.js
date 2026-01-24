@@ -6,14 +6,14 @@ const supabase = createClient(
 );
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  const { email } = req.body;
-  if (!email) return res.status(400).json({ error: 'Missing email' });
-
   try {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: 'Missing email' });
+
     // Fetch user by email
     const { data: users, error: listError } = await supabase.auth.admin.listUsers({ filter: `email=eq.${email}` });
     if (listError) return res.status(400).json({ error: listError.message });
@@ -27,6 +27,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ message: `User ${email} deleted successfully.` });
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    // Always respond with valid JSON
+    return res.status(500).json({ error: err.message || 'Unknown server error' });
   }
 }

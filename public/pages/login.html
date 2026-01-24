@@ -1,10 +1,45 @@
 <!DOCTYPE html>
 <html>
+<head>
+<meta charset="UTF-8" />
+<title>Login</title>
+<style>
+body {
+  margin:0;
+  font-family:system-ui, Arial, sans-serif;
+  background:#0f172a;
+  color:#e5e7eb;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:100vh;
+}
+form {
+  background:#020617;
+  padding:24px;
+  border-radius:10px;
+  width:320px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+input, button {
+  padding:10px;
+  border-radius:6px;
+  border:none;
+}
+button {
+  background:#2563eb;
+  color:white;
+  cursor:pointer;
+}
+</style>
+</head>
 <body>
-<h2>Login</h2>
 <form id="f">
-  <input id="email" required />
-  <input id="password" type="password" required />
+  <h2>Login</h2>
+  <input id="email" type="email" placeholder="Email" required />
+  <input id="password" type="password" placeholder="Password" required />
   <button>Login</button>
 </form>
 <p id="msg"></p>
@@ -20,7 +55,6 @@ f.onsubmit = async e => {
       password: password.value
     })
   });
-
   const text = await res.text();
   try {
     const data = JSON.parse(text);

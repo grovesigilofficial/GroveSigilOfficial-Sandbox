@@ -9,21 +9,21 @@ export default async function handler(req, res) {
   try {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-    const { email } = req.body;
-    if (!email) return res.status(400).json({ error: 'Email required' });
+    const { email, password } = req.body;
+    if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
 
-    const { data, error } = await supabase.auth.admin.listUsers();
+    const { data, error } = await supabase.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true
+    });
+
     if (error) return res.status(400).json({ error: error.message });
 
-    const user = data.users.find(u => u.email === email);
-    if (!user) return res.status(404).json({ error: 'User not found' });
-
-    const { error: delError } = await supabase.auth.admin.deleteUser(user.id);
-    if (delError) return res.status(400).json({ error: delError.message });
-
-    return res.status(200).json({ message: 'User deleted' });
+    // success stays the same
+    return res.status(200).json({ message: 'User created', user: data });
   } catch (err) {
-    // ⚡ FIX: always return JSON
+    // ⚡ FIX: always return JSON, never plain text
     return res.status(500).json({ error: err?.message || 'Server error' });
   }
 }

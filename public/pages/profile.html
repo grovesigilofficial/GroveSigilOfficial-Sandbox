@@ -4,59 +4,105 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Sandbox Profile</title>
+
 <style>
-body { background: #000; color: #a259ff; font-family: system-ui; display:flex; justify-content:center; align-items:center; min-height:100vh; }
-.container { width:90%; max-width:400px; padding:2rem; border:1px solid #a259ff; border-radius:12px; text-align:center; }
-button { background:#a259ff; color:#000; font-weight:bold; padding:0.7rem 1rem; border-radius:8px; cursor:pointer; margin-top:1rem; display:block; width:100%; }
-#message { margin-top: 1rem; font-size:0.85rem; }
+body {
+  background:#000;
+  color:#a259ff;
+  font-family:system-ui;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+}
+.container {
+  width:90%;
+  max-width:420px;
+  padding:2rem;
+  border:1px solid #a259ff;
+  border-radius:12px;
+  text-align:center;
+}
+button {
+  width:100%;
+  padding:0.7rem;
+  margin-top:1rem;
+  border-radius:8px;
+  border:none;
+  font-weight:bold;
+  cursor:pointer;
+}
+#logout { background:#a259ff; color:#000; }
+#delete { background:#ff4d4d; color:#000; }
+#message {
+  margin-top:1rem;
+  font-size:0.85rem;
+}
 </style>
 </head>
+
 <body>
 <div class="container">
   <h2>Profile</h2>
-  <p id="welcome">Loading...</p>
+  <p id="status">Checking session...</p>
+
   <button id="logout">Logout</button>
   <button id="delete">Delete My Account</button>
+
   <div id="message"></div>
 </div>
 
 <script>
 const token = localStorage.getItem('token');
-if(!token) {
-  window.location.href = 'https://vltunwjftktmaaiicbny.vercel.app/pages/login.html';
+const msg = document.getElementById('message');
+
+if (!token) {
+  window.location.href = '/pages/login.html';
 } else {
-  document.getElementById('welcome').textContent = 'Logged in! Token present.';
+  document.getElementById('status').textContent = 'Logged in';
 }
 
-document.getElementById('logout').addEventListener('click', () => {
+document.getElementById('logout').onclick = () => {
   localStorage.removeItem('token');
-  window.location.href = 'https://vltunwjftktmaaiicbny.vercel.app/pages/login.html';
-});
+  window.location.href = '/pages/login.html';
+};
 
-document.getElementById('delete').addEventListener('click', async () => {
-  const email = prompt("Enter your email to confirm deletion:");
-  if(!email) return;
+document.getElementById('delete').onclick = async () => {
+  const email = prompt('Confirm email to delete account:');
+  if (!email) return;
 
-  const msg = document.getElementById('message');
-  msg.textContent = '';
+  msg.textContent = 'Deleting...';
+
   try {
     const res = await fetch('/api/delete-user', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email })
     });
-    const data = await res.json();
-    if(res.ok) {
-      msg.textContent = data.message;
-      localStorage.removeItem('token');
-      setTimeout(() => window.location.href = 'https://vltunwjftktmaaiicbny.vercel.app/pages/signup.html', 1500);
-    } else {
-      msg.textContent = `Error: ${data.error}`;
+
+    let text = await res.text();   // ← KEY FIX
+    let data;
+
+    try {
+      data = JSON.parse(text);
+    } catch {
+      msg.textContent = 'Server error (non-JSON response)';
+      return;
     }
-  } catch(err) {
-    msg.textContent = `Error: ${err.message}`;
+
+    if (!res.ok) {
+      msg.textContent = data.error || 'Delete failed';
+      return;
+    }
+
+    msg.textContent = data.message || 'Deleted';
+    localStorage.removeItem('token');
+    setTimeout(() => window.location.href = '/pages/signup.html', 1200);
+
+  } catch (err) {
+    msg.textContent = err.message;
   }
-});
+};
 </script>
 </body>
 </html>

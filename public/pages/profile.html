@@ -8,6 +8,7 @@
     body { margin:0; min-height:100vh; display:flex; justify-content:center; align-items:center; background:#0f172a; color:#e5e7eb; font-family:system-ui,sans-serif; }
     .container { background:#020617; padding:2rem; border-radius:12px; max-width:400px; width:90%; display:flex; flex-direction:column; gap:1rem; align-items:center; box-shadow:0 0 20px #2563eb33; }
     h1{margin:0;text-shadow:0 0 10px #2563eb;}
+    input{width:100%;padding:10px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#e5e7eb;}
     button{width:100%;padding:10px;border-radius:6px;border:none;background:#2563eb;color:#e5e7eb;font-weight:bold;cursor:pointer;transition:0.3s all;}
     button:hover{box-shadow:0 0 15px #3b82f6;transform:translateY(-2px);}
     .message{font-size:0.9rem;opacity:0.8;}
@@ -17,6 +18,11 @@
   <div class="container">
     <h1>Profile</h1>
     <p id="email">Loading...</p>
+
+    <!-- Delete user section -->
+    <input type="email" id="deleteEmail" placeholder="Email to delete" />
+    <button id="deleteUser">Delete User</button>
+
     <button id="logout">Logout</button>
     <p class="message" id="msg"></p>
   </div>
@@ -31,21 +37,42 @@
 
     const emailEl = document.getElementById('email');
     const logoutBtn = document.getElementById('logout');
+    const deleteInput = document.getElementById('deleteEmail');
+    const deleteBtn = document.getElementById('deleteUser');
     const msg = document.getElementById('msg');
 
     async function loadUser() {
       const { data: { user }, error } = await supabase.auth.getUser();
-      if (error) {
-        emailEl.textContent = 'Not logged in';
-      } else {
-        emailEl.textContent = user.email;
-      }
+      if (error) emailEl.textContent = 'Not logged in';
+      else emailEl.textContent = user.email;
     }
 
     logoutBtn.addEventListener('click', async () => {
       const { error } = await supabase.auth.signOut();
       if (error) msg.textContent = error.message;
       else window.location.href = '/pages/login.html';
+    });
+
+    deleteBtn.addEventListener('click', async () => {
+      const emailToDelete = deleteInput.value;
+      if (!emailToDelete) {
+        msg.textContent = 'Enter an email to delete.';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/delete-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: emailToDelete })
+        });
+
+        const data = await res.json();
+        if (res.ok) msg.textContent = data.message;
+        else msg.textContent = data.error || 'Error deleting user';
+      } catch (err) {
+        msg.textContent = err.message;
+      }
     });
 
     loadUser();

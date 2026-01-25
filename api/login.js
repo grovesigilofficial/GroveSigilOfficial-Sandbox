@@ -16,7 +16,6 @@ export default async function handler(req, res) {
 
     if (error) return res.status(400).json({ error: error.message });
 
-    // ✅ always return JSON
     return res.status(200).json({ message: 'Login successful', user: { email: data.user?.email || email } });
   } catch (err) {
     return res.status(500).json({ error: err?.message || 'Server error' });

@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sandbox Test</title>
 </head>
 <body>
@@ -12,12 +11,22 @@
 
   <script>
     document.getElementById('test').addEventListener('click', async () => {
+      const result = document.getElementById('result');
+      result.textContent = '';
+
       try {
         const res = await fetch('/api/test');
-        const data = await res.json();
-        document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+        const text = await res.text();   // ← FIX
+
+        try {
+          const data = JSON.parse(text);
+          result.textContent = JSON.stringify(data, null, 2);
+        } catch {
+          result.textContent = text;     // shows server error safely
+        }
+
       } catch (err) {
-        document.getElementById('result').textContent = err.message;
+        result.textContent = 'Network error';
       }
     });
   </script>

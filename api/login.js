@@ -1,8 +1,12 @@
+export const config = {
+  runtime: 'nodejs',
+};
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
-  process.env.SUPABASE_URL || '',
-  process.env.SUPABASE_ANON_KEY || ''
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
 );
 
 export default async function handler(req, res) {
@@ -17,16 +21,20 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Email and password required' });
     }
 
-    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
-      return res.status(500).json({ error: 'Supabase keys not set' });
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      return res.status(400).json({ error: error.message });
     }
 
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-
-    if (error) return res.status(400).json({ error: error.message });
-
-    return res.status(200).json({ message: 'Login successful', user: { email: data.user?.email || email } });
+    return res.status(200).json({
+      message: 'Login successful',
+      user: { email: data.user.email },
+    });
   } catch (err) {
-    return res.status(500).json({ error: err?.message || 'Server error' });
+    return res.status(500).json({ error: err.message || 'Server error' });
   }
 }

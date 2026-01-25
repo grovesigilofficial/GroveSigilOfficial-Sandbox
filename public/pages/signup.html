@@ -2,48 +2,107 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Signup</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Signup – Sandbox</title>
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0f172a;
+      color: #e5e7eb;
+      font-family: system-ui, sans-serif;
+    }
+
+    .container {
+      text-align: center;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #2563eb33;
+      max-width: 420px;
+      width: 90%;
+      background: #020617;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    h1 {
+      margin: 0;
+      text-shadow: 0 0 10px #2563eb;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.6rem;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 0.6rem 1rem;
+      background: #2563eb;
+      color: #e5e7eb;
+      border-radius: 8px;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s all;
+      width: 100%;
+    }
+
+    button:hover {
+      box-shadow: 0 0 15px #3b82f6;
+      transform: translateY(-2px);
+    }
+
+    a {
+      color: #93c5fd;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
+
 <body>
+  <div class="container">
+    <h1>Signup</h1>
 
-  <h1>Signup</h1>
+    <input id="email" type="email" placeholder="Email" />
+    <input id="password" type="password" placeholder="Password" />
 
-  <input id="email" type="email" placeholder="email" />
-  <br />
-  <input id="password" type="password" placeholder="password" />
-  <br />
-  <button id="signupBtn">Sign Up</button>
+    <button id="signup">Create Account</button>
 
-  <p id="msg"></p>
+    <a href="/pages/login.html">Already have an account?</a>
 
-  <script type="module">
-    const emailInput = document.getElementById('email');
-    const passInput = document.getElementById('password');
-    const btn = document.getElementById('signupBtn');
-    const msg = document.getElementById('msg');
+    <pre id="result"></pre>
+  </div>
 
-    btn.addEventListener('click', async () => {
-      msg.textContent = '';
+  <script>
+    document.getElementById('signup').addEventListener('click', async () => {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
 
       try {
         const res = await fetch('/api/signup', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email: emailInput.value,
-            password: passInput.value
-          })
+          body: JSON.stringify({ email, password })
         });
 
-        const text = await res.text();     // ← IMPORTANT
-        const data = JSON.parse(text);     // ← ONLY parse if valid
-
-        msg.textContent = data.message || data.error || 'Unknown response';
+        const data = await res.json();
+        document.getElementById('result').textContent =
+          JSON.stringify(data, null, 2);
       } catch (err) {
-        msg.textContent = 'Signup failed (server error)';
+        document.getElementById('result').textContent = err.message;
       }
     });
   </script>
-
 </body>
 </html>

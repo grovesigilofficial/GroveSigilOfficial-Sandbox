@@ -1,113 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Profile – Sandbox</title>
-<style>
-  body {
-    margin: 0;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: #0f172a; /* deep navy */
-    color: #e5e7eb; /* light gray */
-    font-family: system-ui, sans-serif;
-  }
-
-  .container {
-    background: #020617; /* almost black */
-    padding: 2rem;
-    border-radius: 12px;
-    max-width: 480px;
-    width: 90%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    box-shadow: 0 0 20px #2563eb33; /* subtle blue glow */
-    text-align: center;
-  }
-
-  h1 {
-    margin: 0;
-    text-shadow: 0 0 10px #2563eb; /* blue glow */
-  }
-
-  p {
-    margin: 0.2rem 0;
-    opacity: 0.8;
-  }
-
-  button {
-    width: 160px;
-    padding: 0.6rem 1rem;
-    border: none;
-    border-radius: 8px;
-    background: #2563eb;
-    color: #e5e7eb;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s all;
-  }
-
-  button:hover {
-    box-shadow: 0 0 15px #3b82f6;
-    transform: translateY(-2px);
-  }
-</style>
+  <meta charset="UTF-8" />
+  <title>Profile</title>
 </head>
 <body>
-  <div class="container">
-    <h1>Your Profile</h1>
-    <p id="userEmail">Email: </p>
-    <p id="userId">User ID: </p>
-    <button id="deleteBtn">Delete Account</button>
-    <p class="message" id="msg"></p>
-  </div>
 
-<script type="module">
-const msg = document.getElementById('msg');
-const emailEl = document.getElementById('userEmail');
-const idEl = document.getElementById('userId');
-const deleteBtn = document.getElementById('deleteBtn');
+  <h1>Profile</h1>
 
-// Fetch current user info from API
-async function fetchProfile() {
-  try {
-    const res = await fetch('/api/ping-supabase');
-    const data = await res.json();
-    if(data.ok && data.userCount > 0){
-      const user = data.emails[0]; // first user for sandbox demo
-      emailEl.textContent = 'Email: ' + user;
-      idEl.textContent = 'User ID: demo';
-    } else {
-      msg.textContent = 'No users found';
-    }
-  } catch(err){
-    msg.textContent = err.message;
-  }
-}
+  <p id="userEmail">Email: loading...</p>
+  <p id="userId">User ID: loading...</p>
 
-deleteBtn.addEventListener('click', async () => {
-  const email = emailEl.textContent.replace('Email: ', '');
-  if(!email) return msg.textContent = 'No email to delete';
+  <button id="deleteBtn">Delete Account</button>
 
-  try {
-    const res = await fetch('/api/delete-user', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({email})
+  <p id="msg"></p>
+
+  <script type="module">
+    const emailEl = document.getElementById('userEmail');
+    const idEl = document.getElementById('userId');
+    const deleteBtn = document.getElementById('deleteBtn');
+    const msg = document.getElementById('msg');
+
+    // TEMP SAFE DATA — NO BROKEN API
+    emailEl.textContent = 'Email: sandbox@test.com';
+    idEl.textContent = 'User ID: sandbox';
+
+    deleteBtn.addEventListener('click', async () => {
+      msg.textContent = '';
+
+      try {
+        const res = await fetch('/api/delete-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: 'sandbox@test.com' })
+        });
+
+        const text = await res.text();
+        const data = JSON.parse(text);
+
+        msg.textContent = data.message || data.error || 'Unknown response';
+      } catch {
+        msg.textContent = 'Delete failed (server error)';
+      }
     });
-    const data = await res.json();
-    msg.textContent = data.message || data.error;
-  } catch(err){
-    msg.textContent = err.message;
-  }
-});
+  </script>
 
-fetchProfile();
-</script>
 </body>
 </html>

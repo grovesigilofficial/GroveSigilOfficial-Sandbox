@@ -1,8 +1,12 @@
+export const config = {
+  runtime: 'nodejs',
+};
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
-  process.env.SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
 export default async function handler(req, res) {
@@ -17,20 +21,21 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Email and password required' });
     }
 
-    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      return res.status(500).json({ error: 'Supabase keys not set' });
-    }
-
     const { data, error } = await supabase.auth.admin.createUser({
       email,
       password,
-      email_confirm: true
+      email_confirm: true,
     });
 
-    if (error) return res.status(400).json({ error: error.message });
+    if (error) {
+      return res.status(400).json({ error: error.message });
+    }
 
-    return res.status(200).json({ message: 'User created', user: { email: data?.email || email } });
+    return res.status(200).json({
+      message: 'User created',
+      user: { email },
+    });
   } catch (err) {
-    return res.status(500).json({ error: err?.message || 'Server error' });
+    return res.status(500).json({ error: err.message || 'Server error' });
   }
 }

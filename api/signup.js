@@ -20,7 +20,8 @@ export default async function handler(req, res) {
 
     if(error) return res.status(400).json({ error: error.message });
 
-    return res.status(200).json({ message: 'User created', user: data });
+    // always return JSON
+    return res.status(200).json({ message: 'User created', user: { email: data?.email || email } });
   } catch(err) {
     return res.status(500).json({ error: err?.message || 'Server error' });
   }

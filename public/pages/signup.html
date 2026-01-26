@@ -1,48 +1,28 @@
-<!-- /public/pages/signup.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Sign Up</title>
-<style>
-body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0f172a;color:#e5e7eb;font-family:system-ui,sans-serif}
-.box{background:#020617;padding:2rem;border-radius:12px;width:340px;box-shadow:0 0 20px #2563eb33;display:flex;flex-direction:column;gap:1rem}
-input,button{padding:.7rem;border-radius:8px;border:none;font-size:1rem}
-input{background:#020617;color:#e5e7eb;border:1px solid #334155}
-button{background:#2563eb;color:#fff;font-weight:bold;cursor:pointer}
-#msg{min-height:1.2em;font-size:.9rem}
-</style>
+<meta charset="UTF-8">
+<title>Signup</title>
 </head>
 <body>
-<div class="box">
-  <h2>Sign Up</h2>
-  <input id="email" type="email" placeholder="Email" />
-  <input id="password" type="password" placeholder="Password" />
-  <button id="signupBtn">Create account</button>
-  <div id="msg"></div>
-</div>
-<script>
-const email=document.getElementById('email');
-const password=document.getElementById('password');
-const btn=document.getElementById('signupBtn');
-const msg=document.getElementById('msg');
+  <input id="email" placeholder="email">
+  <input id="password" type="password" placeholder="password">
+  <button id="btn">Sign Up</button>
+  <pre id="msg"></pre>
 
-btn.onclick=async()=>{
-  msg.textContent='Working...';
-  try{
-    const res=await fetch('/api/signup',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({email:email.value,password:password.value})
-    });
-    const text=await res.text();
-    let data;
-    try{data=JSON.parse(text);}catch{data={error:text}}
-    msg.textContent=data.message||data.error||'Done';
-  }catch(e){
-    msg.textContent=e.message;
-  }
+<script>
+document.getElementById('btn').onclick = async () => {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+
+  const res = await fetch(`${window.location.origin}/api/signup`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  });
+
+  const data = await res.json();
+  document.getElementById('msg').textContent = JSON.stringify(data);
 };
 </script>
 </body>

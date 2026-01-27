@@ -1,12 +1,8 @@
 {
-  "name": "portal",
+  "name": "portal-auth",
   "version": "1.0.0",
   "type": "module",
-  "scripts": {
-    "dev": "vercel dev",
-    "start": "vercel dev"
-  },
   "dependencies": {
-    "@supabase/supabase-js": "^2.35.0"
+    "@supabase/supabase-js": "^2.39.0"
   }
 }

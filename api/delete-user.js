@@ -1,28 +1,31 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+)
 
-export default async function handler(req, res) {
+export default async function handler(req,res){
   try {
-    if(req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+    if(req.method !== 'POST') return res.status(405).json({ error:'Method not allowed' })
 
-    const { email } = req.body;
-    if(!email) return res.status(400).json({ error: 'Missing email' });
+    const { email } = req.body
+    if(!email) return res.status(400).json({ error:'Email required' })
 
-    const { data, error } = await supabase.auth.admin.listUsers();
-    if(error) return res.status(500).json({ error: error.message });
+    // Find user
+    const { data:user, error:getError } = await supabase.from('users').select('auth_id').eq('email', email).single()
+    if(getError) return res.status(400).json({ error: getError.message })
 
-    const user = data.users.find(u => u.email === email);
-    if(!user) return res.status(404).json({ error: 'User not found' });
+    // Delete from Auth
+    const { error:authError } = await supabase.auth.admin.deleteUser(user.auth_id)
+    if(authError) return res.status(400).json({ error: authError.message })
 
-    const { error: delError } = await supabase.auth.admin.deleteUser(user.id);
-    if(delError) return res.status(400).json({ error: delError.message });
+    // Delete from users table (cascade deletes profiles/posts)
+    const { error:dbError } = await supabase.from('users').delete().eq('auth_id', user.auth_id)
+    if(dbError) return res.status(400).json({ error: dbError.message })
 
-    return res.status(200).json({ message: `User ${email} deleted` });
+    return res.status(200).json({ message:'User deleted' })
   } catch(err) {
-    return res.status(500).json({ error: err?.message || 'Server error' });
+    return res.status(500).json({ error: err?.message || 'Server error' })
   }
 }

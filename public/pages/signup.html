@@ -2,28 +2,45 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Signup</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal – Sign Up</title>
+<style>
+body{margin:0;min-height:100vh;display:flex;justify-content:center;align-items:center;background:#0f172a;color:#e5e7eb;font-family:system-ui;}
+.container{background:#020617;padding:2rem;border-radius:12px;max-width:420px;width:90%;display:flex;flex-direction:column;align-items:center;gap:1rem;text-align:center;box-shadow:0 0 20px #2563eb33;}
+h1{margin:0;text-shadow:0 0 10px #2563eb;}
+input{width:90%;padding:.8rem;border-radius:8px;border:1px solid #2563eb33;background:#0f172a;color:#e5e7eb;font-size:1rem;}
+button{width:140px;padding:.6rem 1rem;border:none;border-radius:8px;background:#2563eb;color:#e5e7eb;font-weight:bold;cursor:pointer;transition:.3s all;}
+button:hover{box-shadow:0 0 15px #3b82f6;transform:translateY(-2px);}
+.message{font-size:.9rem;opacity:.8;}
+</style>
 </head>
 <body>
-  <input id="email" placeholder="email">
-  <input id="password" type="password" placeholder="password">
-  <button id="btn">Sign Up</button>
-  <pre id="msg"></pre>
-
+<div class="container">
+<h1>Sign Up</h1>
+<input type="text" id="username" placeholder="Username"/>
+<input type="email" id="email" placeholder="Email"/>
+<input type="password" id="password" placeholder="Password"/>
+<button id="signupBtn">Sign Up</button>
+<p class="message" id="msg"></p>
+</div>
 <script>
-document.getElementById('btn').onclick = async () => {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-
-  const res = await fetch(`${window.location.origin}/api/signup`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password })
-  });
-
-  const data = await res.json();
-  document.getElementById('msg').textContent = JSON.stringify(data);
-};
+const msg=document.getElementById('msg')
+document.getElementById('signupBtn').addEventListener('click',async()=>{
+  const email=document.getElementById('email').value
+  const password=document.getElementById('password').value
+  const username=document.getElementById('username').value
+  if(!email||!password||!username){msg.textContent='All fields required';return;}
+  try{
+    const res=await fetch('/api/auth/signup',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email,password,username})
+    })
+    const data=await res.json()
+    msg.textContent=data.message||data.error
+    if(data.user){window.location.href='/pages/login.html'}
+  }catch(err){msg.textContent=err.message}
+})
 </script>
 </body>
 </html>

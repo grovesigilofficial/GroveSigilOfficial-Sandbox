@@ -1,67 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sandbox – Live</title>
+<title>Portal</title>
 <style>
-body {
-  margin: 0;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #0f172a; /* deep navy */
-  color: #e5e7eb; /* light gray */
-  font-family: system-ui, sans-serif;
-}
-.container {
-  text-align: center;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 0 20px #2563eb33;
-  max-width: 420px;
-  width: 90%;
-  background: #020617; /* almost black */
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  align-items: center;
-}
-h1 {
-  margin-bottom: 1rem;
-  text-shadow: 0 0 10px #2563eb;
-}
-p {
-  opacity: 0.8;
-  font-size: 0.9rem;
-}
-a {
-  display: inline-block;
-  margin-top: 1rem;
-  padding: 0.6rem 1rem;
-  background: #2563eb;
-  color: #e5e7eb;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: bold;
-  transition: 0.3s all;
-  width: 140px;
-  text-align: center;
-}
-a:hover {
-  box-shadow: 0 0 20px #3b82f6;
-  transform: translateY(-2px);
-}
+body{margin:0;background:#0f172a;color:#e5e7eb;font-family:system-ui}
+.container{max-width:600px;margin:auto;padding:1rem}
+.post{background:#020617;padding:1rem;border-radius:8px;margin-bottom:1rem}
+textarea{width:100%;padding:.6rem;border-radius:6px}
+button{margin-top:.5rem;padding:.5rem 1rem;background:#2563eb;border:none;border-radius:6px;color:white}
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>Sandbox Live</h1>
-  <p>Vercel deployment confirmed.</p>
-  <p>This is the clean baseline.</p>
-  <a href="/pages/signup.html">Join the waitlist</a>
-  <a href="/pages/login.html">Login</a>
+<h1>Portal Feed</h1>
+
+<textarea id="content" placeholder="Say something..."></textarea>
+<button onclick="post()">Post</button>
+
+<div id="feed"></div>
 </div>
+
+<script>
+async function post(){
+  const token = localStorage.getItem('token')
+  const content = document.getElementById('content').value
+
+  const res = await fetch('/api/posts/create',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'Authorization':'Bearer '+token
+    },
+    body:JSON.stringify({content})
+  })
+  document.getElementById('content').value=''
+  load()
+}
+
+async function load(){
+  const res = await fetch('/api/posts/feed')
+  const data = await res.json()
+  const feed = document.getElementById('feed')
+  feed.innerHTML=''
+  data.posts.forEach(p=>{
+    const div=document.createElement('div')
+    div.className='post'
+    div.innerHTML=`<b>@${p.users.username}</b><br>${p.content}`
+    feed.appendChild(div)
+  })
+}
+load()
+</script>
 </body>
 </html>

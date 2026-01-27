@@ -1,7 +1,12 @@
 {
-  "name": "sandbox",
-  "private": true,
+  "name": "portal",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "start": "vercel dev"
+  },
   "dependencies": {
-    "@supabase/supabase-js": "^2.39.0"
+    "@supabase/supabase-js": "^2.35.0"
   }
 }

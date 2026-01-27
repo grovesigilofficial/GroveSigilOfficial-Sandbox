@@ -1,56 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Profile – Sandbox</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal – Profile</title>
 <style>
-body {margin:0; min-height:100vh; display:flex; justify-content:center; align-items:center; background:#0f172a; color:#e5e7eb; font-family:system-ui,sans-serif;}
-.container {background:#020617; padding:2rem; border-radius:12px; max-width:480px; width:90%; display:flex; flex-direction:column; align-items:center; gap:1rem; box-shadow:0 0 20px #2563eb33; text-align:center;}
-h1 {margin:0; text-shadow:0 0 10px #2563eb;}
-p {margin:0.2rem 0; opacity:0.8;}
-button {width:160px; padding:0.6rem 1rem; border:none; border-radius:8px; background:#2563eb; color:#e5e7eb; font-weight:bold; cursor:pointer; transition:0.3s all;}
-button:hover {box-shadow:0 0 15px #3b82f6; transform:translateY(-2px);}
-.message {font-size:0.9rem; opacity:0.8;}
+body{margin:0;min-height:100vh;display:flex;justify-content:center;align-items:center;background:#0f172a;color:#e5e7eb;font-family:system-ui;}
+.container{background:#020617;padding:2rem;border-radius:12px;max-width:480px;width:90%;display:flex;flex-direction:column;align-items:center;gap:1rem;text-align:center;box-shadow:0 0 20px #2563eb33;}
+h1{margin:0;text-shadow:0 0 10px #2563eb;}
+p{margin:0.2rem 0;opacity:.8;}
+button{width:160px;padding:.6rem 1rem;border:none;border-radius:8px;background:#2563eb;color:#e5e7eb;font-weight:bold;cursor:pointer;transition:.3s all;}
+button:hover{box-shadow:0 0 15px #3b82f6;transform:translateY(-2px);}
+.message{font-size:.9rem;opacity:.8;}
 </style>
 </head>
 <body>
 <div class="container">
 <h1>Your Profile</h1>
 <p id="userEmail">Email: </p>
-<p id="userId">User ID: </p>
+<p id="userUsername">Username: </p>
 <button id="deleteBtn">Delete Account</button>
 <p class="message" id="msg"></p>
 </div>
-
-<script type="module">
-const msg=document.getElementById('msg');
-const emailEl=document.getElementById('userEmail');
-const idEl=document.getElementById('userId');
-const deleteBtn=document.getElementById('deleteBtn');
+<script>
+const msg=document.getElementById('msg')
+const emailEl=document.getElementById('userEmail')
+const usernameEl=document.getElementById('userUsername')
+const deleteBtn=document.getElementById('deleteBtn')
 
 async function fetchProfile(){
   try{
-    const res=await fetch('/api/login'); // demo: replace with correct current user API
-    const data=await res.json().catch(()=>({error:'Invalid JSON response'}));
-    if(data.error){msg.textContent=`Error: ${data.error}`;}
-    else if(data.user){emailEl.textContent='Email: '+data.user.email; idEl.textContent='User ID: '+(data.user.id||'demo');}
-    else msg.textContent='No user info available';
-  }catch(err){msg.textContent=`Request failed: ${err.message}`;}
+    const res=await fetch('/api/auth/get-user')
+    const data=await res.json()
+    if(data.user){
+      emailEl.textContent='Email: '+data.user.email
+      usernameEl.textContent='Username: '+data.user.username
+    } else msg.textContent='No user found'
+  }catch(err){msg.textContent=err.message}
 }
 
 deleteBtn.addEventListener('click',async()=>{
-  const email=emailEl.textContent.replace('Email: ','');
-  if(!email){msg.textContent='No email to delete'; return;}
+  const email=emailEl.textContent.replace('Email: ','')
+  if(!email){msg.textContent='No email to delete';return;}
   try{
-    const res=await fetch('/api/delete-user',{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email})});
-    const data=await res.json().catch(()=>({error:'Invalid JSON response'}));
-    if(data.error){msg.textContent=`Error: ${data.error}`;}
-    else{msg.textContent=`Success: ${data.message}`; emailEl.textContent='Email: '; idEl.textContent='User ID: ';}
-  }catch(err){msg.textContent=`Request failed: ${err.message}`;}
-});
+    const res=await fetch('/api/auth/delete-user',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email})
+    })
+    const data=await res.json()
+    msg.textContent=data.message||data.error
+    if(data.message){setTimeout(()=>window.location.href='/pages/signup.html',1000)}
+  }catch(err){msg.textContent=err.message}
+})
 
-fetchProfile();
+fetchProfile()
 </script>
 </body>
 </html>

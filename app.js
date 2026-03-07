@@ -39,6 +39,7 @@ async function login(){
   }
 
   out.textContent = "Logged in"
+  showUser()
 }
 
 async function logout(){
@@ -46,4 +47,20 @@ async function logout(){
   await client.auth.signOut()
 
   out.textContent = "Logged out"
+  showUser()
 }
+
+async function showUser(){
+
+  const { data } = await client.auth.getUser()
+
+  if(data.user){
+    out.textContent =
+      "Logged in as: " + data.user.email
+  } else {
+    out.textContent =
+      "Not logged in"
+  }
+}
+
+showUser()

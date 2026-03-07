@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Portal Auth</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>Portal</h1>
+
+<div class="box">
+  <h2>Signup</h2>
+  <input id="signup-email" placeholder="Email">
+  <input id="signup-password" type="password" placeholder="Password">
+  <button onclick="signup()">Signup</button>
+</div>
+
+<div class="box">
+  <h2>Login</h2>
+  <input id="login-email" placeholder="Email">
+  <input id="login-password" type="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+</div>
+
+<div class="box">
+  <button onclick="logout()">Logout</button>
+</div>
+
+<pre id="output"></pre>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="app.js"></script>
+
+</body>
+</html>

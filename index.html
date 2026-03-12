@@ -2,74 +2,53 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>The Grove</title>
+<title>The Grove — Portal In Progress</title>
 
 <style>
-
-body{
+body {
   margin:0;
   height:100vh;
   background:black;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
+  color:#ff1a1a;
   font-family:Georgia, serif;
   text-align:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  padding-top:50px;
 }
 
-/* breathing glow animation */
-
+/* Glow animation */
 @keyframes glowPulse{
-  0%{
-    text-shadow:
-      0 0 8px #ff0000,
-      0 0 20px #990000,
-      0 0 40px #660000;
-  }
-  50%{
-    text-shadow:
-      0 0 14px #ff0000,
-      0 0 35px #cc0000,
-      0 0 60px #990000;
-  }
-  100%{
-    text-shadow:
-      0 0 8px #ff0000,
-      0 0 20px #990000,
-      0 0 40px #660000;
-  }
+  0%{text-shadow:0 0 8px #ff0000,0 0 20px #990000,0 0 40px #660000;}
+  50%{text-shadow:0 0 14px #ff0000,0 0 35px #cc0000,0 0 60px #990000;}
+  100%{text-shadow:0 0 8px #ff0000,0 0 20px #990000,0 0 40px #660000;}
 }
 
-/* title */
-
+/* Title */
 h1{
-  color:#ff1a1a;
   font-size:72px;
   margin:0;
   letter-spacing:3px;
   animation:glowPulse 4s infinite;
 }
 
-/* subtitle */
-
+/* Subtitle */
 .subtitle{
-  color:#ff1a1a;
   font-size:22px;
-  margin-top:12px;
-  opacity:0.9;
+  margin:10px 0 40px 0;
+  animation:glowPulse 4s infinite;
 }
 
-/* fold button */
-
+/* Fold Button */
 .fold-button{
-  margin-top:40px;
   display:flex;
   flex-direction:column;
   align-items:center;
   cursor:pointer;
   border:1px solid #ff1a1a;
-  padding:8px 20px; /* smaller padding = shorter box */
+  padding:8px 20px;
   transition:0.3s;
 }
 
@@ -78,21 +57,82 @@ h1{
   box-shadow:0 0 10px #ff0000;
 }
 
-/* fold button text */
+.fold-text{font-size:18px;}
+.fold-arrows{font-size:12px;margin-top:2px;}
 
-.fold-text{
-  color:#ff1a1a;
-  font-size:18px;
-  letter-spacing:1px;
+/* Grove Chamber */
+.grove-chamber{
+  display:none;
+  margin-top:30px;
+  width:80%;
 }
 
-/* arrows inside the button */
+/* Table */
+.table-container{
+  margin-top:20px;
+  border:1px solid #ff1a1a;
+  padding:20px;
+  text-align:left;
+  position:relative;
+  background:#000000ee;
+}
 
-.fold-arrows{
+.table-title{
+  font-size:16px;
+  text-align:center;
+  margin-bottom:10px;
+  font-style:italic;
+  animation:glowPulse 4s infinite;
+}
+
+/* Chat/Notes area */
+.notes{
+  border-top:1px solid #ff1a1a;
+  margin-top:10px;
+  padding-top:10px;
+  max-height:200px;
+  overflow-y:auto;
+  font-size:14px;
+}
+
+/* Input area */
+.note-input{
+  display:flex;
+  margin-top:10px;
+  gap:5px;
+  justify-content:center;
+}
+
+.note-input input{
+  padding:5px;
+  flex:1;
+  background:black;
+  border:1px solid #ff1a1a;
   color:#ff1a1a;
-  font-size:12px; /* smaller triangles */
-  margin-top:2px;
-  line-height:1;
+}
+
+.note-input button{
+  padding:5px 10px;
+  border:1px solid #ff1a1a;
+  cursor:pointer;
+  transition:.3s;
+  background:black;
+  color:#ff1a1a;
+}
+
+.note-input button:hover{
+  background:#110000;
+  box-shadow:0 0 8px #ff0000;
+}
+
+.note-message{
+  margin:2px 0;
+}
+
+.note-timestamp{
+  font-size:10px;
+  opacity:0.6;
+  margin-left:5px;
 }
 
 </style>
@@ -101,15 +141,64 @@ h1{
 <body>
 
 <h1>The Grove</h1>
+<div class="subtitle">by Bleedvow • GroveSigilOfficial</div>
 
-<div class="subtitle">
-by Bleedvow • GroveSigilOfficial
-</div>
-
-<div class="fold-button">
+<div class="fold-button" id="foldBtn">
   <div class="fold-text">Enter The Fold</div>
   <div class="fold-arrows">🔻🔻🔻</div>
 </div>
+
+<div class="grove-chamber" id="groveChamber">
+  <div class="table-container">
+    <div class="table-title">Carving: "Changes will be made. Temporarily."</div>
+    
+    <div class="notes" id="notes"></div>
+    
+    <div class="note-input">
+      <input type="text" id="nameInput" placeholder="Your Name">
+      <input type="text" id="messageInput" placeholder="Leave a temporary message...">
+      <button id="addNoteBtn">Leave Note</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const foldBtn = document.getElementById('foldBtn');
+const chamber = document.getElementById('groveChamber');
+
+foldBtn.addEventListener('click', () => {
+  chamber.style.display='block';
+  chamber.scrollIntoView({behavior:'smooth'});
+});
+
+// Simple temporary notes logic
+const addNoteBtn = document.getElementById('addNoteBtn');
+const notesEl = document.getElementById('notes');
+
+addNoteBtn.addEventListener('click', () => {
+  const name = document.getElementById('nameInput').value.trim() || "Anonymous";
+  const msg = document.getElementById('messageInput').value.trim();
+  if(!msg) return;
+  
+  const noteEl = document.createElement('div');
+  noteEl.classList.add('note-message');
+  
+  const now = new Date();
+  const timestamp = now.toLocaleTimeString();
+  
+  noteEl.innerHTML = `<strong>${name}</strong>: ${msg} <span class="note-timestamp">${timestamp}</span>`;
+  
+  notesEl.appendChild(noteEl);
+  
+  // Clear input
+  document.getElementById('messageInput').value='';
+  
+  // Auto-remove note after 24 hours (86400000ms)
+  setTimeout(() => {
+    noteEl.remove();
+  }, 86400000);
+});
+</script>
 
 </body>
 </html>

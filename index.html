@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>The Grove — Portal In Progress</title>
+<title>The Grove — Live Portal</title>
 
 <style>
 body {
@@ -70,23 +70,44 @@ h1{
 /* Table */
 .table-container{
   margin-top:20px;
-  border:1px solid #ff1a1a;
-  padding:20px;
-  text-align:left;
   position:relative;
+  width:100%;
+  max-width:800px;
+  border:2px solid #ff1a1a;
+  padding:20px;
   background:#000000ee;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  border-radius:8px;
 }
 
-.table-title{
-  font-size:16px;
-  text-align:center;
+/* Table image (optional carved look) */
+.table-img{
+  width:100%;
+  height:200px;
+  background:url('https://i.imgur.com/NxkB8Kc.png') center/cover no-repeat;
   margin-bottom:10px;
+  border-radius:8px;
+  position:relative;
+}
+
+/* Table title / carving text */
+.table-title{
+  position:absolute;
+  top:10px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:16px;
   font-style:italic;
   animation:glowPulse 4s infinite;
+  color:#ff1a1a;
+  text-shadow:0 0 10px #ff0000;
 }
 
 /* Chat/Notes area */
 .notes{
+  width:100%;
   border-top:1px solid #ff1a1a;
   margin-top:10px;
   padding-top:10px;
@@ -149,8 +170,11 @@ h1{
 </div>
 
 <div class="grove-chamber" id="groveChamber">
+
   <div class="table-container">
-    <div class="table-title">Carving: "Changes will be made. Temporarily."</div>
+    <div class="table-img">
+      <div class="table-title">Carving: "Changes will be made. Temporarily."</div>
+    </div>
     
     <div class="notes" id="notes"></div>
     
@@ -160,44 +184,67 @@ h1{
       <button id="addNoteBtn">Leave Note</button>
     </div>
   </div>
+
 </div>
 
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// ====== Setup Supabase ======
+const SUPABASE_URL = 'https://vltunwjftktmaaiicbny.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdHVud2pmdGt0bWFhaWljY255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDY5NjQsImV4cCI6MjA4NDcyMjk2NH0.hQcnLrb7TgH37eek5FOlOgtwKfE2IlEWzxG35vzqS7Q';
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ====== Fold button logic ======
 const foldBtn = document.getElementById('foldBtn');
 const chamber = document.getElementById('groveChamber');
-
 foldBtn.addEventListener('click', () => {
   chamber.style.display='block';
   chamber.scrollIntoView({behavior:'smooth'});
+  loadNotes();
 });
 
-// Simple temporary notes logic
+// ====== Notes logic ======
 const addNoteBtn = document.getElementById('addNoteBtn');
 const notesEl = document.getElementById('notes');
 
-addNoteBtn.addEventListener('click', () => {
-  const name = document.getElementById('nameInput').value.trim() || "Anonymous";
-  const msg = document.getElementById('messageInput').value.trim();
-  if(!msg) return;
-  
-  const noteEl = document.createElement('div');
-  noteEl.classList.add('note-message');
-  
-  const now = new Date();
-  const timestamp = now.toLocaleTimeString();
-  
-  noteEl.innerHTML = `<strong>${name}</strong>: ${msg} <span class="note-timestamp">${timestamp}</span>`;
-  
-  notesEl.appendChild(noteEl);
-  
-  // Clear input
-  document.getElementById('messageInput').value='';
-  
-  // Auto-remove note after 24 hours (86400000ms)
-  setTimeout(() => {
-    noteEl.remove();
-  }, 86400000);
+addNoteBtn.addEventListener('click', async () => {
+  const name = document.getElementById('nameInput').value.trim() || 'Anonymous';
+  const message = document.getElementById('messageInput').value.trim();
+  if(!message) return;
+
+  // Insert into Supabase table "grove_notes"
+  const {error} = await supabase.from('grove_notes').insert([
+    {name,message,created_at: new Date()}
+  ]);
+  if(error) console.error(error);
+
+  document.getElementById('messageInput').value = '';
+  loadNotes();
 });
+
+// Load notes
+async function loadNotes(){
+  const {data,error} = await supabase
+    .from('grove_notes')
+    .select('*')
+    .order('created_at',{ascending:true})
+    .gte('created_at', new Date(Date.now() - 24*60*60*1000).toISOString()); // last 24h
+
+  if(error) console.error(error);
+  
+  notesEl.innerHTML = '';
+  data.forEach(n=>{
+    const div = document.createElement('div');
+    div.classList.add('note-message');
+    const time = new Date(n.created_at).toLocaleTimeString();
+    div.innerHTML = `<strong>${n.name}</strong>: ${n.message} <span class="note-timestamp">${time}</span>`;
+    notesEl.appendChild(div);
+  });
+
+  // Scroll to bottom
+  notesEl.scrollTop = notesEl.scrollHeight;
+}
 </script>
 
 </body>

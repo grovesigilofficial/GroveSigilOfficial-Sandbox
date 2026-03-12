@@ -1,36 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Portal Auth</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>The Grove</title>
+
+<style>
+
+body{
+  margin:0;
+  height:100vh;
+  background:black;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  font-family:Georgia, serif;
+}
+
+h1{
+  color:#ff1a1a;
+  font-size:72px;
+  margin:0;
+  letter-spacing:2px;
+}
+
+p{
+  color:#ff1a1a;
+  font-size:24px;
+  margin-top:12px;
+  opacity:0.9;
+}
+
+</style>
 </head>
+
 <body>
 
-<h1>Portal</h1>
-
-<div class="box">
-  <h2>Signup</h2>
-  <input id="signup-email" placeholder="Email">
-  <input id="signup-password" type="password" placeholder="Password">
-  <button onclick="signup()">Signup</button>
-</div>
-
-<div class="box">
-  <h2>Login</h2>
-  <input id="login-email" placeholder="Email">
-  <input id="login-password" type="password" placeholder="Password">
-  <button onclick="login()">Login</button>
-</div>
-
-<div class="box">
-  <button onclick="logout()">Logout</button>
-</div>
-
-<pre id="output"></pre>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js"></script>
+<h1>The Grove</h1>
+<p>by Bleedvow • GroveSigilOfficial</p>
 
 </body>
 </html>

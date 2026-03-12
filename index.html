@@ -15,35 +15,84 @@ body{
   justify-content:center;
   flex-direction:column;
   font-family:Georgia, serif;
+  text-align:center;
 }
 
-/* main title */
+/* breathing glow animation */
+
+@keyframes glowPulse{
+  0%{
+    text-shadow:
+      0 0 8px #ff0000,
+      0 0 20px #990000,
+      0 0 40px #660000;
+  }
+  50%{
+    text-shadow:
+      0 0 14px #ff0000,
+      0 0 35px #cc0000,
+      0 0 60px #990000;
+  }
+  100%{
+    text-shadow:
+      0 0 8px #ff0000,
+      0 0 20px #990000,
+      0 0 40px #660000;
+  }
+}
+
+/* title */
 
 h1{
   color:#ff1a1a;
   font-size:72px;
   margin:0;
   letter-spacing:3px;
-  text-shadow:
-    0 0 8px #ff0000,
-    0 0 20px #990000,
-    0 0 40px #660000;
+  animation:glowPulse 4s infinite;
 }
 
 /* subtitle */
 
-p{
+.subtitle{
   color:#ff1a1a;
   font-size:22px;
-  margin-top:14px;
+  margin-top:12px;
   opacity:0.9;
-  text-shadow:0 0 6px #990000;
 }
 
-/* hidden sections for later */
+/* fold button */
 
-.section{
-  display:none;
+.fold-button{
+  margin-top:40px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  cursor:pointer;
+  border:1px solid #ff1a1a;
+  padding:8px 20px; /* smaller padding = shorter box */
+  transition:0.3s;
+}
+
+.fold-button:hover{
+  background:#110000;
+  box-shadow:0 0 10px #ff0000;
+}
+
+/* fold button text */
+
+.fold-text{
+  color:#ff1a1a;
+  font-size:18px;
+  letter-spacing:1px;
+}
+
+/* arrows inside the button */
+
+.fold-arrows{
+  color:#ff1a1a;
+  font-size:12px; /* smaller triangles */
+  margin-top:2px;
+  line-height:1;
 }
 
 </style>
@@ -51,11 +100,15 @@ p{
 
 <body>
 
-<div id="home">
-
 <h1>The Grove</h1>
-<p>by Bleedvow • GroveSigilOfficial</p>
 
+<div class="subtitle">
+by Bleedvow • GroveSigilOfficial
+</div>
+
+<div class="fold-button">
+  <div class="fold-text">Enter The Fold</div>
+  <div class="fold-arrows">🔻🔻🔻</div>
 </div>
 
 </body>

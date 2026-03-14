@@ -188,16 +188,16 @@ h1{
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ====== Setup Supabase ======
-const SUPABASE_URL = 'https://vltunwjftktmaaiiccny.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdHVud2pmdGt0bWFhaWljY255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDY5NjQsImV4cCI6MjA4NDcyMjk2NH0.hQcnLrb7TgH37eek5FOlOgtwKfE2IlEWzxG35vzqS7Q'; // <-- Replace with your anon key
+const SUPABASE_URL = 'https://vltunwjftktmaaiicbny.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdHVud2pmdGt0bWFhaWljY255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDY5NjQsImV4cCI6MjA4NDcyMjk2NH0.hQcnLrb7TgH37eek5FOlOgtwKfE2IlEWzxG35vzqS7Q';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ====== Fold button logic ======
 const foldBtn = document.getElementById('foldBtn');
 const chamber = document.getElementById('groveChamber');
 foldBtn.addEventListener('click', () => {
-  chamber.style.display='block';
-  chamber.scrollIntoView({behavior:'smooth'});
+  chamber.style.display = 'block';
+  chamber.scrollIntoView({ behavior: 'smooth' });
   loadNotes();
 });
 
@@ -208,26 +208,26 @@ const notesEl = document.getElementById('notes');
 addNoteBtn.addEventListener('click', async () => {
   const name = document.getElementById('nameInput').value.trim() || 'Anonymous';
   const message = document.getElementById('messageInput').value.trim();
-  if(!message) return;
+  if (!message) return;
 
   const { error } = await supabase.from('grove_notes').insert([
     { name, message, created_at: new Date() }
   ]);
 
-  if(error) console.error(error);
+  if (error) console.error(error);
   document.getElementById('messageInput').value = '';
   loadNotes();
 });
 
 // Load notes from last 24 hours
-async function loadNotes(){
+async function loadNotes() {
   const { data, error } = await supabase
     .from('grove_notes')
     .select('*')
-    .gte('created_at', new Date(Date.now() - 24*60*60*1000).toISOString())
-    .order('created_at', { ascending:true });
+    .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
+    .order('created_at', { ascending: true });
 
-  if(error) console.error(error);
+  if (error) console.error(error);
   notesEl.innerHTML = '';
 
   data.forEach(n => {

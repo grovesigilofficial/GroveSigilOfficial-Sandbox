@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>The Grove — Live Portal</title>
@@ -155,7 +155,6 @@ h1{
   opacity:0.6;
   margin-left:5px;
 }
-
 </style>
 </head>
 
@@ -170,7 +169,6 @@ h1{
 </div>
 
 <div class="grove-chamber" id="groveChamber">
-
   <div class="table-container">
     <div class="table-img">
       <div class="table-title">Carving: "Changes will be made. Temporarily."</div>
@@ -184,7 +182,6 @@ h1{
       <button id="addNoteBtn">Leave Note</button>
     </div>
   </div>
-
 </div>
 
 <!-- Supabase SDK -->
@@ -192,8 +189,8 @@ h1{
 <script>
 // ====== Setup Supabase ======
 const SUPABASE_URL = 'https://vltunwjftktmaaiicbny.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdHVud2pmdGt0bWFhaWljY255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDY5NjQsImV4cCI6MjA4NDcyMjk2NH0.hQcnLrb7TgH37eek5FOlOgtwKfE2IlEWzxG35vzqS7Q';
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_KEY = 'YOUR_ANON_KEY_HERE'; // <-- Replace with your anon key
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ====== Fold button logic ======
 const foldBtn = document.getElementById('foldBtn');
@@ -213,28 +210,27 @@ addNoteBtn.addEventListener('click', async () => {
   const message = document.getElementById('messageInput').value.trim();
   if(!message) return;
 
-  // Insert into Supabase table "grove_notes"
-  const {error} = await supabase.from('grove_notes').insert([
-    {name,message,created_at: new Date()}
+  const { error } = await supabase.from('grove_notes').insert([
+    { name, message, created_at: new Date() }
   ]);
-  if(error) console.error(error);
 
+  if(error) console.error(error);
   document.getElementById('messageInput').value = '';
   loadNotes();
 });
 
-// Load notes
+// Load notes from last 24 hours
 async function loadNotes(){
-  const {data,error} = await supabase
+  const { data, error } = await supabase
     .from('grove_notes')
     .select('*')
-    .order('created_at',{ascending:true})
-    .gte('created_at', new Date(Date.now() - 24*60*60*1000).toISOString()); // last 24h
+    .gte('created_at', new Date(Date.now() - 24*60*60*1000).toISOString())
+    .order('created_at', { ascending:true });
 
   if(error) console.error(error);
-  
   notesEl.innerHTML = '';
-  data.forEach(n=>{
+
+  data.forEach(n => {
     const div = document.createElement('div');
     div.classList.add('note-message');
     const time = new Date(n.created_at).toLocaleTimeString();
@@ -242,7 +238,6 @@ async function loadNotes(){
     notesEl.appendChild(div);
   });
 
-  // Scroll to bottom
   notesEl.scrollTop = notesEl.scrollHeight;
 }
 </script>

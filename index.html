@@ -3,29 +3,48 @@
 <head>
 <meta charset="UTF-8">
 <title>The Grove — Live Portal</title>
+
 <style>
-/* same CSS as before */
-body { margin:0; height:100vh; background:black; color:#ff1a1a; font-family:Georgia, serif; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding-top:50px;}
-@keyframes glowPulse{0%{text-shadow:0 0 8px #ff0000,0 0 20px #990000,0 0 40px #660000;}50%{text-shadow:0 0 14px #ff0000,0 0 35px #cc0000,0 0 60px #990000;}100%{text-shadow:0 0 8px #ff0000,0 0 20px #990000,0 0 40px #660000;}}
-h1{font-size:72px;margin:0;letter-spacing:3px;animation:glowPulse 4s infinite;}
-.subtitle{font-size:22px;margin:10px 0 40px 0;animation:glowPulse 4s infinite;}
-.fold-button{display:flex;flex-direction:column;align-items:center;cursor:pointer;border:1px solid #ff1a1a;padding:8px 20px;transition:0.3s;}
-.fold-button:hover{background:#110000;box-shadow:0 0 10px #ff0000;}
-.fold-text{font-size:18px;}
-.fold-arrows{font-size:12px;margin-top:2px;}
-.grove-chamber{display:none;margin-top:30px;width:80%;}
-.table-container{margin-top:20px;position:relative;width:100%;max-width:800px;border:2px solid #ff1a1a;padding:20px;background:#000000ee;display:flex;flex-direction:column;align-items:center;border-radius:8px;}
-.table-img{width:100%;height:200px;background:url('https://i.imgur.com/NxkB8Kc.png') center/cover no-repeat;margin-bottom:10px;border-radius:8px;position:relative;}
-.table-title{position:absolute;top:10px;left:50%;transform:translateX(-50%);font-size:16px;font-style:italic;animation:glowPulse 4s infinite;color:#ff1a1a;text-shadow:0 0 10px #ff0000;}
-.notes{width:100%;border-top:1px solid #ff1a1a;margin-top:10px;padding-top:10px;max-height:200px;overflow-y:auto;font-size:14px;}
-.note-input{display:flex;margin-top:10px;gap:5px;justify-content:center;}
-.note-input input{padding:5px;flex:1;background:black;border:1px solid #ff1a1a;color:#ff1a1a;}
-.note-input button{padding:5px 10px;border:1px solid #ff1a1a;cursor:pointer;transition:.3s;background:black;color:#ff1a1a;}
-.note-input button:hover{background:#110000;box-shadow:0 0 8px #ff0000;}
-.note-message{margin:2px 0;}
-.note-timestamp{font-size:10px;opacity:0.6;margin-left:5px;}
+body {
+  margin:0;
+  height:100vh;
+  background:black;
+  color:#ff1a1a;
+  font-family:Georgia, serif;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  padding-top:50px;
+}
+
+/* Glow animation */
+@keyframes glowPulse{
+  0%{text-shadow:0 0 8px #ff0000,0 0 20px #990000,0 0 40px #660000;}
+  50%{text-shadow:0 0 14px #ff0000,0 0 35px #cc0000,0 0 60px #990000;}
+  100%{text-shadow:0 0 8px #ff0000,0 0 20px #990000,0 0 40px #660000;}
+}
+
+h1{ font-size:72px; margin:0; letter-spacing:3px; animation:glowPulse 4s infinite;}
+.subtitle{ font-size:22px; margin:10px 0 40px 0; animation:glowPulse 4s infinite;}
+.fold-button{ display:flex; flex-direction:column; align-items:center; cursor:pointer; border:1px solid #ff1a1a; padding:8px 20px; transition:0.3s;}
+.fold-button:hover{ background:#110000; box-shadow:0 0 10px #ff0000;}
+.fold-text{font-size:18px;} .fold-arrows{font-size:12px;margin-top:2px;}
+.grove-chamber{ display:none; margin-top:30px; width:80%;}
+.table-container{ margin-top:20px; position:relative; width:100%; max-width:800px; border:2px solid #ff1a1a; padding:20px; background:#000000ee; display:flex; flex-direction:column; align-items:center; border-radius:8px;}
+.table-img{ width:100%; height:200px; background:url('https://i.imgur.com/NxkB8Kc.png') center/cover no-repeat; margin-bottom:10px; border-radius:8px; position:relative;}
+.table-title{ position:absolute; top:10px; left:50%; transform:translateX(-50%); font-size:16px; font-style:italic; animation:glowPulse 4s infinite; color:#ff1a1a; text-shadow:0 0 10px #ff0000;}
+.notes{ width:100%; border-top:1px solid #ff1a1a; margin-top:10px; padding-top:10px; max-height:200px; overflow-y:auto; font-size:14px;}
+.note-input{ display:flex; margin-top:10px; gap:5px; justify-content:center;}
+.note-input input{ padding:5px; flex:1; background:black; border:1px solid #ff1a1a; color:#ff1a1a;}
+.note-input button{ padding:5px 10px; border:1px solid #ff1a1a; cursor:pointer; transition:.3s; background:black; color:#ff1a1a;}
+.note-input button:hover{ background:#110000; box-shadow:0 0 8px #ff0000;}
+.note-message{ margin:2px 0;}
+.note-timestamp{ font-size:10px; opacity:0.6; margin-left:5px;}
 </style>
 </head>
+
 <body>
 
 <h1>The Grove</h1>
@@ -41,7 +60,9 @@ h1{font-size:72px;margin:0;letter-spacing:3px;animation:glowPulse 4s infinite;}
     <div class="table-img">
       <div class="table-title">Carving: "Changes will be made. Temporarily."</div>
     </div>
+    
     <div class="notes" id="notes"></div>
+    
     <div class="note-input">
       <input type="text" id="nameInput" placeholder="Your Name">
       <input type="text" id="messageInput" placeholder="Leave a temporary message...">
@@ -52,21 +73,21 @@ h1{font-size:72px;margin:0;letter-spacing:3px;animation:glowPulse 4s infinite;}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ====== Setup Supabase ======
+// ===== Supabase setup =====
 const SUPABASE_URL = 'https://vltunwjftktmaaiicbny.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdHVud2pmdGt0bWFhaWljY255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDY5NjQsImV4cCI6MjA4NDcyMjk2NH0.hQcnLrb7TgH37eek5FOlOgtwKfE2IlEWzxG35vzqS7Q';
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ====== Fold button ======
+// ===== Fold button logic =====
 const foldBtn = document.getElementById('foldBtn');
 const chamber = document.getElementById('groveChamber');
 foldBtn.addEventListener('click', () => {
-  chamber.style.display = 'block';
-  chamber.scrollIntoView({ behavior: 'smooth' });
+  chamber.style.display='block';
+  chamber.scrollIntoView({behavior:'smooth'});
   loadNotes();
 });
 
-// ====== Notes logic ======
+// ===== Notes logic =====
 const addNoteBtn = document.getElementById('addNoteBtn');
 const notesEl = document.getElementById('notes');
 
@@ -75,7 +96,7 @@ addNoteBtn.addEventListener('click', async () => {
   const message = document.getElementById('messageInput').value.trim();
   if(!message) return;
 
-  const { error } = await supabaseClient.from('grove_notes').insert([
+  const { error } = await supabase.from('grove_notes').insert([
     { name, message, created_at: new Date() }
   ]);
 
@@ -84,16 +105,17 @@ addNoteBtn.addEventListener('click', async () => {
   loadNotes();
 });
 
-// Load last 24h notes
-async function loadNotes() {
-  const { data, error } = await supabaseClient.from('grove_notes')
+// Load notes from last 24h
+async function loadNotes(){
+  const { data, error } = await supabase
+    .from('grove_notes')
     .select('*')
-    .gte('created_at', new Date(Date.now()-24*60*60*1000).toISOString())
-    .order('created_at',{ascending:true});
-    
-  if(error) console.error(error);
+    .gte('created_at', new Date(Date.now() - 24*60*60*1000).toISOString())
+    .order('created_at', { ascending:true });
 
+  if(error) console.error(error);
   notesEl.innerHTML = '';
+
   data.forEach(n => {
     const div = document.createElement('div');
     div.classList.add('note-message');

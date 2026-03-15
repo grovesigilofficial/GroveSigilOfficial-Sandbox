@@ -2,158 +2,74 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>The Grove — Live Portal</title>
+<title>The Grove Portal</title>
 
 <style>
-body {
+body{
   margin:0;
-  height:100vh;
   background:black;
   color:#ff1a1a;
   font-family:Georgia, serif;
   text-align:center;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-start;
-  padding-top:50px;
+  padding-top:60px;
 }
 
-/* Glow animation */
+/* glowing title */
 @keyframes glowPulse{
-  0%{text-shadow:0 0 8px #ff0000,0 0 20px #990000,0 0 40px #660000;}
-  50%{text-shadow:0 0 14px #ff0000,0 0 35px #cc0000,0 0 60px #990000;}
-  100%{text-shadow:0 0 8px #ff0000,0 0 20px #990000,0 0 40px #660000;}
+  0%{text-shadow:0 0 10px #ff0000,0 0 25px #990000;}
+  50%{text-shadow:0 0 20px #ff0000,0 0 45px #ff0000;}
+  100%{text-shadow:0 0 10px #ff0000,0 0 25px #990000;}
 }
 
-/* Title */
 h1{
   font-size:72px;
   margin:0;
-  letter-spacing:3px;
   animation:glowPulse 4s infinite;
 }
 
-/* Subtitle */
 .subtitle{
-  font-size:22px;
-  margin:10px 0 40px 0;
-  animation:glowPulse 4s infinite;
+  margin-bottom:40px;
+  opacity:.8;
 }
 
-/* Fold Button */
-.fold-button{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  cursor:pointer;
+button{
+  background:black;
   border:1px solid #ff1a1a;
-  padding:8px 20px;
-  transition:0.3s;
+  color:#ff1a1a;
+  padding:10px 20px;
+  cursor:pointer;
 }
 
-.fold-button:hover{
-  background:#110000;
-  box-shadow:0 0 10px #ff0000;
+button:hover{
+  box-shadow:0 0 10px red;
 }
 
-.fold-text{font-size:18px;}
-.fold-arrows{font-size:12px;margin-top:2px;}
-
-/* Grove Chamber */
-.grove-chamber{
+#groveChamber{
   display:none;
-  margin-top:30px;
-  width:80%;
+  margin-top:40px;
 }
 
-/* Table */
-.table-container{
-  margin-top:20px;
-  position:relative;
-  width:100%;
-  max-width:800px;
-  border:2px solid #ff1a1a;
-  padding:20px;
-  background:#000000ee;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  border-radius:8px;
-}
+/* notes table */
 
-/* Table image (optional carved look) */
-.table-img{
-  width:100%;
-  height:200px;
-  background:url('https://i.imgur.com/NxkB8Kc.png') center/cover no-repeat;
-  margin-bottom:10px;
-  border-radius:8px;
-  position:relative;
-}
-
-/* Table title / carving text */
-.table-title{
-  position:absolute;
-  top:10px;
-  left:50%;
-  transform:translateX(-50%);
-  font-size:16px;
-  font-style:italic;
-  animation:glowPulse 4s infinite;
-  color:#ff1a1a;
-  text-shadow:0 0 10px #ff0000;
-}
-
-/* Chat/Notes area */
-.notes{
-  width:100%;
-  border-top:1px solid #ff1a1a;
-  margin-top:10px;
-  padding-top:10px;
-  max-height:200px;
+#notes{
+  width:600px;
+  max-height:250px;
+  margin:auto;
   overflow-y:auto;
-  font-size:14px;
+  border:1px solid #ff1a1a;
+  padding:10px;
+  text-align:left;
 }
 
-/* Input area */
-.note-input{
-  display:flex;
-  margin-top:10px;
-  gap:5px;
-  justify-content:center;
+.note{
+  margin-bottom:6px;
 }
 
-.note-input input{
-  padding:5px;
-  flex:1;
+input{
   background:black;
   border:1px solid #ff1a1a;
   color:#ff1a1a;
-}
-
-.note-input button{
-  padding:5px 10px;
-  border:1px solid #ff1a1a;
-  cursor:pointer;
-  transition:.3s;
-  background:black;
-  color:#ff1a1a;
-}
-
-.note-input button:hover{
-  background:#110000;
-  box-shadow:0 0 8px #ff0000;
-}
-
-.note-message{
-  margin:2px 0;
-}
-
-.note-timestamp{
-  font-size:10px;
-  opacity:0.6;
-  margin-left:5px;
+  padding:6px;
 }
 </style>
 </head>
@@ -163,79 +79,107 @@ h1{
 <h1>The Grove</h1>
 <div class="subtitle">by Bleedvow • GroveSigilOfficial</div>
 
-<div class="fold-button" id="foldBtn">
-  <div class="fold-text">Enter The Fold</div>
-  <div class="fold-arrows">🔻🔻🔻</div>
+<button id="enterBtn">Enter The Fold</button>
+
+<div id="groveChamber">
+
+<br>
+
+<div id="notes"></div>
+
+<br>
+
+<input id="nameInput" placeholder="Name">
+
+<input id="messageInput" placeholder="Leave a message">
+
+<button id="addNoteBtn">Leave Note</button>
+
 </div>
 
-<div class="grove-chamber" id="groveChamber">
-  <div class="table-container">
-    <div class="table-img">
-      <div class="table-title">Carving: "Changes will be made. Temporarily."</div>
-    </div>
-    
-    <div class="notes" id="notes"></div>
-    
-    <div class="note-input">
-      <input type="text" id="nameInput" placeholder="Your Name">
-      <input type="text" id="messageInput" placeholder="Leave a temporary message...">
-      <button id="addNoteBtn">Leave Note</button>
-    </div>
-  </div>
-</div>
-
-<!-- Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
-const SUPABASE_URL = "https://vltunwjftktmaaiicbny.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdHVud2pmdGt0bWFhaWljY255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDY5NjQsImV4cCI6MjA4NDcyMjk2NH0.hQcnLrb7TgH37eek5FOlOgtwKfE2IlEWzxG35vzqS7Q";
 
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+/* YOUR SUPABASE PROJECT */
 
-const foldBtn = document.getElementById("foldBtn");
-const chamber = document.getElementById("groveChamber");
-const notesEl = document.getElementById("notes");
-const addBtn = document.getElementById("addNoteBtn");
+const SUPABASE_URL = "https://vltunwjftktmaaiicbny.supabase.co"
 
-foldBtn.addEventListener("click", () => {
-  chamber.style.display="block";
-  chamber.scrollIntoView({behavior:"smooth"});
-  loadNotes();
-});
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdHVud2pmdGt0bWFhaWljY255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDY5NjQsImV4cCI6MjA4NDcyMjk2NH0.hQcnLrb7TgH37eek5FOlOgtwKfE2IlEWzxG35vzqS7Q"
 
-addBtn.addEventListener("click", async () => {
-  const name = document.getElementById("nameInput").value.trim() || "Anonymous";
-  const message = document.getElementById("messageInput").value.trim();
-  if(!message) return;
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
 
-  const {error} = await supabase.from("grove_notes").insert([{name,message}]);
-  if(error){ console.error(error); alert("Insert failed"); return; }
+/* open chamber */
 
-  document.getElementById("messageInput").value="";
-  loadNotes();
-});
+const enterBtn = document.getElementById("enterBtn")
+const chamber = document.getElementById("groveChamber")
 
-async function loadNotes(){
-  const {data,error} = await supabase
-    .from("grove_notes")
-    .select("*")
-    .order("created_at",{ascending:true});
+enterBtn.onclick = () => {
 
-  if(error){ console.error(error); return; }
+  chamber.style.display="block"
 
-  notesEl.innerHTML="";
-  data.forEach(note=>{
-    const time = new Date(note.created_at).toLocaleTimeString();
-    const div = document.createElement("div");
-    div.className="note-message";
-    div.innerHTML=`<strong>${note.name}</strong>: ${note.message} <span class="note-timestamp">(${time})</span>`;
-    notesEl.appendChild(div);
-  });
-  notesEl.scrollTop = notesEl.scrollHeight;
+  loadNotes()
+
 }
 
-// Auto-load notes every 5 seconds
-setInterval(loadNotes,5000);
+/* add note */
+
+const addBtn = document.getElementById("addNoteBtn")
+
+addBtn.onclick = async () => {
+
+  const name =
+  document.getElementById("nameInput").value || "Anonymous"
+
+  const message =
+  document.getElementById("messageInput").value
+
+  if(!message) return
+
+  await supabaseClient
+  .from("grove_notes")
+  .insert([{name,message}])
+
+  document.getElementById("messageInput").value=""
+
+  loadNotes()
+
+}
+
+/* load notes */
+
+async function loadNotes(){
+
+  const {data} =
+  await supabaseClient
+  .from("grove_notes")
+  .select("*")
+  .order("created_at",{ascending:true})
+
+  const notes = document.getElementById("notes")
+
+  notes.innerHTML=""
+
+  data.forEach(note=>{
+
+    const div=document.createElement("div")
+
+    div.className="note"
+
+    const time =
+    new Date(note.created_at).toLocaleTimeString()
+
+    div.innerHTML =
+    "<b>"+note.name+"</b>: "+
+    note.message+
+    " <span style='opacity:.6;font-size:10px'>("+time+")</span>"
+
+    notes.appendChild(div)
+
+  })
+
+}
+
 </script>
 
 </body>

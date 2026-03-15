@@ -102,81 +102,66 @@ input{
 <script>
 
 /* YOUR SUPABASE PROJECT */
+const SUPABASE_URL = "https://vltunwjftktmaaiicbny.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdHVud2pmdGt0bWFhaWljY255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDY5NjQsImV4cCI6MjA4NDcyMjk2NH0.hQcnLrb7TgH37eek5FOlOgtwKfE2IlEWzxG35vzqS7Q";
 
-const SUPABASE_URL = "https://vltunwjftktmaaiicbny.supabase.co"
-
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdHVud2pmdGt0bWFhaWljY255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDY5NjQsImV4cCI6MjA4NDcyMjk2NH0.hQcnLrb7TgH37eek5FOlOgtwKfE2IlEWzxG35vzqS7Q"
-
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 /* open chamber */
-
-const enterBtn = document.getElementById("enterBtn")
-const chamber = document.getElementById("groveChamber")
+const enterBtn = document.getElementById("enterBtn");
+const chamber = document.getElementById("groveChamber");
 
 enterBtn.onclick = () => {
-
-  chamber.style.display="block"
-
-  loadNotes()
-
+  chamber.style.display="block";
+  loadNotes();
 }
 
 /* add note */
-
-const addBtn = document.getElementById("addNoteBtn")
+const addBtn = document.getElementById("addNoteBtn");
 
 addBtn.onclick = async () => {
+  const name = document.getElementById("nameInput").value || "Anonymous";
+  const message = document.getElementById("messageInput").value;
+  if(!message) return;
 
-  const name =
-  document.getElementById("nameInput").value || "Anonymous"
+  const { error } = await supabaseClient
+    .from("grove_notes")
+    .insert([{name, message, created_at: new Date().toISOString()}]);
 
-  const message =
-  document.getElementById("messageInput").value
+  if(error){
+    console.error("Insert failed:", error);
+    alert("Failed to save message. Check console.");
+    return;
+  }
 
-  if(!message) return
-
-  await supabaseClient
-  .from("grove_notes")
-  .insert([{name,message}])
-
-  document.getElementById("messageInput").value=""
-
-  loadNotes()
-
+  document.getElementById("messageInput").value="";
+  loadNotes();
 }
 
 /* load notes */
-
 async function loadNotes(){
+  const {data, error} = await supabaseClient
+    .from("grove_notes")
+    .select("*")
+    .order("created_at",{ascending:true});
 
-  const {data} =
-  await supabaseClient
-  .from("grove_notes")
-  .select("*")
-  .order("created_at",{ascending:true})
+  const notes = document.getElementById("notes");
+  notes.innerHTML="";
 
-  const notes = document.getElementById("notes")
-
-  notes.innerHTML=""
+  if(error){
+    notes.innerHTML="<div style='color:red;'>Failed to load notes</div>";
+    console.error(error);
+    return;
+  }
 
   data.forEach(note=>{
-
-    const div=document.createElement("div")
-
-    div.className="note"
-
-    const time =
-    new Date(note.created_at).toLocaleTimeString()
-
-    div.innerHTML =
-    "<b>"+note.name+"</b>: "+
-    note.message+
-    " <span style='opacity:.6;font-size:10px'>("+time+")</span>"
-
-    notes.appendChild(div)
-
-  })
+    const div=document.createElement("div");
+    div.className="note";
+    const time = new Date(note.created_at).toLocaleTimeString();
+    div.innerHTML="<b>"+note.name+"</b>: "+note.message+
+                  " <span style='opacity:.6;font-size:10px'>("+time+")</span>";
+    notes.appendChild(div);
+  });
 
 }
 

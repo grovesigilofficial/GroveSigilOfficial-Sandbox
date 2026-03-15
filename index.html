@@ -5,7 +5,7 @@
 <title>The Grove Portal</title>
 
 <style>
-body{
+body {
   margin:0;
   background:black;
   color:#ff1a1a;
@@ -14,24 +14,25 @@ body{
   padding-top:60px;
 }
 
-@keyframes glowPulse{
+/* Glow animation for title */
+@keyframes glowPulse {
   0%{text-shadow:0 0 10px #ff0000,0 0 25px #990000;}
   50%{text-shadow:0 0 20px #ff0000,0 0 45px #ff0000;}
   100%{text-shadow:0 0 10px #ff0000,0 0 25px #990000;}
 }
 
-h1{
+h1 {
   font-size:72px;
   margin:0;
   animation:glowPulse 4s infinite;
 }
 
-.subtitle{
+.subtitle {
   margin-bottom:40px;
   opacity:.8;
 }
 
-button{
+button {
   background:black;
   border:1px solid #ff1a1a;
   color:#ff1a1a;
@@ -39,16 +40,17 @@ button{
   cursor:pointer;
 }
 
-button:hover{
+button:hover {
   box-shadow:0 0 10px red;
 }
 
-#groveChamber{
+#groveChamber {
   display:none;
   margin-top:40px;
 }
 
-#notes{
+/* Notes box */
+#notes {
   width:600px;
   max-height:250px;
   margin:auto;
@@ -58,11 +60,11 @@ button:hover{
   text-align:left;
 }
 
-.note{
+.note {
   margin-bottom:6px;
 }
 
-input{
+input {
   background:black;
   border:1px solid #ff1a1a;
   color:#ff1a1a;
@@ -89,75 +91,75 @@ input{
   <button id="addNoteBtn">Leave Note</button>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1.35.6/dist/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const SUPABASE_URL = "https://vltunwjftktmaaiicbny.supabase.co";
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdHVud2pmdGt0bWFhaWljY255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDY5NjQsImV4cCI6MjA4NDcyMjk2NH0.hQcnLrb7TgH37eek5FOlOgtwKfE2IlEWzxG35vzqS7Q";
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+/* Supabase setup */
+const SUPABASE_URL = "https://vltunwjftktmaaiicbny.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdHVud2pmdGt0bWFhaWljY255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDY5NjQsImV4cCI6MjA4NDcyMjk2NH0.hQcnLrb7TgH37eek5FOlOgtwKfE2IlEWzxG35vzqS7Q";
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  const enterBtn = document.getElementById("enterBtn");
-  const chamber = document.getElementById("groveChamber");
-  const notesEl = document.getElementById("notes");
-  const addBtn = document.getElementById("addNoteBtn");
-  const nameInput = document.getElementById("nameInput");
-  const messageInput = document.getElementById("messageInput");
+/* Elements */
+const enterBtn = document.getElementById("enterBtn");
+const chamber = document.getElementById("groveChamber");
+const notesEl = document.getElementById("notes");
+const addBtn = document.getElementById("addNoteBtn");
 
-  // Show chamber
-  enterBtn.addEventListener("click", () => {
-    chamber.style.display = "block";
+/* Show chamber */
+enterBtn.onclick = () => {
+  chamber.style.display = "block";
+  loadNotes();
+};
+
+/* Add note */
+addBtn.onclick = async () => {
+  const name = document.getElementById("nameInput").value.trim() || "Anonymous";
+  const message = document.getElementById("messageInput").value.trim();
+  if(!message) return;
+
+  try {
+    const { error } = await supabase
+      .from("grove_notes")
+      .insert([{ name, message }]);
+
+    if(error) throw error;
+
+    document.getElementById("messageInput").value = "";
     loadNotes();
-  });
-
-  // Add note
-  addBtn.addEventListener("click", async () => {
-    const name = nameInput.value.trim() || "Anonymous";
-    const message = messageInput.value.trim();
-    if(!message) return;
-
-    try {
-      const { data, error } = await supabase
-        .from("grove_notes")
-        .insert([{ name, message }]);
-
-      if(error) throw error;
-
-      messageInput.value = "";
-      loadNotes();
-    } catch (err) {
-      notesEl.innerHTML = "Failed to submit note. Check console.";
-      console.error(err);
-    }
-  });
-
-  // Load notes
-  async function loadNotes() {
-    notesEl.innerHTML = "Loading notes...";
-    try {
-      const { data, error } = await supabase
-        .from("grove_notes")
-        .select("*")
-        .order("created_at", { ascending: true });
-
-      if(error) throw error;
-
-      notesEl.innerHTML = "";
-      data.forEach(note => {
-        const div = document.createElement("div");
-        div.className = "note";
-        const time = new Date(note.created_at).toLocaleTimeString();
-        div.innerHTML = `<b>${note.name}</b>: ${note.message} <span style="opacity:.6;font-size:10px">(${time})</span>`;
-        notesEl.appendChild(div);
-      });
-
-      notesEl.scrollTop = notesEl.scrollHeight;
-    } catch (err) {
-      notesEl.innerHTML = "Failed to load notes. Check console.";
-      console.error(err);
-    }
+  } catch (err) {
+    notesEl.innerHTML = "Failed to submit note. Check console.";
+    console.error(err);
   }
-});
+};
+
+/* Load notes */
+async function loadNotes() {
+  notesEl.innerHTML = "Loading notes...";
+  try {
+    const { data, error } = await supabase
+      .from("grove_notes")
+      .select("*")
+      .order("created_at", { ascending: true });
+
+    if(error) throw error;
+
+    notesEl.innerHTML = "";
+    if(data.length === 0) notesEl.innerHTML = "No notes yet.";
+
+    data.forEach(note => {
+      const div = document.createElement("div");
+      div.className = "note";
+      const time = new Date(note.created_at).toLocaleTimeString();
+      div.innerHTML = `<b>${note.name}</b>: ${note.message} <span style="opacity:.6;font-size:10px">(${time})</span>`;
+      notesEl.appendChild(div);
+    });
+
+    notesEl.scrollTop = notesEl.scrollHeight;
+  } catch (err) {
+    notesEl.innerHTML = "Failed to load notes. Check console.";
+    console.error(err);
+  }
+}
 </script>
 
 </body>

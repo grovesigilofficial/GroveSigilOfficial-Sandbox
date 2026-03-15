@@ -82,7 +82,7 @@ h1{
   border-radius:8px;
 }
 
-/* Table image (optional carved look) */
+/* Table image */
 .table-img{
   width:100%;
   height:200px;
@@ -92,7 +92,7 @@ h1{
   position:relative;
 }
 
-/* Table title / carving text */
+/* Table title */
 .table-title{
   position:absolute;
   top:10px;
@@ -105,7 +105,7 @@ h1{
   text-shadow:0 0 10px #ff0000;
 }
 
-/* Chat/Notes area */
+/* Notes area */
 .notes{
   width:100%;
   border-top:1px solid #ff1a1a;
@@ -173,9 +173,9 @@ h1{
     <div class="table-img">
       <div class="table-title">Carving: "Changes will be made. Temporarily."</div>
     </div>
-    
+
     <div class="notes" id="notes"></div>
-    
+
     <div class="note-input">
       <input type="text" id="nameInput" placeholder="Your Name">
       <input type="text" id="messageInput" placeholder="Leave a temporary message...">
@@ -187,55 +187,69 @@ h1{
 <!-- Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL = "https://vltunwjftktmaaiicbny.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdHVud2pmdGt0bWFhaWljY255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDY5NjQsImV4cCI6MjA4NDcyMjk2NH0.hQcnLrb7TgH37eek5FOlOgtwKfE2IlEWzxG35vzqS7Q";
-
+// ====== Setup Supabase ======
+const SUPABASE_URL = 'https://vltunwjftktmaaiicbny.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdHVud2pmdGt0bWFhaWljY255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDY5NjQsImV4cCI6MjA4NDcyMjk2NH0.hQcnLrb7TgH37eek5FOlOgtwKfE2IlEWzxG35vzqS7Q';
 const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const foldBtn = document.getElementById("foldBtn");
-const chamber = document.getElementById("groveChamber");
-const notesEl = document.getElementById("notes");
-const addBtn = document.getElementById("addNoteBtn");
+// ====== Fold button logic ======
+const foldBtn = document.getElementById('foldBtn');
+const chamber = document.getElementById('groveChamber');
 
-foldBtn.addEventListener("click", () => {
-  chamber.style.display="block";
-  chamber.scrollIntoView({behavior:"smooth"});
+foldBtn.addEventListener('click', () => {
+  chamber.style.display = 'block';
+  chamber.scrollIntoView({behavior:'smooth'});
   loadNotes();
 });
 
-addBtn.addEventListener("click", async () => {
-  const name = document.getElementById("nameInput").value.trim() || "Anonymous";
-  const message = document.getElementById("messageInput").value.trim();
-  if(!message) return;
+// ====== Notes logic ======
+const addNoteBtn = document.getElementById('addNoteBtn');
+const notesEl = document.getElementById('notes');
 
-  const {error} = await supabase.from("grove_notes").insert([{name,message}]);
-  if(error){ console.error(error); alert("Insert failed"); return; }
+addNoteBtn.addEventListener('click', async () => {
+  const name = document.getElementById('nameInput').value.trim() || 'Anonymous';
+  const message = document.getElementById('messageInput').value.trim();
+  if (!message) return;
 
-  document.getElementById("messageInput").value="";
+  const { error } = await supabase.from('grove_notes').insert([
+    { name, message, created_at: new Date() }
+  ]);
+
+  if (error) {
+    console.error('Insert error:', error);
+    alert('Failed to save note. Check console.');
+    return;
+  }
+
+  document.getElementById('messageInput').value = '';
   loadNotes();
 });
 
-async function loadNotes(){
-  const {data,error} = await supabase
-    .from("grove_notes")
-    .select("*")
-    .order("created_at",{ascending:true});
+// Load notes from last 24 hours
+async function loadNotes() {
+  const { data, error } = await supabase
+    .from('grove_notes')
+    .select('*')
+    .gte('created_at', new Date(Date.now() - 24*60*60*1000).toISOString())
+    .order('created_at', { ascending:true });
 
-  if(error){ console.error(error); return; }
+  if (error) {
+    console.error('Load error:', error);
+    notesEl.innerHTML = '<div style="color:red;">Failed to load notes.</div>';
+    return;
+  }
 
-  notesEl.innerHTML="";
-  data.forEach(note=>{
-    const time = new Date(note.created_at).toLocaleTimeString();
-    const div = document.createElement("div");
-    div.className="note-message";
-    div.innerHTML=`<strong>${note.name}</strong>: ${note.message} <span class="note-timestamp">(${time})</span>`;
+  notesEl.innerHTML = '';
+  data.forEach(n => {
+    const div = document.createElement('div');
+    div.classList.add('note-message');
+    const time = new Date(n.created_at).toLocaleTimeString();
+    div.innerHTML = `<strong>${n.name}</strong>: ${n.message} <span class="note-timestamp">${time}</span>`;
     notesEl.appendChild(div);
   });
+
   notesEl.scrollTop = notesEl.scrollHeight;
 }
-
-// Auto-load notes every 5 seconds
-setInterval(loadNotes,5000);
 </script>
 
 </body>

@@ -5,7 +5,7 @@
 <title>The Grove Portal</title>
 
 <style>
-body{
+body {
   margin:0;
   background:black;
   color:#ff1a1a;
@@ -21,18 +21,18 @@ body{
   100%{text-shadow:0 0 10px #ff0000,0 0 25px #990000;}
 }
 
-h1{
+h1 {
   font-size:72px;
   margin:0;
   animation:glowPulse 4s infinite;
 }
 
-.subtitle{
+.subtitle {
   margin-bottom:40px;
   opacity:.8;
 }
 
-button{
+button {
   background:black;
   border:1px solid #ff1a1a;
   color:#ff1a1a;
@@ -40,18 +40,17 @@ button{
   cursor:pointer;
 }
 
-button:hover{
+button:hover {
   box-shadow:0 0 10px red;
 }
 
-#groveChamber{
+#groveChamber {
   display:none;
   margin-top:40px;
 }
 
-/* notes table */
-
-#notes{
+/* notes box */
+#notes {
   width:600px;
   max-height:250px;
   margin:auto;
@@ -61,11 +60,11 @@ button:hover{
   text-align:left;
 }
 
-.note{
+.note {
   margin-bottom:6px;
 }
 
-input{
+input {
   background:black;
   border:1px solid #ff1a1a;
   color:#ff1a1a;
@@ -84,49 +83,49 @@ input{
 <button id="enterBtn">Enter The Fold</button>
 
 <div id="groveChamber">
-
-<br>
-
-<div id="notes">Loading notes...</div>
-
-<br>
-
-<input id="nameInput" placeholder="Name">
-<input id="messageInput" placeholder="Leave a message">
-<button id="addNoteBtn">Leave Note</button>
-
+  <br>
+  <div id="notes">Loading notes...</div>
+  <br>
+  <input id="nameInput" placeholder="Name">
+  <input id="messageInput" placeholder="Leave a message">
+  <button id="addNoteBtn">Leave Note</button>
 </div>
 
+<!-- Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
+// ====== Supabase setup ======
 const SUPABASE_URL = "https://vltunwjftktmaaiicbny.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdHVud2pmdGt0bWFhaWljY255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDY5NjQsImV4cCI6MjA4NDcyMjk2NH0.hQcnLrb7TgH37eek5FOlOgtwKfE2IlEWzxG35vzqS7Q";
 
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// Correct client initialization
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// ====== DOM elements ======
 const enterBtn = document.getElementById("enterBtn");
 const chamber = document.getElementById("groveChamber");
 const notesEl = document.getElementById("notes");
 const addBtn = document.getElementById("addNoteBtn");
 
+// ====== Show Grove Chamber ======
 enterBtn.onclick = () => {
   chamber.style.display = "block";
   loadNotes();
 };
 
-/* Add note */
+// ====== Add a note ======
 addBtn.onclick = async () => {
   const name = document.getElementById("nameInput").value.trim() || "Anonymous";
   const message = document.getElementById("messageInput").value.trim();
-  if(!message) return;
+  if (!message) return;
 
   try {
     const { error } = await supabase
       .from("grove_notes")
       .insert([{ name, message }]);
 
-    if(error) throw error;
+    if (error) throw error;
 
     document.getElementById("messageInput").value = "";
     loadNotes();
@@ -136,7 +135,7 @@ addBtn.onclick = async () => {
   }
 };
 
-/* Load notes */
+// ====== Load notes ======
 async function loadNotes() {
   notesEl.innerHTML = "Loading notes...";
   try {
@@ -145,7 +144,7 @@ async function loadNotes() {
       .select("*")
       .order("created_at", { ascending: true });
 
-    if(error) throw error;
+    if (error) throw error;
 
     notesEl.innerHTML = "";
     data.forEach(note => {

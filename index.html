@@ -2,92 +2,145 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>The Grove Test</title>
+<title>The Grove Portal</title>
 <style>
-body {
-  background: black;
-  color: #ff1a1a;
-  font-family: Georgia, serif;
-  text-align: center;
-  padding: 40px;
+body{
+  margin:0;
+  background:black;
+  color:#ff1a1a;
+  font-family:Georgia, serif;
+  text-align:center;
+  padding-top:60px;
 }
 
-h1 { font-size: 48px; margin-bottom: 20px; }
-input, button { padding: 8px; margin: 5px; }
-input { width: 200px; border: 1px solid #ff1a1a; background: black; color: #ff1a1a; }
-button { border: 1px solid #ff1a1a; background: black; color: #ff1a1a; cursor: pointer; }
-#messages { border: 1px solid #ff1a1a; padding: 10px; width: 300px; margin: 20px auto; max-height: 200px; overflow-y: auto; text-align: left; }
-.message { margin-bottom: 6px; }
+@keyframes glowPulse{
+  0%{text-shadow:0 0 10px #ff0000,0 0 25px #990000;}
+  50%{text-shadow:0 0 20px #ff0000,0 0 45px #ff0000;}
+  100%{text-shadow:0 0 10px #ff0000,0 0 25px #990000;}
+}
+
+h1{ font-size:72px; margin:0; animation:glowPulse 4s infinite; }
+.subtitle{ margin-bottom:40px; opacity:.8; }
+
+button{
+  background:black;
+  border:1px solid #ff1a1a;
+  color:#ff1a1a;
+  padding:10px 20px;
+  cursor:pointer;
+}
+
+button:hover{ box-shadow:0 0 10px red; }
+
+#groveChamber{ display:none; margin-top:40px; }
+#notes{
+  width:600px;
+  max-height:250px;
+  margin:auto;
+  overflow-y:auto;
+  border:1px solid #ff1a1a;
+  padding:10px;
+  text-align:left;
+}
+.note{ margin-bottom:6px; }
+input{
+  background:black;
+  border:1px solid #ff1a1a;
+  color:#ff1a1a;
+  padding:6px;
+  margin:4px 0;
+  width:calc(100% - 14px);
+}
+.fold-button{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  cursor:pointer;
+  border:1px solid #ff1a1a;
+  padding:10px 25px;
+  margin-bottom:20px;
+}
+.fold-arrows{ font-size:18px; }
 </style>
 </head>
 <body>
 
 <h1>The Grove Test</h1>
+<div class="subtitle">by Bleedvow • GroveSigilOfficial</div>
 
-<input type="text" id="msgInput" placeholder="Write a message">
-<button id="submitBtn">Send</button>
+<div class="fold-button" id="enterBtn">
+  <div>Enter The Fold</div>
+  <div class="fold-arrows">🔻🔻🔻</div>
+</div>
 
-<div id="messages">Loading messages...</div>
+<div id="groveChamber">
+  <div id="notes">Loading messages...</div>
+  <input id="nameInput" placeholder="Name">
+  <input id="messageInput" placeholder="Leave a message">
+  <button id="addNoteBtn">Send</button>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// --- Supabase setup ---
 const SUPABASE_URL = "https://vltunwjftktmaaiicbny.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdHVud2pmdGt0bWFhaWljY255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDY5NjQsImV4cCI6MjA4NDcyMjk2NH0.hQcnLrb7TgH37eek5FOlOgtwKfE2IlEWzxG35vzqS7Q";
+
 const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// --- Elements ---
-const msgInput = document.getElementById("msgInput");
-const submitBtn = document.getElementById("submitBtn");
-const messagesEl = document.getElementById("messages");
+const enterBtn = document.getElementById("enterBtn");
+const chamber = document.getElementById("groveChamber");
+const notesEl = document.getElementById("notes");
+const addBtn = document.getElementById("addNoteBtn");
+const nameInput = document.getElementById("nameInput");
+const messageInput = document.getElementById("messageInput");
 
-// --- Load messages ---
-async function loadMessages() {
-  messagesEl.innerHTML = "Loading messages...";
-  try {
-    const { data, error } = await supabase
-      .from("grove_test_messages")
-      .select("*")
-      .order("created_at", { ascending: true });
+enterBtn.onclick = () => {
+  chamber.style.display = "block";
+  loadNotes();
+};
 
-    if(error) throw error;
-
-    messagesEl.innerHTML = "";
-    data.forEach(m => {
-      const div = document.createElement("div");
-      div.className = "message";
-      div.textContent = m.message + " (" + new Date(m.created_at).toLocaleTimeString() + ")";
-      messagesEl.appendChild(div);
-    });
-  } catch (err) {
-    messagesEl.innerHTML = "Failed to load messages. Check console.";
-    console.error(err);
-  }
-}
-
-// --- Submit message ---
-submitBtn.onclick = async () => {
-  const message = msgInput.value.trim();
+addBtn.onclick = async () => {
+  const name = nameInput.value.trim() || "Anonymous";
+  const message = messageInput.value.trim();
   if(!message) return;
 
   try {
     const { error } = await supabase
       .from("grove_test_messages")
-      .insert([{ message }]);
-
+      .insert([{ name, message }]);
     if(error) throw error;
 
-    msgInput.value = "";
-    loadMessages();
-  } catch(err) {
-    messagesEl.innerHTML = "Failed to submit message. Check console.";
+    messageInput.value = "";
+    loadNotes();
+  } catch (err) {
+    notesEl.innerHTML = "Failed to send message. Check console.";
     console.error(err);
   }
 };
 
-// Initial load
-loadMessages();
-</script>
+async function loadNotes() {
+  notesEl.innerHTML = "Loading messages...";
+  try {
+    const { data, error } = await supabase
+      .from("grove_test_messages")
+      .select("*")
+      .order("created_at", { ascending:true });
+    if(error) throw error;
 
+    notesEl.innerHTML = "";
+    data.forEach(note => {
+      const time = new Date(note.created_at).toLocaleTimeString();
+      const div = document.createElement("div");
+      div.className = "note";
+      div.innerHTML = `<b>${note.name}</b>: ${note.message} <span style="opacity:.6;font-size:10px">(${time})</span>`;
+      notesEl.appendChild(div);
+    });
+    notesEl.scrollTop = notesEl.scrollHeight;
+  } catch(err){
+    notesEl.innerHTML = "Failed to load messages. Check console.";
+    console.error(err);
+  }
+}
+</script>
 </body>
 </html>

@@ -26,22 +26,135 @@ body {
   100%{text-shadow:0 0 8px #ff0000,0 0 20px #990000,0 0 40px #660000;}
 }
 
-h1{ font-size:72px; margin:0; letter-spacing:3px; animation:glowPulse 4s infinite;}
-.subtitle{ font-size:22px; margin:10px 0 40px 0; animation:glowPulse 4s infinite;}
-.fold-button{ display:flex; flex-direction:column; align-items:center; cursor:pointer; border:1px solid #ff1a1a; padding:8px 20px; transition:0.3s;}
-.fold-button:hover{ background:#110000; box-shadow:0 0 10px #ff0000;}
-.fold-text{font-size:18px;} .fold-arrows{font-size:12px;margin-top:2px;}
-.grove-chamber{ display:none; margin-top:30px; width:80%;}
-.table-container{ margin-top:20px; position:relative; width:100%; max-width:800px; border:2px solid #ff1a1a; padding:20px; background:#000000ee; display:flex; flex-direction:column; align-items:center; border-radius:8px;}
-.table-img{ width:100%; height:200px; background:url('https://i.imgur.com/NxkB8Kc.png') center/cover no-repeat; margin-bottom:10px; border-radius:8px; position:relative;}
-.table-title{ position:absolute; top:10px; left:50%; transform:translateX(-50%); font-size:16px; font-style:italic; animation:glowPulse 4s infinite; color:#ff1a1a; text-shadow:0 0 10px #ff0000;}
-.notes{ width:100%; border-top:1px solid #ff1a1a; margin-top:10px; padding-top:10px; max-height:200px; overflow-y:auto; font-size:14px;}
-.note-input{ display:flex; margin-top:10px; gap:5px; justify-content:center;}
-.note-input input{ padding:5px; flex:1; background:black; border:1px solid #ff1a1a; color:#ff1a1a;}
-.note-input button{ padding:5px 10px; border:1px solid #ff1a1a; cursor:pointer; transition:.3s; background:black; color:#ff1a1a;}
-.note-input button:hover{ background:#110000; box-shadow:0 0 8px #ff0000;}
-.note-message{ margin:2px 0;}
-.note-timestamp{ font-size:10px; opacity:0.6; margin-left:5px;}
+/* Title */
+h1{
+  font-size:72px;
+  margin:0;
+  letter-spacing:3px;
+  animation:glowPulse 4s infinite;
+}
+
+/* Subtitle */
+.subtitle{
+  font-size:22px;
+  margin:10px 0 40px 0;
+  animation:glowPulse 4s infinite;
+}
+
+/* Fold Button */
+.fold-button{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  cursor:pointer;
+  border:1px solid #ff1a1a;
+  padding:8px 20px;
+  transition:0.3s;
+}
+
+.fold-button:hover{
+  background:#110000;
+  box-shadow:0 0 10px #ff0000;
+}
+
+.fold-text{font-size:18px;}
+.fold-arrows{font-size:12px;margin-top:2px;}
+
+/* Grove Chamber */
+.grove-chamber{
+  display:none;
+  margin-top:30px;
+  width:80%;
+}
+
+/* Table */
+.table-container{
+  margin-top:20px;
+  position:relative;
+  width:100%;
+  max-width:800px;
+  border:2px solid #ff1a1a;
+  padding:20px;
+  background:#000000ee;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  border-radius:8px;
+}
+
+/* Table image (optional carved look) */
+.table-img{
+  width:100%;
+  height:200px;
+  background:url('https://i.imgur.com/NxkB8Kc.png') center/cover no-repeat;
+  margin-bottom:10px;
+  border-radius:8px;
+  position:relative;
+}
+
+/* Table title / carving text */
+.table-title{
+  position:absolute;
+  top:10px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:16px;
+  font-style:italic;
+  animation:glowPulse 4s infinite;
+  color:#ff1a1a;
+  text-shadow:0 0 10px #ff0000;
+}
+
+/* Chat/Notes area */
+.notes{
+  width:100%;
+  border-top:1px solid #ff1a1a;
+  margin-top:10px;
+  padding-top:10px;
+  max-height:200px;
+  overflow-y:auto;
+  font-size:14px;
+}
+
+/* Input area */
+.note-input{
+  display:flex;
+  margin-top:10px;
+  gap:5px;
+  justify-content:center;
+}
+
+.note-input input{
+  padding:5px;
+  flex:1;
+  background:black;
+  border:1px solid #ff1a1a;
+  color:#ff1a1a;
+}
+
+.note-input button{
+  padding:5px 10px;
+  border:1px solid #ff1a1a;
+  cursor:pointer;
+  transition:.3s;
+  background:black;
+  color:#ff1a1a;
+}
+
+.note-input button:hover{
+  background:#110000;
+  box-shadow:0 0 8px #ff0000;
+}
+
+.note-message{
+  margin:2px 0;
+}
+
+.note-timestamp{
+  font-size:10px;
+  opacity:0.6;
+  margin-left:5px;
+}
 </style>
 </head>
 
@@ -71,14 +184,15 @@ h1{ font-size:72px; margin:0; letter-spacing:3px; animation:glowPulse 4s infinit
   </div>
 </div>
 
+<!-- Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ===== Supabase setup =====
+// ====== Setup Supabase ======
 const SUPABASE_URL = 'https://vltunwjftktmaaiicbny.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdHVud2pmdGt0bWFhaWljY255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDY5NjQsImV4cCI6MjA4NDcyMjk2NH0.hQcnLrb7TgH37eek5FOlOgtwKfE2IlEWzxG35vzqS7Q';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ===== Fold button logic =====
+// ====== Fold button logic ======
 const foldBtn = document.getElementById('foldBtn');
 const chamber = document.getElementById('groveChamber');
 foldBtn.addEventListener('click', () => {
@@ -87,7 +201,7 @@ foldBtn.addEventListener('click', () => {
   loadNotes();
 });
 
-// ===== Notes logic =====
+// ====== Notes logic ======
 const addNoteBtn = document.getElementById('addNoteBtn');
 const notesEl = document.getElementById('notes');
 
@@ -100,12 +214,17 @@ addNoteBtn.addEventListener('click', async () => {
     { name, message, created_at: new Date() }
   ]);
 
-  if(error) console.error(error);
+  if(error){
+    console.error(error);
+    alert("Error saving note: " + error.message);
+    return;
+  }
+
   document.getElementById('messageInput').value = '';
   loadNotes();
 });
 
-// Load notes from last 24h
+// Load notes from last 24 hours
 async function loadNotes(){
   const { data, error } = await supabase
     .from('grove_notes')
@@ -113,9 +232,13 @@ async function loadNotes(){
     .gte('created_at', new Date(Date.now() - 24*60*60*1000).toISOString())
     .order('created_at', { ascending:true });
 
-  if(error) console.error(error);
-  notesEl.innerHTML = '';
+  if(error){
+    console.error(error);
+    notesEl.innerHTML = '<div style="color:#ff5555;">Failed to load notes.</div>';
+    return;
+  }
 
+  notesEl.innerHTML = '';
   data.forEach(n => {
     const div = document.createElement('div');
     div.classList.add('note-message');

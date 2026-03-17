@@ -13,7 +13,7 @@
 <div id="box" style="display:none; margin-top:20px;">
 
   <div id="notes" style="border:1px solid red; padding:10px; max-width:400px; margin:auto; margin-bottom:10px;">
-    No messages yet.
+    Loading messages...
   </div>
 
   <input id="name" placeholder="Name"><br><br>
@@ -23,25 +23,62 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
+const SUPABASE_URL = "https://vltunwjftktmaaiicbny.supabase.co";
+const SUPABASE_KEY = "YOUR_ANON_KEY_HERE"; // ← put your key here
+
+const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 function openBox() {
   document.getElementById("box").style.display = "block";
+  loadMessages();
 }
 
-function sendMessage() {
+async function loadMessages() {
+  const notes = document.getElementById("notes");
+  notes.innerHTML = "Loading messages...";
+
+  const { data, error } = await client
+    .from("grove_test_messages")
+    .select("*")
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    notes.innerHTML = "Error loading messages";
+    console.error(error);
+    return;
+  }
+
+  notes.innerHTML = "";
+
+  data.forEach(msg => {
+    const div = document.createElement("div");
+    div.innerText = msg.name + ": " + msg.message;
+    notes.appendChild(div);
+  });
+}
+
+async function sendMessage() {
   const name = document.getElementById("name").value || "Anonymous";
   const message = document.getElementById("message").value;
 
   if (!message) return;
 
-  const notes = document.getElementById("notes");
+  const { error } = await client
+    .from("grove_test_messages")
+    .insert([{ name, message }]);
 
-  const newMsg = document.createElement("div");
-  newMsg.innerText = name + ": " + message;
-
-  notes.appendChild(newMsg);
+  if (error) {
+    alert("Send failed");
+    console.error(error);
+    return;
+  }
 
   document.getElementById("message").value = "";
+
+  loadMessages(); // reload after send
 }
 </script>
 

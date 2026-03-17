@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Test Button</title>
+<title>The Grove</title>
 </head>
 
 <body style="background:black; color:red; text-align:center; padding-top:100px;">
@@ -11,12 +11,37 @@
 <button onclick="openBox()">Enter The Fold 🔻🔻🔻</button>
 
 <div id="box" style="display:none; margin-top:20px;">
-  IT WORKED. THE BOX IS OPEN.
+
+  <div id="notes" style="border:1px solid red; padding:10px; max-width:400px; margin:auto; margin-bottom:10px;">
+    No messages yet.
+  </div>
+
+  <input id="name" placeholder="Name"><br><br>
+  <input id="message" placeholder="Message"><br><br>
+
+  <button onclick="sendMessage()">Send</button>
+
 </div>
 
 <script>
 function openBox() {
   document.getElementById("box").style.display = "block";
+}
+
+function sendMessage() {
+  const name = document.getElementById("name").value || "Anonymous";
+  const message = document.getElementById("message").value;
+
+  if (!message) return;
+
+  const notes = document.getElementById("notes");
+
+  const newMsg = document.createElement("div");
+  newMsg.innerText = name + ": " + message;
+
+  notes.appendChild(newMsg);
+
+  document.getElementById("message").value = "";
 }
 </script>
 

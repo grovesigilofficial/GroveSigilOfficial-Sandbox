@@ -1,93 +1,111 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>The Grove</title>
+<meta charset="UTF-8">
+<title>The Grove Portal</title>
+<style>
+body {
+  margin:0;
+  background:black;
+  color:#ff1a1a;
+  font-family:Georgia, serif;
+  text-align:center;
+  padding-top:50px;
+}
+h1 { font-size:60px; margin:0; }
+.subtitle { margin-bottom:30px; opacity:.8; }
+button {
+  background:black;
+  border:1px solid #ff1a1a;
+  color:#ff1a1a;
+  padding:10px 20px;
+  cursor:pointer;
+  margin:5px;
+}
+button:hover { box-shadow:0 0 10px #ff0000; }
+#groveChamber { display:none; margin-top:20px; }
+#notes { width:90%; max-width:600px; margin:auto; border:1px solid #ff1a1a; padding:10px; max-height:200px; overflow-y:auto; text-align:left; }
+input { width:calc(100% - 14px); margin:4px 0; padding:6px; background:black; border:1px solid #ff1a1a; color:#ff1a1a; }
+.note { margin-bottom:6px; }
+</style>
 </head>
-
-<body style="background:black; color:red; text-align:center; padding-top:100px;">
+<body>
 
 <h1>The Grove</h1>
+<div class="subtitle">by Bleedvow • GroveSigilOfficial</div>
 
-<button onclick="openBox()">Enter The Fold 🔻🔻🔻</button>
+<button id="enterBtn">Enter The Fold 🔻🔻🔻</button>
 
-<div id="box" style="display:none; margin-top:20px;">
-
-  <div id="notes" style="border:1px solid red; padding:10px; max-width:400px; margin:auto; margin-bottom:10px;">
-    Loading messages...
-  </div>
-
-  <input id="name" placeholder="Name"><br><br>
-  <input id="message" placeholder="Message"><br><br>
-
-  <button onclick="sendMessage()">Send</button>
-
+<div id="groveChamber">
+  <div id="notes">Loading messages...</div>
+  <input id="nameInput" placeholder="Name">
+  <input id="messageInput" placeholder="Leave a message">
+  <button id="addNoteBtn">Send</button>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
+// Supabase setup
 const SUPABASE_URL = "https://vltunwjftktmaaiicbny.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdHVud2pmdGt0bWFhaWljY255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDY5NjQsImV4cCI6MjA4NDcyMjk2NH0.hQcnLrb7TgH37eek5FOlOgtwKfE2IlEWzxG35vzqS7Q";
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// Elements
+const enterBtn = document.getElementById("enterBtn");
+const chamber = document.getElementById("groveChamber");
+const notesEl = document.getElementById("notes");
+const addBtn = document.getElementById("addNoteBtn");
 
-function openBox() {
-  document.getElementById("box").style.display = "block";
-  loadMessages();
-}
+// Show chamber
+enterBtn.onclick = () => {
+  chamber.style.display = "block";
+  loadNotes();
+};
 
-async function loadMessages() {
-  const notes = document.getElementById("notes");
-  notes.innerHTML = "Loading messages...";
-
-  const { data, error } = await client
-    .from("grove_test_messages")
-    .select("*")
-    .order("created_at", { ascending: true });
-
-  console.log("LOAD DATA:", data);
-  console.log("LOAD ERROR:", error);
-
-  if (error) {
-    notes.innerHTML = "ERROR: " + error.message;
-    return;
-  }
-
-  notes.innerHTML = "";
-
-  if (!data || data.length === 0) {
-    notes.innerHTML = "No messages yet.";
-    return;
-  }
-
-  data.forEach(msg => {
-    const div = document.createElement("div");
-    div.innerText = msg.name + ": " + msg.message;
-    notes.appendChild(div);
-  });
-}
-
-async function sendMessage() {
-  const name = document.getElementById("name").value || "Anonymous";
-  const message = document.getElementById("message").value;
-
+// Add note
+addBtn.onclick = async () => {
+  const name = document.getElementById("nameInput").value.trim() || "Anonymous";
+  const message = document.getElementById("messageInput").value.trim();
   if (!message) return;
 
-  const { data, error } = await client
-    .from("grove_test_messages")
-    .insert([{ name, message }])
-    .select();
+  try {
+    const { error } = await supabase
+      .from("grove_notes")
+      .insert([{ name, message }]);
+    if (error) throw error;
 
-  console.log("SEND DATA:", data);
-  console.log("SEND ERROR:", error);
-
-  if (error) {
-    alert("SEND ERROR: " + error.message);
-    return;
+    document.getElementById("messageInput").value = "";
+    loadNotes();
+  } catch (err) {
+    notesEl.innerHTML = "Failed to send message. Check console.";
+    console.error(err);
   }
+};
 
-  document.getElementById("message").value = "";
-  loadMessages();
+// Load notes
+async function loadNotes() {
+  notesEl.innerHTML = "Loading messages...";
+  try {
+    const { data, error } = await supabase
+      .from("grove_notes")
+      .select("*")
+      .order("created_at", { ascending: true });
+    if (error) throw error;
+
+    notesEl.innerHTML = "";
+    data.forEach(note => {
+      const div = document.createElement("div");
+      div.className = "note";
+      const time = new Date(note.created_at).toLocaleTimeString();
+      div.innerHTML = `<b>${note.name}</b>: ${note.message} <span style="opacity:.6;font-size:10px">(${time})</span>`;
+      notesEl.appendChild(div);
+    });
+
+    notesEl.scrollTop = notesEl.scrollHeight;
+  } catch (err) {
+    notesEl.innerHTML = "Failed to load messages. Check console.";
+    console.error(err);
+  }
 }
 </script>
 

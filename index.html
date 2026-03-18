@@ -12,6 +12,8 @@
 
 <div id="box" style="display:none;margin-top:20px;">
 
+  <div id="status" style="margin-bottom:10px;">Status: idle</div>
+
   <div id="notes" style="border:1px solid red;padding:10px;width:300px;margin:auto;margin-bottom:10px;">
     Loading...
   </div>
@@ -26,14 +28,24 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-const client = window.supabase.createClient(
-  "https://vltunwjftktmaaiicbny.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdHVud2pmdGt0bWFhaWljY255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDY5NjQsImV4cCI6MjA4NDcyMjk2NH0.hQcnLrb7TgH37eek5FOlOgtwKfE2IlEWzxG35vzqS7Q"
-);
+const SUPABASE_URL = "https://vltunwjftktmaaiicbny.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdHVud2pmdGt0bWFhaWljY255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDY5NjQsImV4cCI6MjA4NDcyMjk2NH0.hQcnLrb7TgH37eek5FOlOgtwKfE2IlEWzxG35vzqS7Q";
+
+const statusEl = document.getElementById("status");
+const notesEl = document.getElementById("notes");
+
+let client;
+
+try {
+  client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  statusEl.innerText = "Status: Supabase client created";
+} catch (e) {
+  statusEl.innerText = "Client ERROR: " + e.message;
+}
 
 document.getElementById("enterBtn").onclick = () => {
   document.getElementById("box").style.display = "block";
-  load();
+  testConnection();
 };
 
 document.getElementById("sendBtn").onclick = async () => {
@@ -42,45 +54,64 @@ document.getElementById("sendBtn").onclick = async () => {
 
   if (!message) return;
 
-  const { error } = await client
-    .from("grove_notes")
-    .insert([{ name, message }]);
+  statusEl.innerText = "Sending...";
 
-  if (error) {
-    alert("SEND ERROR: " + error.message);
-    return;
+  try {
+    const { error } = await client
+      .from("grove_notes")
+      .insert([{ name, message }]);
+
+    if (error) throw error;
+
+    document.getElementById("message").value = "";
+    statusEl.innerText = "Message sent ✅";
+    loadNotes();
+
+  } catch (err) {
+    statusEl.innerText = "SEND ERROR: " + err.message;
   }
-
-  document.getElementById("message").value = "";
-  load();
 };
 
-async function load() {
-  const notes = document.getElementById("notes");
-  notes.innerHTML = "Loading...";
+async function testConnection() {
+  statusEl.innerText = "Testing connection...";
 
-  const { data, error } = await client
-    .from("grove_notes")
-    .select("*")
-    .order("created_at", { ascending: true });
-
-  if (error) {
-    notes.innerHTML = "LOAD ERROR: " + error.message;
-    return;
+  try {
+    const res = await fetch(SUPABASE_URL);
+    statusEl.innerText = "Fetch OK: " + res.status;
+    loadNotes();
+  } catch (err) {
+    statusEl.innerText = "FETCH FAILED ❌";
+    notesEl.innerText = "Your browser is blocking Supabase.";
   }
+}
 
-  notes.innerHTML = "";
+async function loadNotes() {
+  notesEl.innerText = "Loading...";
 
-  if (!data.length) {
-    notes.innerHTML = "No messages yet.";
-    return;
+  try {
+    const { data, error } = await client
+      .from("grove_notes")
+      .select("*")
+      .order("created_at", { ascending: true });
+
+    if (error) throw error;
+
+    notesEl.innerHTML = "";
+
+    if (!data.length) {
+      notesEl.innerText = "No messages yet.";
+      return;
+    }
+
+    data.forEach(row => {
+      const div = document.createElement("div");
+      div.innerText = row.name + ": " + row.message;
+      notesEl.appendChild(div);
+    });
+
+  } catch (err) {
+    notesEl.innerText = "LOAD ERROR: " + err.message;
   }
-
-  data.forEach(row => {
-    const div = document.createElement("div");
-    div.innerText = row.name + ": " + row.message;
-    notes.appendChild(div);
-  });
 }
 </script>
 

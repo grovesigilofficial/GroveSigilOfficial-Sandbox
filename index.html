@@ -1,126 +1,124 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Grove Portal</title>
+  <meta charset="UTF-8">
+  <title>The Grove</title>
 </head>
+<body style="background:black;color:red;text-align:center;padding-top:40px;font-family:Arial,sans-serif;">
 
-<body style="background:black;color:red;text-align:center;padding-top:40px;font-family:Arial;">
+  <h1>The Grove</h1>
+  <button id="enterBtn">Enter The Fold 🔻🔻🔻</button>
 
-<h1>The Grove</h1>
+  <div id="box" style="display:none;margin-top:20px;">
+    <div id="status" style="margin-bottom:10px;">Status: idle</div>
 
-<button id="enterBtn">Enter The Fold 🔻🔻🔻</button>
+    <div id="notes" style="border:1px solid red;padding:10px;width:320px;height:220px;overflow:auto;margin:0 auto 12px auto;text-align:left;">
+      Waiting...
+    </div>
 
-<div id="box" style="display:none;margin-top:20px;">
-
-  <div id="status" style="margin-bottom:10px;">Status: idle</div>
-
-  <div id="notes" style="border:1px solid red;padding:10px;width:300px;margin:auto;margin-bottom:10px;height:200px;overflow:auto;">
-    Loading...
+    <input id="name" placeholder="Name" style="margin-bottom:8px;width:320px;padding:8px;"><br>
+    <input id="message" placeholder="Message" style="margin-bottom:8px;width:320px;padding:8px;"><br>
+    <button id="sendBtn">Send</button>
   </div>
 
-  <input id="name" placeholder="Name"><br><br>
-  <input id="message" placeholder="Message"><br><br>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://vltunwjftktmaaiicbny.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdHVud2pmdGt0bWFhaWljY255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDY5NjQsImV4cCI6MjA4NDcyMjk2NH0.hQcnLrb7TgH37eek5FOlOgtwKfE2IlEWzxG35vzqS7Q";
 
-  <button id="sendBtn">Send</button>
+    const statusEl = document.getElementById("status");
+    const notesEl = document.getElementById("notes");
+    const boxEl = document.getElementById("box");
+    const enterBtn = document.getElementById("enterBtn");
+    const sendBtn = document.getElementById("sendBtn");
 
-</div>
+    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    enterBtn.onclick = async () => {
+      boxEl.style.display = "block";
+      await pingSupabase();
+      await loadNotes();
+    };
 
-<script>
-const SUPABASE_URL = "https://vltunwjftktmaaiicbny.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdHVud2pmdGt0bWFhaWljY255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDY5NjQsImV4cCI6MjA4NDcyMjk2NH0.hQcnLrb7TgH37eek5FOlOgtwKfE2IlEWzxG35vzqS7Q";
+    sendBtn.onclick = async () => {
+      const name = document.getElementById("name").value.trim() || "Anonymous";
+      const message = document.getElementById("message").value.trim();
 
-const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-const notesEl = document.getElementById("notes");
-const statusEl = document.getElementById("status");
-
-document.getElementById("enterBtn").onclick = () => {
-  document.getElementById("box").style.display = "block";
-  loadNotes();
-  startRealtime();
-};
-
-document.getElementById("sendBtn").onclick = async () => {
-  const name = document.getElementById("name").value || "Anonymous";
-  const message = document.getElementById("message").value;
-
-  if (!message) return;
-
-  statusEl.innerText = "Sending...";
-
-  const { error } = await client
-    .from("grove_notes")
-    .insert([{ name, message }]);
-
-  if (error) {
-    statusEl.innerText = "SEND ERROR: " + error.message;
-    return;
-  }
-
-  document.getElementById("message").value = "";
-  statusEl.innerText = "Sent ✅";
-};
-
-async function loadNotes() {
-  notesEl.innerHTML = "Loading...";
-
-  const { data, error } = await client
-    .from("grove_notes")
-    .select("*")
-    .order("created_at", { ascending: true });
-
-  if (error) {
-    notesEl.innerText = "LOAD ERROR: " + error.message;
-    return;
-  }
-
-  render(data);
-}
-
-function render(data) {
-  notesEl.innerHTML = "";
-
-  if (!data.length) {
-    notesEl.innerText = "No messages yet.";
-    return;
-  }
-
-  data.forEach(row => {
-    const div = document.createElement("div");
-    div.innerText = row.name + ": " + row.message;
-    notesEl.appendChild(div);
-  });
-
-  notesEl.scrollTop = notesEl.scrollHeight;
-}
-
-function startRealtime() {
-  statusEl.innerText = "Live connection active 🔴";
-
-  client
-    .channel("grove-live")
-    .on(
-      "postgres_changes",
-      {
-        event: "INSERT",
-        schema: "public",
-        table: "grove_notes",
-      },
-      (payload) => {
-        const row = payload.new;
-
-        const div = document.createElement("div");
-        div.innerText = row.name + ": " + row.message;
-
-        notesEl.appendChild(div);
-        notesEl.scrollTop = notesEl.scrollHeight;
+      if (!message) {
+        statusEl.innerText = "Status: message is empty";
+        return;
       }
-    )
-    .subscribe();
-}
-</script>
 
+      statusEl.innerText = "Status: sending...";
+
+      try {
+        const { error } = await client
+          .from("grove_notes")
+          .insert([{ name, message }]);
+
+        if (error) {
+          statusEl.innerText = "SEND ERROR: " + error.message;
+          return;
+        }
+
+        document.getElementById("message").value = "";
+        statusEl.innerText = "Status: sent ✅";
+        await loadNotes();
+      } catch (err) {
+        statusEl.innerText = "SEND CATCH ERROR: " + err.message;
+      }
+    };
+
+    async function pingSupabase() {
+      statusEl.innerText = "Status: testing connection...";
+      try {
+        const res = await fetch(SUPABASE_URL + "/rest/v1/", {
+          method: "GET",
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: "Bearer " + SUPABASE_KEY
+          }
+        });
+
+        statusEl.innerText = "Status: connection test " + res.status;
+      } catch (err) {
+        statusEl.innerText = "PING ERROR: " + err.message;
+      }
+    }
+
+    async function loadNotes() {
+      notesEl.innerText = "Loading...";
+
+      try {
+        const { data, error } = await client
+          .from("grove_notes")
+          .select("*")
+          .order("created_at", { ascending: true });
+
+        if (error) {
+          notesEl.innerText = "LOAD ERROR: " + error.message;
+          return;
+        }
+
+        if (!data || data.length === 0) {
+          notesEl.innerText = "No messages yet.";
+          return;
+        }
+
+        notesEl.innerHTML = "";
+
+        data.forEach((row) => {
+          const div = document.createElement("div");
+          div.style.marginBottom = "8px";
+          div.textContent = row.name + ": " + row.message;
+          notesEl.appendChild(div);
+        });
+
+        notesEl.scrollTop = notesEl.scrollHeight;
+      } catch (err) {
+        notesEl.innerText = "LOAD CATCH ERROR: " + err.message;
+      }
+    }
+  </script>
 </body>
 </html>

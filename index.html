@@ -5,7 +5,6 @@
   <title>The Grove</title>
 </head>
 <body style="background:black;color:red;text-align:center;padding-top:40px;font-family:Arial,sans-serif;">
-
   <h1>The Grove</h1>
   <button id="enterBtn">Enter The Fold 🔻🔻🔻</button>
 
@@ -24,7 +23,9 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const SUPABASE_URL = "https://vltunwjftktmaaiicbny.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdHVud2pmdGt0bWFhaWljY255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDY5NjQsImV4cCI6MjA4NDcyMjk2NH0.hQcnLrb7TgH37eek5FOlOgtwKfE2IlEWzxG35vzqS7Q";
+    const SUPABASE_KEY = "PASTE_YOUR_ANON_KEY_HERE";
+
+    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const statusEl = document.getElementById("status");
     const notesEl = document.getElementById("notes");
@@ -32,11 +33,9 @@
     const enterBtn = document.getElementById("enterBtn");
     const sendBtn = document.getElementById("sendBtn");
 
-    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
     enterBtn.onclick = async () => {
       boxEl.style.display = "block";
-      await pingSupabase();
+      await pingApi();
       await loadNotes();
     };
 
@@ -69,8 +68,7 @@
       }
     };
 
-    async function pingSupabase() {
-      statusEl.innerText = "Status: testing connection...";
+    async function pingApi() {
       try {
         const res = await fetch(SUPABASE_URL + "/rest/v1/", {
           method: "GET",
@@ -79,10 +77,9 @@
             Authorization: "Bearer " + SUPABASE_KEY
           }
         });
-
-        statusEl.innerText = "Status: connection test " + res.status;
+        statusEl.innerText = "API TEST: " + res.status;
       } catch (err) {
-        statusEl.innerText = "PING ERROR: " + err.message;
+        statusEl.innerText = "API TEST FAILED: " + err.message;
       }
     }
 
@@ -106,15 +103,12 @@
         }
 
         notesEl.innerHTML = "";
-
         data.forEach((row) => {
           const div = document.createElement("div");
           div.style.marginBottom = "8px";
           div.textContent = row.name + ": " + row.message;
           notesEl.appendChild(div);
         });
-
-        notesEl.scrollTop = notesEl.scrollHeight;
       } catch (err) {
         notesEl.innerText = "LOAD CATCH ERROR: " + err.message;
       }

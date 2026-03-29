@@ -103,6 +103,7 @@
 
     enterBtn.onclick = async () => {
       boxEl.style.display = "block";
+      await testApi();
       await loadNotes();
     };
 
@@ -138,6 +139,16 @@
         statusEl.innerText = "SEND CATCH ERROR: " + err.message;
       }
     };
+
+    async function testApi() {
+      try {
+        const res = await fetch("/api/ping");
+        const result = await res.json();
+        statusEl.innerText = "API OK: " + result.message;
+      } catch (err) {
+        statusEl.innerText = "API TEST FAILED: " + err.message;
+      }
+    }
 
     async function loadNotes() {
       notesEl.innerText = "Loading...";

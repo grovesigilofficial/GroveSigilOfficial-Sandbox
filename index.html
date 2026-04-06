@@ -1,40 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Grove</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Grove – Step 1</title>
   <style>
     body {
       margin: 0;
-      min-height: 100vh;
-      background: #000;
-      color: #ff2a2a;
+      background: black;
+      color: #ff1a1a;
       font-family: Arial, sans-serif;
       text-align: center;
       padding: 40px 16px;
-      box-sizing: border-box;
     }
 
     h1 {
-      margin: 0 0 20px 0;
-      font-size: 42px;
+      font-size: 48px;
+      margin-bottom: 20px;
     }
 
-    button,
-    input {
-      font: inherit;
-    }
-
-    #enterBtn,
-    #sendBtn {
-      background: #000;
-      color: #ff2a2a;
-      border: 1px solid #ff2a2a;
+    button {
+      background: black;
+      color: #ff1a1a;
+      border: 1px solid #ff1a1a;
       padding: 10px 16px;
       cursor: pointer;
+      font-size: 16px;
     }
 
+    #box {
+      display: none;
+      margin-top: 20px;
+      border: 1px solid #ff1a1a;
+      padding: 20px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>The Grove</h1>
+  <button id="enterBtn">Enter The Fold 🔻🔻🔻</button>
+
+  <div id="box">
+    <p>Welcome to the Grove Chamber! UI works.</p>
+  </div>
+
+  <script>
+    const enterBtn = document.getElementById("enterBtn");
+    const box = document.getElementById("box");
+
+    enterBtn.onclick = () => {
+      box.style.display = "block";
+    };
+  </script>
+</body>
+</html>
     #box {
       display: none;
       margin-top: 20px;

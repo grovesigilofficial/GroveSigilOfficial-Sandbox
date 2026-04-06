@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Grove – Step 3</title>
+  <title>The Grove – Step 3 Fixed</title>
   <style>
     body {
       margin: 0;
@@ -14,11 +14,7 @@
       padding: 40px 16px;
     }
 
-    h1 {
-      font-size: 48px;
-      margin-bottom: 20px;
-    }
-
+    h1 { font-size: 48px; margin-bottom: 20px; }
     button {
       background: black;
       color: #ff1a1a;
@@ -27,7 +23,6 @@
       cursor: pointer;
       font-size: 16px;
     }
-
     #box {
       display: none;
       margin-top: 20px;
@@ -37,7 +32,6 @@
       margin-left: auto;
       margin-right: auto;
     }
-
     input, textarea {
       display: block;
       width: 90%;
@@ -48,21 +42,14 @@
       border: 1px solid #ff1a1a;
       font-size: 14px;
     }
-
-    textarea {
-      resize: vertical;
-    }
-
+    textarea { resize: vertical; }
     .message {
       border-top: 1px solid #ff1a1a;
       padding: 6px 0;
       text-align: left;
       font-size: 14px;
     }
-
-    .message strong {
-      color: #ff6666;
-    }
+    .message strong { color: #ff6666; }
   </style>
 </head>
 <body>
@@ -71,15 +58,13 @@
 
   <div id="box">
     <p>Welcome to the Grove Chamber! UI works.</p>
-
     <input type="text" id="nameInput" placeholder="Your Name">
     <textarea id="messageInput" rows="4" placeholder="Your Message"></textarea>
     <button id="sendBtn">Send</button>
-
     <div id="messages"></div>
   </div>
 
-  <!-- Supabase CDN -->
+  <!-- Load Supabase last -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const enterBtn = document.getElementById("enterBtn");
@@ -89,10 +74,11 @@
     const messageInput = document.getElementById("messageInput");
     const messagesDiv = document.getElementById("messages");
 
-    enterBtn.onclick = () => {
+    // Enter The Fold button works immediately
+    enterBtn.addEventListener("click", () => {
       box.style.display = "block";
       fetchMessages();
-    };
+    });
 
     // Initialize Supabase
     const supabaseUrl = "YOUR_SUPABASE_URL";
@@ -119,7 +105,7 @@
       });
     }
 
-    sendBtn.onclick = async () => {
+    sendBtn.addEventListener("click", async () => {
       const name = nameInput.value.trim();
       const message = messageInput.value.trim();
       if (!name || !message) {
@@ -127,10 +113,7 @@
         return;
       }
 
-      const { data, error } = await supabase
-        .from("messages")
-        .insert([{ name, message }]);
-
+      const { error } = await supabase.from("messages").insert([{ name, message }]);
       if (error) {
         console.error("Error sending message:", error);
         alert("Failed to send message.");
@@ -140,7 +123,7 @@
       nameInput.value = "";
       messageInput.value = "";
       fetchMessages();
-    };
+    });
   </script>
 </body>
 </html>

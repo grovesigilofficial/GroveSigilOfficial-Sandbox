@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Grove – Step 1</title>
+  <title>The Grove – Step 2</title>
   <style>
     body {
       margin: 0;
@@ -37,6 +37,21 @@
       margin-left: auto;
       margin-right: auto;
     }
+
+    input, textarea {
+      display: block;
+      width: 90%;
+      margin: 10px auto;
+      padding: 8px;
+      background: black;
+      color: #ff1a1a;
+      border: 1px solid #ff1a1a;
+      font-size: 14px;
+    }
+
+    textarea {
+      resize: vertical;
+    }
   </style>
 </head>
 <body>
@@ -45,14 +60,34 @@
 
   <div id="box">
     <p>Welcome to the Grove Chamber! UI works.</p>
+
+    <!-- Step 2: Name + Message fields -->
+    <input type="text" id="nameInput" placeholder="Your Name">
+    <textarea id="messageInput" rows="4" placeholder="Your Message"></textarea>
+    <button id="sendBtn">Send</button>
   </div>
 
   <script>
     const enterBtn = document.getElementById("enterBtn");
     const box = document.getElementById("box");
+    const sendBtn = document.getElementById("sendBtn");
+    const nameInput = document.getElementById("nameInput");
+    const messageInput = document.getElementById("messageInput");
 
     enterBtn.onclick = () => {
       box.style.display = "block";
+    };
+
+    sendBtn.onclick = () => {
+      const name = nameInput.value.trim();
+      const message = messageInput.value.trim();
+      if (!name || !message) {
+        alert("Please enter both name and message!");
+        return;
+      }
+      alert(`Name: ${name}\nMessage: ${message}`);
+      nameInput.value = "";
+      messageInput.value = "";
     };
   </script>
 </body>

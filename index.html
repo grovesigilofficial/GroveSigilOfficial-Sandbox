@@ -1,20 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Test Page</title>
+  <title>Backend Test</title>
 </head>
 
 <body style="background:black;color:red;text-align:center;padding-top:50px;">
 
-<h1>It Works</h1>
+<h1>Backend Test</h1>
 
-<button onclick="test()">Click Me</button>
+<button onclick="testApi()">Test API</button>
 
 <p id="output">Waiting...</p>
 
 <script>
-function test() {
-  document.getElementById("output").innerText = "Button works ✅";
+async function testApi() {
+  const output = document.getElementById("output");
+  output.innerText = "Testing...";
+
+  try {
+    const res = await fetch("/api/hello");
+    const data = await res.json();
+
+    output.innerText = data.message;
+  } catch (err) {
+    output.innerText = "ERROR: " + err.message;
+  }
 }
 </script>
 
